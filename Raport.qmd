@@ -24,6 +24,7 @@ Podczas analizy posłużymy się następującymi pytaniami badawczymi:
 #| echo: false
 #| warning: false
 library(RMariaDB)
+library(ggplot2)
 
 #połączenie z bazą danych
 con <- dbConnect(RMariaDB::MariaDB(),
@@ -48,13 +49,78 @@ con <- dbConnect(RMariaDB::MariaDB(),
 ### Po których z proponowanych wycieczek klienci są skłonni wybrać się na kolejne, a po których nie wracają do firmy? Czy można na tej podstawie wycofać niektóre wycieczki z oferty?
 
 ```{r}
+#| echo: false
+#| warning: false
+#| fig.width: 9
+#| fig.height: 14
+
+query3_1 <- "WITH more_than_one_trip AS (SELECT payment.id_customer AS id_customer, spaceflight.id_trip AS id_trip, trip_type.trip_name AS trip_name
+FROM payment INNER JOIN spaceflight ON payment.id_spaceflight = spaceflight.id_spaceflight INNER JOIN trip_type ON spaceflight.id_trip = trip_type.id_trip
+WHERE id_customer IN (
+    SELECT id_customer FROM payment
+    GROUP BY id_customer
+    HAVING COUNT(id_spaceflight) > 1))
+
+
+SELECT trip_name AS nazwa_wycieczki, COUNT(*) AS liczba_klientów
+FROM (SELECT *, ROW_NUMBER() OVER (PARTITION BY id_customer) AS rn
+    FROM more_than_one_trip) AS subquery
+WHERE rn = 1
+GROUP BY trip_name ORDER BY COUNT(*) DESC"
+
+df3_1 <- dbGetQuery(con, query3_1)
+
+ggplot(df3_1, aes(x = df3_1$nazwa_wycieczki, y = df3_1$liczba_klientów)) +
+  geom_col(fill = "lightblue") +
+  labs(title = "Liczba klientów, którzy wrócili do firmy po danej wycieczce", x = "Nazwa wycieczki", y = "Liczba klientów") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+```
+
+```{r}
+#| echo: false
+#| warning: false
+#| fig.width: 9
+#| fig.height: 14
+
+query3_2 <- "WITH one_trip AS (SELECT payment.id_customer AS id_customer, spaceflight.id_trip AS id_trip, trip_type.trip_name AS trip_name
+FROM payment INNER JOIN spaceflight ON payment.id_spaceflight = spaceflight.id_spaceflight INNER JOIN trip_type ON spaceflight.id_trip = trip_type.id_trip
+WHERE id_customer IN (
+    SELECT id_customer FROM payment
+    GROUP BY id_customer
+    HAVING COUNT(id_spaceflight) = 1))
+
+SELECT trip_name AS nazwa_wycieczki, COUNT(*) AS liczba_klientów
+FROM one_trip
+GROUP BY trip_name ORDER BY COUNT(*) DESC"
+
+df3_2 <- dbGetQuery(con, query3_2)
+
+ggplot(df3_2, aes(x = df3_2$nazwa_wycieczki, y = df3_2$liczba_klientów)) +
+  geom_col(fill = "lightblue") +
+  labs(title = "Liczba klientów, którzy nie wrócili do firmy po danej wycieczce", x = "Nazwa wycieczki", y = "Liczba klientów") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 ```
 
 ### Który z typów wycieczek cieszy się większą popularnością – wycieczki z jasną czy ciemną stroną mocy?
 
 ```{r}
+#| echo: false
+#| warning: false
+#| fig.width: 9
+#| fig.height: 14
 
+query4 <- "SELECT force_side AS strona_mocy, COUNT(*) AS liczba_klientów
+FROM spaceflight INNER JOIN trip_type ON spaceflight.id_trip = trip_type.id_trip
+INNER JOIN payment ON spaceflight.id_spaceflight = payment.id_spaceflight
+GROUP BY force_side ORDER BY COUNT(*) DESC"
+
+df4 <- dbGetQuery(con, query4)
+
+ggplot(df4, aes(x = df4$strona_mocy, y = df4$liczba_klientów)) +
+  geom_col(fill = "lightblue") +
+  labs(title = "Liczba klientów w zależności od strony mocy", x = "Strona mocy", y = "Liczba klientów")
 ```
 
 ### Jak często podczas wyjazdów zdarzają się wypadki konkretnych typów i jaka część klientów jest ubezpieczona na wypadek ich wystąpienia?
@@ -72,6 +138,25 @@ con <- dbConnect(RMariaDB::MariaDB(),
 ### Którzy spośród naszych pracowników (pilot i przewodnik) najczęściej latali wspólnie na wycieczki?
 
 ```{r}
+#| echo: false
+#| warning: false
+#| fig.width: 9
+#| fig.height: 14
+
+query7 <- "SELECT s.id_pilot AS id_pilota, s.id_guide AS id_przewodnika, CONCAT(e1.first_name, ' ', e1.last_name, ', ', e2.first_name, ' ', 
+e2.last_name) AS imiona, COUNT(*) AS liczba_wyjazdów
+FROM spaceflight AS s INNER JOIN employee AS e1 ON s.id_pilot = e1.id_employee
+INNER JOIN employee AS e2 ON s.id_guide = e2.id_employee
+GROUP BY s.id_pilot, s.id_guide
+ORDER BY COUNT(*) DESC"
+
+df7 <- dbGetQuery(con, query7)
+
+ggplot(df7, aes(x = df7$imiona, y = df7$liczba_wyjazdów)) +
+  geom_col(fill = "lightblue") +
+  labs(title = "Liczba wspólnych wyjazdów wybranych członków załogi", x = "Załoga", y = "Liczba wyjazdów") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
 ```
 
 ```{r}
