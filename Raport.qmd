@@ -1,0 +1,81 @@
+---
+title: "Raport"
+format: html
+editor: visual
+---
+
+# Raport
+
+Niniejszy raport został wykonany na zlecenie firmy „Space-U”, organizującej konsumenckie załogowe loty kosmiczne, a w szczególności wycieczki z jasną i ciemną stroną mocy w świecie Star Wars. Celem raportu jest analiza danych zebranych przez firmę podczas 2 lat obecności na rynku, która pozwoli na wyciągnięcie wniosków na temat dotychczasowej działalności: związanych z nią kosztów oraz zysków, a także stosunku klientów do proponowanej oferty. Dzięki temu, możliwe będzie wskazanie kierunku rozwoju dla firmy w najbliższej przyszłości.
+
+Podczas analizy posłużymy się następującymi pytaniami badawczymi:
+
+-   Które z proponowanych przez firmę rodzajów wycieczek cieszą się największą popularnością? Jak kształtuje się ich bilans zysków i strat? Czy są dla firmy opłacalne?
+-   Czy na podstawie wykresu liczby obsłużonych klientów w każdym miesiącu działalności firmy możemy wyciągnąć wnioski, że firma się rozwija lub podupada?
+-   Po których z proponowanych wycieczek klienci są skłonni wybrać się na kolejne, a po których nie wracają do firmy? Czy można na tej podstawie wycofać niektóre wycieczki z oferty?
+-   Który z typów wycieczek cieszy się większą popularnością – wycieczki z jasną czy ciemną stroną mocy?
+-   Jak często podczas wyjazdów zdarzają się wypadki konkretnych typów i jaka część klientów jest ubezpieczona na wypadek ich wystąpienia?
+-   Czy wycieczki, którym klienci wystawiają najwyższe oceny, są również najchętniej wybierane?
+-   Którzy spośród naszych pracowników (pilot i przewodnik) najczęściej latali wspólnie na wycieczki?
+
+## Analiza
+
+```{r}
+#| echo: false
+#| warning: false
+library(RMariaDB)
+
+#połączenie z bazą danych
+con <- dbConnect(RMariaDB::MariaDB(),
+                 dbname = "team12",
+                 username = "team12",
+                 password = "te@mliz",
+                 host = "giniewicz.it")
+```
+
+### Które z proponowanych przez firmę rodzajów wycieczek cieszą się największą popularnością? Jak kształtuje się ich bilans zysków i strat? Czy są dla firmy opłacalne?
+
+```{r}
+
+```
+
+### Czy na podstawie wykresu liczby obsłużonych klientów w każdym miesiącu działalności firmy możemy wyciągnąć wnioski, że firma się rozwija lub podupada?
+
+```{r}
+
+```
+
+### Po których z proponowanych wycieczek klienci są skłonni wybrać się na kolejne, a po których nie wracają do firmy? Czy można na tej podstawie wycofać niektóre wycieczki z oferty?
+
+```{r}
+
+```
+
+### Który z typów wycieczek cieszy się większą popularnością – wycieczki z jasną czy ciemną stroną mocy?
+
+```{r}
+
+```
+
+### Jak często podczas wyjazdów zdarzają się wypadki konkretnych typów i jaka część klientów jest ubezpieczona na wypadek ich wystąpienia?
+
+```{r}
+
+```
+
+### Czy wycieczki, którym klienci wystawiają najwyższe oceny, są również najchętniej wybierane?
+
+```{r}
+
+```
+
+### Którzy spośród naszych pracowników (pilot i przewodnik) najczęściej latali wspólnie na wycieczki?
+
+```{r}
+```
+
+```{r}
+#| echo: false
+#zamykanie połączenia
+dbDisconnect(con)
+```
