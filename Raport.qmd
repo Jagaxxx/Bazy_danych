@@ -75,10 +75,12 @@ df1_1_summary <- df1_1 %>%
 
 # Wykres
 ggplot(df1_1_summary, aes(x = reorder(planet_name, -liczba_lotow),
-                       y = liczba_lotow,
-                       fill = force_side)) +
+                          y = liczba_lotow,
+                          fill = force_side)) +
   geom_col() +
-  scale_fill_manual(values = c("Jasna" = "blue", "Ciemna" = "red")) +
+  geom_text(aes(label = liczba_lotow),
+            vjust = -0.5, size = 5) +  # <- to dodaje wartości nad słupkami
+  scale_fill_manual(values = c("jasna" = "blue", "ciemna" = "red")) +
   labs(title = "Popularność wycieczek",
        x = "Planeta",
        y = "Liczba lotów",
@@ -93,12 +95,13 @@ ggplot(df1_1_summary, aes(x = reorder(planet_name, -liczba_lotow),
     legend.title = element_text(size = 13),
     legend.text = element_text(size = 12)
   )
+
 ```
 
 ```{r}
 #| echo: false
 #| warning: false
-#| fig.width: 9
+#| fig.width: 14
 #| fig.height: 8
 
 # Pobranie danych
@@ -167,14 +170,19 @@ dane_long <- srednie %>%
 # Wykres
 ggplot(dane_long, aes(x = planet_name, y = wartosc, fill = typ)) +
   geom_col(position = position_dodge(width = 0.9)) +
-  geom_text(aes(label = round(wartosc)), 
-            position = position_dodge(width = 0.9), 
+  geom_text(aes(label = ifelse(wartosc >= 1e6,
+                               paste0(round(wartosc / 1e6, 1), " M"),
+                               ifelse(wartosc >= 1e3,
+                                      paste0(round(wartosc / 1e3, 1), " k"),
+                                      round(wartosc)))),
+            position = position_dodge(width = 0.9),
             vjust = -0.5, size = 4) +
+  scale_y_continuous(labels = scales::label_comma()) +
   scale_fill_manual(values = c("Koszty" = "red", "Przychód" = "blue", "Zysk" = "green")) +
   labs(
     title = "Średnie koszty, przychody i zysk z wycieczek na planetę",
     x = "Planeta",
-    y = "Kwota (zł)",
+    y = "Kwota",
     fill = "Rodzaj"
   ) +
   theme_minimal() +
@@ -187,12 +195,13 @@ ggplot(dane_long, aes(x = planet_name, y = wartosc, fill = typ)) +
     legend.title = element_text(size = 13),
     legend.text = element_text(size = 12)
   )
+
 ```
 
 ```{r}
 #| echo: false
 #| warning: false
-#| fig.width: 9
+#| fig.width: 14
 #| fig.height: 8
 
 query <- "
@@ -260,14 +269,19 @@ dane_long <- suma %>%
 # Wykres
 ggplot(dane_long, aes(x = planet_name, y = wartosc, fill = typ)) +
   geom_col(position = position_dodge(width = 0.9)) +
-  geom_text(aes(label = round(wartosc)), 
+  geom_text(aes(label = ifelse(wartosc >= 1e6,
+                               paste0(round(wartosc / 1e6, 1), " M"),
+                               ifelse(wartosc >= 1e3,
+                                      paste0(round(wartosc / 1e3, 1), " k"),
+                                      round(wartosc)))),
             position = position_dodge(width = 0.9), 
             vjust = -0.5, size = 4) +
+  scale_y_continuous(labels = scales::label_comma()) +
   scale_fill_manual(values = c("Koszty" = "red", "Przychód" = "blue", "Zysk" = "green")) +
   labs(
     title = "Suma kosztów, przychodów i zysków z wycieczek na każdą planetę",
     x = "Planeta",
-    y = "Kwota (zł)",
+    y = "Kwota",
     fill = "Rodzaj"
   ) +
   theme_minimal() +
@@ -378,11 +392,12 @@ df_wykres <- data.frame(
 ggplot(df_wykres, aes(x = Rodzaj, y = Kwota, fill = Rodzaj)) +
   geom_col(width = 0.6) +
   geom_text(aes(label = round(Kwota)), vjust = -0.5, size = 5) +
+  scale_y_continuous(labels = scales::label_comma()) +
   scale_fill_manual(values = c("Koszty" = "red", "Przychód" = "blue", "Zysk" = "green")) +
   labs(
     title = "Podsumowanie finansowe firmy",
     x = "",
-    y = "Kwota (zł)"
+    y = "Kwota"
   ) +
   theme_minimal() +
   theme(
