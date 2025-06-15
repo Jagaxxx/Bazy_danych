@@ -50,11 +50,13 @@ con <- dbConnect(RMariaDB::MariaDB(),
 
 ### Po których z proponowanych wycieczek klienci są skłonni wybrać się na kolejne, a po których nie wracają do firmy? Czy można na tej podstawie wycofać niektóre wycieczki z oferty?
 
+Kolejne zagadnienie dotyczy badania chęci wybierania się klientów na kolejne wycieczki z firmą. W tym celu klienci zostali podzieleni na 2 grupy: tych, którzy w ciągu 2 lat działalności „Space-U” wybrali się tylko na jeden wyjazd, oraz tych, którzy odwiedzili kilka miejsc. Dla każdej z grup zliczono wycieczki, które wybrano podczas pierwszych wylotów – pierwsze wrażenia zdecydowały o tym, czy klienci ponownie obdarzyli firmę zaufaniem, czy też nie.
+
 ```{r}
 #| echo: false
 #| warning: false
 #| fig.width: 9
-#| fig.height: 14
+#| fig.height: 12
 
 query3_1 <- "WITH more_than_one_trip AS (SELECT payment.id_customer AS id_customer, spaceflight.id_trip AS id_trip, trip_type.trip_name AS trip_name
 FROM payment INNER JOIN spaceflight ON payment.id_spaceflight = spaceflight.id_spaceflight INNER JOIN trip_type ON spaceflight.id_trip = trip_type.id_trip
@@ -68,9 +70,27 @@ SELECT trip_name AS nazwa_wycieczki, COUNT(*) AS liczba_klientów
 FROM (SELECT *, ROW_NUMBER() OVER (PARTITION BY id_customer) AS rn
     FROM more_than_one_trip) AS subquery
 WHERE rn = 1
-GROUP BY trip_name ORDER BY COUNT(*) DESC"
+GROUP BY trip_name ORDER BY COUNT(*) DESC LIMIT 3"
 
 df3_1 <- dbGetQuery(con, query3_1)
+
+query3_1_1 <- "WITH more_than_one_trip AS (SELECT payment.id_customer AS id_customer, spaceflight.id_trip AS id_trip, trip_type.trip_name AS trip_name
+FROM payment INNER JOIN spaceflight ON payment.id_spaceflight = spaceflight.id_spaceflight INNER JOIN trip_type ON spaceflight.id_trip = trip_type.id_trip
+WHERE id_customer IN (
+    SELECT id_customer FROM payment
+    GROUP BY id_customer
+    HAVING COUNT(id_spaceflight) > 1))
+
+SELECT trip_name AS nazwa_najczesciej_powtarzanej_wycieczki, COUNT(*) AS liczba_klientów
+FROM (SELECT *, ROW_NUMBER() OVER (PARTITION BY id_customer) AS rn
+    FROM more_than_one_trip) AS subquery
+WHERE rn = 1
+GROUP BY trip_name ORDER BY COUNT(*) DESC LIMIT 1"
+
+df3_1_1 <- dbGetQuery(con, query3_1_1)
+
+most_repeated_trip <- df3_1_1$nazwa_najczesciej_powtarzanej_wycieczki
+
 
 ggplot(df3_1, aes(x = df3_1$nazwa_wycieczki, y = df3_1$liczba_klientów)) +
   geom_col(fill = "lightblue") +
@@ -79,11 +99,13 @@ ggplot(df3_1, aes(x = df3_1$nazwa_wycieczki, y = df3_1$liczba_klientów)) +
 
 ```
 
+Klienci, którzy zdecydowali się wziąć udział w więcej niż jednym wyjeździe, najczęściej wykupowali za pierwszym razem następujące wycieczki: `r df3_1$nazwa_wycieczki[1]`, `r df3_1$nazwa_wycieczki[2]`, `r df3_1$nazwa_wycieczki[3]`. Najpopularniejszą wycieczką wśród nich była wycieczka o nazwie `r most_repeated_trip`, na którą wybrało się `r df3_1_1$liczba_klientów` klientów. Może to oznaczać, że zwiedzającym spodobał się klimat wycieczki, a w planie firmy na najbliższy czas należy uwzględnić organizację większej liczby wycieczek tego typu bądź wprowadzić do oferty więcej rodzajów wyjazdów w podobnym klimacie.
+
 ```{r}
 #| echo: false
 #| warning: false
 #| fig.width: 9
-#| fig.height: 14
+#| fig.height: 12
 
 query3_2 <- "WITH one_trip AS (SELECT payment.id_customer AS id_customer, spaceflight.id_trip AS id_trip, trip_type.trip_name AS trip_name
 FROM payment INNER JOIN spaceflight ON payment.id_spaceflight = spaceflight.id_spaceflight INNER JOIN trip_type ON spaceflight.id_trip = trip_type.id_trip
@@ -94,9 +116,22 @@ WHERE id_customer IN (
 
 SELECT trip_name AS nazwa_wycieczki, COUNT(*) AS liczba_klientów
 FROM one_trip
-GROUP BY trip_name ORDER BY COUNT(*) DESC"
+GROUP BY trip_name ORDER BY COUNT(*) DESC LIMIT 3"
 
 df3_2 <- dbGetQuery(con, query3_2)
+
+query3_2_1 <- "WITH one_trip AS (SELECT payment.id_customer AS id_customer, spaceflight.id_trip AS id_trip, trip_type.trip_name AS trip_name
+FROM payment INNER JOIN spaceflight ON payment.id_spaceflight = spaceflight.id_spaceflight INNER JOIN trip_type ON spaceflight.id_trip = trip_type.id_trip
+WHERE id_customer IN (
+    SELECT id_customer FROM payment
+    GROUP BY id_customer
+    HAVING COUNT(id_spaceflight) = 1))
+
+SELECT trip_name AS nazwa_wycieczki, COUNT(*) AS liczba_klientów
+FROM one_trip
+GROUP BY trip_name ORDER BY COUNT(*) DESC LIMIT 1"
+
+df3_2_1 <- dbGetQuery(con, query3_2_1)
 
 ggplot(df3_2, aes(x = df3_2$nazwa_wycieczki, y = df3_2$liczba_klientów)) +
   geom_col(fill = "lightblue") +
@@ -105,13 +140,15 @@ ggplot(df3_2, aes(x = df3_2$nazwa_wycieczki, y = df3_2$liczba_klientów)) +
 
 ```
 
+Klienci, którzy nie zdecydowali się ponownie wziąć udziału w wyjeździe organizowanym przez „Space-U", najczęściej wykupowali za pierwszym razem następujące wycieczki: `r df3_2$nazwa_wycieczki[1]`, `r df3_2$nazwa_wycieczki[2]`, `r df3_2$nazwa_wycieczki[3]`. Najczęściej wybieraną wśród nich wycieczką była wycieczka o nazwie `r df3_2_1$nazwa_wycieczki`, na którą wybrało się `r df3_2_1$liczba_klientów` klientów. Może to oznaczać, że zaproponowana wycieczka nie spotyka się z pozytywnym odbiorem wszystkich klientów, zatem należy wprowadzić zmiany w jej plan. W przypadku dalszego braku zainteresowania kolejnymi wyjazdami z firmą wśród klientów, którzy wybrali się na wycieczkę tego typu, należy zastanowić się nad wycofaniem wycieczki z oferty i zastąpieniem jej inną propozycją.
+
 ### Który z typów wycieczek cieszy się większą popularnością – wycieczki z jasną czy ciemną stroną mocy?
 
 ```{r}
 #| echo: false
 #| warning: false
 #| fig.width: 9
-#| fig.height: 14
+#| fig.height: 12
 
 query4 <- "SELECT force_side AS strona_mocy, COUNT(*) AS liczba_klientów
 FROM spaceflight INNER JOIN trip_type ON spaceflight.id_trip = trip_type.id_trip
@@ -143,7 +180,7 @@ ggplot(df4, aes(x = df4$strona_mocy, y = df4$liczba_klientów)) +
 #| echo: false
 #| warning: false
 #| fig.width: 9
-#| fig.height: 14
+#| fig.height: 12
 
 query7 <- "SELECT s.id_pilot AS id_pilota, s.id_guide AS id_przewodnika, CONCAT(e1.first_name, ' ', e1.last_name, ', ', e2.first_name, ' ', 
 e2.last_name) AS imiona, COUNT(*) AS liczba_wyjazdów
