@@ -6,7 +6,7 @@ execute:
   eval: true
 ---
 
-# Raport
+# Analiza danych firmy „Space-U”
 
 Niniejszy raport został wykonany na zlecenie firmy „Space-U”, organizującej konsumenckie załogowe loty kosmiczne, a w szczególności wycieczki z jasną i ciemną stroną mocy w świecie Star Wars. Celem raportu jest analiza danych zebranych przez firmę podczas 2 lat obecności na rynku, która pozwoli na wyciągnięcie wniosków na temat dotychczasowej działalności: związanych z nią kosztów oraz zysków, a także stosunku klientów do proponowanej oferty. Dzięki temu, możliwe będzie wskazanie kierunku rozwoju dla firmy w najbliższej przyszłości.
 
@@ -144,6 +144,8 @@ Klienci, którzy nie zdecydowali się ponownie wziąć udziału w wyjeździe org
 
 ### Który z typów wycieczek cieszy się większą popularnością – wycieczki z jasną czy ciemną stroną mocy?
 
+Firmę „Space-U” interesuje również, która ze stron mocy cieszy się większą popularnością wśród turystów - czy więcej osób wybiera się na wycieczki z jasną, czy z ciemną stroną mocy? Odpowiedź na to pytanie pomoże firmie lepiej dopasować ofertę wycieczek do oczekiwań klientów w najbliższej przyszłości. Aby uzyskać odpowiedź, liczymy, ile było rezerwacji wycieczek każdego z dwóch typów.
+
 ```{r}
 #| echo: false
 #| warning: false
@@ -157,10 +159,25 @@ GROUP BY force_side ORDER BY COUNT(*) DESC"
 
 df4 <- dbGetQuery(con, query4)
 
+query4_1 <- "SELECT force_side AS strona_mocy, COUNT(*) AS liczba_klientów
+FROM spaceflight INNER JOIN trip_type ON spaceflight.id_trip = trip_type.id_trip
+INNER JOIN payment ON spaceflight.id_spaceflight = payment.id_spaceflight
+GROUP BY force_side ORDER BY COUNT(*) DESC LIMIT 1"
+
+more_popular_force_side <- dbGetQuery(con, query4_1)
+
+query4_2 <- "SELECT force_side AS strona_mocy, COUNT(*) AS liczba_klientów
+FROM spaceflight INNER JOIN trip_type ON spaceflight.id_trip = trip_type.id_trip
+INNER JOIN payment ON spaceflight.id_spaceflight = payment.id_spaceflight
+GROUP BY force_side ORDER BY COUNT(*) ASC LIMIT 1"
+
+less_popular_force_side <- dbGetQuery(con, query4_2)
+
 ggplot(df4, aes(x = df4$strona_mocy, y = df4$liczba_klientów)) +
   geom_col(fill = "lightblue") +
   labs(title = "Liczba klientów w zależności od strony mocy", x = "Strona mocy", y = "Liczba klientów")
 ```
+Z powyższego wykresu odczytać można, że to `r more_popular_force_side$strona_mocy` strona mocy cieszy się większą popularnością wśród klientów firmy - na wycieczki tego typu wybrało się `r more_popular_force_side$liczba_klientów` klientów. Dla porównania, wycieczki oznaczone jako "`r less_popular_force_side$strona_mocy` strona mocy" wybrało `r less_popular_force_side$liczba_klientów` klientów. Wobec dużego zainteresowania klientów wyjazdami oznaczonymi jako "`r more_popular_force_side$strona_mocy` strona mocy", można wprowadzić do oferty firmy więcej wycieczek tego typu.
 
 ### Jak często podczas wyjazdów zdarzają się wypadki konkretnych typów i jaka część klientów jest ubezpieczona na wypadek ich wystąpienia?
 
@@ -176,6 +193,7 @@ ggplot(df4, aes(x = df4$strona_mocy, y = df4$liczba_klientów)) +
 
 ### Którzy spośród naszych pracowników (pilot i przewodnik) najczęściej latali wspólnie na wycieczki?
 
+Ostatnie pytanie dotyczy załogi statków - którzy spośród pracowników firmy najczęściej wybierają się wspólnie na wycieczki. Aby na nie odpowiedzieć, korzystamy z tabeli, w której opisano wszystkie zorganizowane wyjazdy - wybieramy wszystkie możliwe połączenia pilotów i przewodników oraz liczymy, jak często wyruszają ze sobą w podróże.
 ```{r}
 #| echo: false
 #| warning: false
@@ -191,12 +209,23 @@ ORDER BY COUNT(*) DESC"
 
 df7 <- dbGetQuery(con, query7)
 
+query7_1 <- "SELECT s.id_pilot AS id_pilota, s.id_guide AS id_przewodnika, CONCAT(e1.first_name, ' ', e1.last_name, ', ', e2.first_name, ' ', 
+e2.last_name) AS imiona, COUNT(*) AS liczba_wyjazdów
+FROM spaceflight AS s INNER JOIN employee AS e1 ON s.id_pilot = e1.id_employee
+INNER JOIN employee AS e2 ON s.id_guide = e2.id_employee
+GROUP BY s.id_pilot, s.id_guide
+ORDER BY COUNT(*) DESC LIMIT 1"
+
+df7_1 <- dbGetQuery(con, query7_1)
+
 ggplot(df7, aes(x = df7$imiona, y = df7$liczba_wyjazdów)) +
   geom_col(fill = "lightblue") +
   labs(title = "Liczba wspólnych wyjazdów wybranych członków załogi", x = "Załoga", y = "Liczba wyjazdów") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 ```
+
+Z wykresu powyżej możemy odczytać, że `r df7_1$imiona` są członkami załogi, którzy wylatują ze sobą na wycieczki najczęściej. Może to oznaczać, że zgłaszają się do wyjazdów wspólnie, ponieważ dobrze im się współpracuje. Firma powinna wziąć to pod uwagę podczas planowania kolejnych lotów - jeżeli relacje pomiędzy pracownikami są dobre, znajduje to przełożenie na atmosferę całej wycieczki, a dzięki temu - również na pozytywną opinię klientów. 
 
 ```{r}
 #| echo: false
