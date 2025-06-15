@@ -29,6 +29,7 @@ Podczas analizy posłużymy się następującymi pytaniami badawczymi:
 library(dplyr)
 library(DBI)
 library(tidyr)
+library(scales)
 ```
 
 ```{r}
@@ -46,6 +47,10 @@ con <- dbConnect(RMariaDB::MariaDB(),
 ```
 
 ### Które z proponowanych przez firmę rodzajów wycieczek cieszą się największą popularnością? Jak kształtuje się ich bilans zysków i strat? Czy są dla firmy opłacalne?
+
+Jednym z kluczowych elementów działalności firmy turystycznej jest dostosowywanie oferty do potrzeb i preferencji klientów. Dlatego analiza popularności poszczególnych rodzajów wycieczek jest niezwykle istotna z punktu widzenia planowania przyszłych działań marketingowych oraz rozwoju oferty. Pozwala to nie tylko na optymalizację zasobów, ale również na zwiększenie satysfakcji klientów poprzez oferowanie wyjazdów, które cieszą się największym zainteresowaniem.
+
+Na podstawie danych zgromadzonych w bazie danych, możliwe było określenie, które wycieczki cieszyły się największą popularnością wśród klientów. Spójrzmy teraz na liczbę zorganizowanych lotów na poszczególne planety.
 
 ```{r}
 #| echo: false
@@ -97,6 +102,60 @@ ggplot(df1_1_summary, aes(x = reorder(planet_name, -liczba_lotow),
   )
 
 ```
+
+Teraz możemy zobaczyć, jak wygląda to w przypadku ilości obsłużonych podróżnych.
+
+```{r}
+#| echo: false
+#| warning: false
+#| fig.width: 9
+#| fig.height: 8
+
+df <- dbGetQuery(con, "
+  SELECT 
+    payment.id_payment,
+    payment.id_spaceflight,
+    spaceflight.id_trip,
+    trip_type.planet_name,
+    trip_type.force_side
+  FROM payment
+  JOIN spaceflight ON payment.id_spaceflight = spaceflight.id_spaceflight
+  JOIN trip_type ON spaceflight.id_trip = trip_type.id_trip
+")
+
+# Liczby klientów
+klienci_na_planete <- df %>%
+  group_by(planet_name, force_side) %>%
+  summarise(liczba_klientow = n(), .groups = "drop") %>%
+  arrange(desc(liczba_klientow))
+
+# Wykres
+ggplot(klienci_na_planete, aes(x = reorder(planet_name, -liczba_klientow), y = liczba_klientow, fill = force_side)) +
+  geom_col() +
+  geom_text(aes(label = liczba_klientow), vjust = -0.5, size = 5) +
+  scale_fill_manual(values = c("jasna" = "blue", "ciemna" = "red")) +
+  labs(
+    title = "Liczba klientów na planetę według strony mocy",
+    x = "Planeta",
+    y = "Liczba klientów",
+    fill = "Strona mocy"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 18, face = "bold", hjust = 0.5),
+    axis.title = element_text(size = 14),
+    axis.text.x = element_text(angle = 45, hjust = 1, size = 12),
+    axis.text.y = element_text(size = 12)
+  )
+```
+
+#### Bilans zysków i strat poszczególnych rodzajów wycieczek
+
+Analiza bilansu zysków i strat dla różnych typów wycieczek oferowanych przez firmę stanowi kluczowy element oceny rentowności działalności. Pozwala ona nie tylko ocenić, które rodzaje wycieczek generują największe przychody, ale również które wiążą się z najwyższymi kosztami operacyjnymi, co ma bezpośredni wpływ na ostateczny zysk netto.
+
+W ramach analizy zestawiono przychody uzyskane z tytułu sprzedaży konkretnych rodzajów wycieczek z odpowiadającymi im kosztami – takimi jak zakwaterowanie, wyżywienie, opłaty przewodników, transport, naprawy pojazdów czy wydatki logistyczne. Dzięki temu możliwe było określenie, które typy wyjazdów są najbardziej opłacalne, a które przynoszą mniejsze zyski lub wręcz straty.
+
+W tym celu posłużmy się najpierw średnią ceną wycieczki.
 
 ```{r}
 #| echo: false
@@ -177,7 +236,7 @@ ggplot(dane_long, aes(x = planet_name, y = wartosc, fill = typ)) +
                                       round(wartosc)))),
             position = position_dodge(width = 0.9),
             vjust = -0.5, size = 4) +
-  scale_y_continuous(labels = scales::label_comma()) +
+  scale_y_continuous(labels = scales::label_number(big.mark = " ", decimal.mark = ",")) +
   scale_fill_manual(values = c("Koszty" = "red", "Przychód" = "blue", "Zysk" = "green")) +
   labs(
     title = "Średnie koszty, przychody i zysk z wycieczek na planetę",
@@ -195,8 +254,9 @@ ggplot(dane_long, aes(x = planet_name, y = wartosc, fill = typ)) +
     legend.title = element_text(size = 13),
     legend.text = element_text(size = 12)
   )
-
 ```
+
+W celu uzyskania pełniejszego obrazu rentowności działalności firmy, przeprowadzono także analizę łącznych zysków generowanych przez wycieczki do poszczególnych planet, z uwzględnieniem liczby uczestników. W odróżnieniu od wcześniejszego zestawienia, które bazowało na średnich wartościach dla jednej wycieczki (jeden wylot), niniejsze podsumowanie uwzględnia realną skalę sprzedaży – czyli ilość podróżnych, którzy skorzystali z każdej z ofert. Takie podejście pozwala precyzyjnie określić, które kierunki nie tylko są popularne, ale również najbardziej dochodowe w ujęciu globalnym.
 
 ```{r}
 #| echo: false
@@ -276,7 +336,9 @@ ggplot(dane_long, aes(x = planet_name, y = wartosc, fill = typ)) +
                                       round(wartosc)))),
             position = position_dodge(width = 0.9), 
             vjust = -0.5, size = 4) +
-  scale_y_continuous(labels = scales::label_comma()) +
+  scale_y_continuous(
+    labels = label_number(big.mark = " ", decimal.mark = ",")
+  ) +
   scale_fill_manual(values = c("Koszty" = "red", "Przychód" = "blue", "Zysk" = "green")) +
   labs(
     title = "Suma kosztów, przychodów i zysków z wycieczek na każdą planetę",
@@ -295,6 +357,22 @@ ggplot(dane_long, aes(x = planet_name, y = wartosc, fill = typ)) +
     legend.text = element_text(size = 12)
   )
 ```
+
+#### Ostateczny bilans finansowy
+
+W końcowym etapie analizy działalności firmy turystycznej dokonano całościowego podsumowania bilansu finansowego, obejmującego wszystkie kluczowe kategorie wpływające na rentowność przedsiębiorstwa. Zestawiono trzy główne elementy: koszty, przychody oraz zysk.
+
+W skład całkowitych kosztów weszły:
+
+-   Koszty organizacji wyjazdów,
+
+-   Koszty utrzymania klientów podczas wycieczki,
+
+-   Koszty utrzymania pracowników.
+
+Przychody uwzględniają wszystkie wpływy uzyskane od klientów za zakupione wycieczki, bez względu na ich rodzaj czy kierunek. Dzięki temu możliwe było określenie ogólnej wartości sprzedaży usług turystycznych w analizowanym okresie.
+
+Zysk został obliczony jako różnica między całkowitymi przychodami a sumą wszystkich kosztów – zarówno bezpośrednich (organizacja wyjazdów), jak i pośrednich (utrzymanie pracowników).
 
 ```{r}
 #| echo: false
@@ -374,25 +452,21 @@ suma_wyplaty <- sum(employee_df$wyplata, na.rm = TRUE)
 suma_koszt_calkowity <- suma_koszt_organizacji + suma_koszt_utrzymania + suma_wyplaty
 zysk_firmy <- suma_przychod - suma_koszt_calkowity
 
-# Wynik
-cat("Suma kosztów organizacji lotów:", round(suma_koszt_organizacji), "\n")
-cat("Suma kosztów utrzymania klientów:", round(suma_koszt_utrzymania), "\n")
-cat("Suma wypłat dla pracowników:", round(suma_wyplaty), "\n")
-cat("Całkowity koszt:", round(suma_koszt_calkowity), "\n\n")
-
-cat("Całkowity przychód:", round(suma_przychod), "\n")
-cat("Zysk firmy:", round(zysk_firmy), "\n")
-
 df_wykres <- data.frame(
   Rodzaj = c("Koszty", "Przychód", "Zysk"),
   Kwota = c(suma_koszt_calkowity, suma_przychod, zysk_firmy)
 )
 
-# Wykres
 ggplot(df_wykres, aes(x = Rodzaj, y = Kwota, fill = Rodzaj)) +
   geom_col(width = 0.6) +
-  geom_text(aes(label = round(Kwota)), vjust = -0.5, size = 5) +
-  scale_y_continuous(labels = scales::label_comma()) +
+  geom_text(
+    aes(label = format(Kwota, big.mark = " ", scientific = FALSE)),
+    vjust = -0.5,
+    size = 5
+  ) +
+  scale_y_continuous(
+    labels = label_number(big.mark = " ", decimal.mark = ",")
+  ) +
   scale_fill_manual(values = c("Koszty" = "red", "Przychód" = "blue", "Zysk" = "green")) +
   labs(
     title = "Podsumowanie finansowe firmy",
@@ -408,6 +482,16 @@ ggplot(df_wykres, aes(x = Rodzaj, y = Kwota, fill = Rodzaj)) +
     legend.position = "none"
   )
 ```
+
+Ostatecznie uzyskano:
+
+-   Koszt organizacji lotów wyniósł `r format(suma_koszt_organizacji, big.mark = " ", scientific = FALSE)`. Obejmuje on głównie wydatki związane z transportem oraz logistyką podróży.
+-   Koszt utrzymania klientów podczas wycieczek wyniósł `r format(suma_koszt_utrzymania, big.mark = " ", scientific = FALSE)`. W skład tej kategorii wchodzą m.in. zakwaterowanie, wyżywienie, usługi przewodników i atrakcje w ramach programu wycieczki.
+-   Wypłaty dla pracowników stanowiły `r format(suma_wyplaty, big.mark = " ", scientific = FALSE)`.
+
+Łącznie koszty operacyjne firmy osiągnęły poziom `r format(suma_koszt_calkowity, big.mark = " ", scientific = FALSE)`. \
+Z kolei przychód uzyskany ze sprzedaży wycieczek wyniósł `r format(suma_przychod, big.mark = " ", scientific = FALSE)`. \
+Na tej podstawie obliczono zysk firmy, który wyniósł `r format(zysk_firmy, big.mark = " ", scientific = FALSE)`.
 
 ### Czy na podstawie wykresu liczby obsłużonych klientów w każdym miesiącu działalności firmy możemy wyciągnąć wnioski, że firma się rozwija lub podupada?
 

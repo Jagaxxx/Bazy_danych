@@ -79,6 +79,8 @@ ul.task-list li input[type="checkbox"] {
 <h2 class="anchored" data-anchor-id="analiza">Analiza</h2>
 <section id="które-z-proponowanych-przez-firmę-rodzajów-wycieczek-cieszą-się-największą-popularnością-jak-kształtuje-się-ich-bilans-zysków-i-strat-czy-są-dla-firmy-opłacalne" class="level3">
 <h3 class="anchored" data-anchor-id="które-z-proponowanych-przez-firmę-rodzajów-wycieczek-cieszą-się-największą-popularnością-jak-kształtuje-się-ich-bilans-zysków-i-strat-czy-są-dla-firmy-opłacalne">Które z proponowanych przez firmę rodzajów wycieczek cieszą się największą popularnością? Jak kształtuje się ich bilans zysków i strat? Czy są dla firmy opłacalne?</h3>
+<p>Jednym z kluczowych elementów działalności firmy turystycznej jest dostosowywanie oferty do potrzeb i preferencji klientów. Dlatego analiza popularności poszczególnych rodzajów wycieczek jest niezwykle istotna z punktu widzenia planowania przyszłych działań marketingowych oraz rozwoju oferty. Pozwala to nie tylko na optymalizację zasobów, ale również na zwiększenie satysfakcji klientów poprzez oferowanie wyjazdów, które cieszą się największym zainteresowaniem.</p>
+<p>Na podstawie danych zgromadzonych w bazie danych, możliwe było określenie, które wycieczki cieszyły się największą popularnością wśród klientów. Spójrzmy teraz na liczbę zorganizowanych lotów na poszczególne planety.</p>
 <div class="cell">
 <div class="cell-output-display">
 <div>
@@ -88,15 +90,21 @@ ul.task-list li input[type="checkbox"] {
 </div>
 </div>
 </div>
+<p>Teraz możemy zobaczyć, jak wygląda to w przypadku ilości obsłużonych podróżnych.</p>
 <div class="cell">
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="Raport_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="1344"></p>
+<p><img src="Raport_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="864"></p>
 </figure>
 </div>
 </div>
 </div>
+<section id="bilans-zysków-i-strat-poszczególnych-rodzajów-wycieczek" class="level4">
+<h4 class="anchored" data-anchor-id="bilans-zysków-i-strat-poszczególnych-rodzajów-wycieczek">Bilans zysków i strat poszczególnych rodzajów wycieczek</h4>
+<p>Analiza bilansu zysków i strat dla różnych typów wycieczek oferowanych przez firmę stanowi kluczowy element oceny rentowności działalności. Pozwala ona nie tylko ocenić, które rodzaje wycieczek generują największe przychody, ale również które wiążą się z najwyższymi kosztami operacyjnymi, co ma bezpośredni wpływ na ostateczny zysk netto.</p>
+<p>W ramach analizy zestawiono przychody uzyskane z tytułu sprzedaży konkretnych rodzajów wycieczek z odpowiadającymi im kosztami – takimi jak zakwaterowanie, wyżywienie, opłaty przewodników, transport, naprawy pojazdów czy wydatki logistyczne. Dzięki temu możliwe było określenie, które typy wyjazdów są najbardziej opłacalne, a które przynoszą mniejsze zyski lub wręcz straty.</p>
+<p>W tym celu posłużmy się najpierw średnią ceną wycieczki.</p>
 <div class="cell">
 <div class="cell-output-display">
 <div>
@@ -106,33 +114,47 @@ ul.task-list li input[type="checkbox"] {
 </div>
 </div>
 </div>
+<p>W celu uzyskania pełniejszego obrazu rentowności działalności firmy, przeprowadzono także analizę łącznych zysków generowanych przez wycieczki do poszczególnych planet, z uwzględnieniem liczby uczestników. W odróżnieniu od wcześniejszego zestawienia, które bazowało na średnich wartościach dla jednej wycieczki (jeden wylot), niniejsze podsumowanie uwzględnia realną skalę sprzedaży – czyli ilość podróżnych, którzy skorzystali z każdej z ofert. Takie podejście pozwala precyzyjnie określić, które kierunki nie tylko są popularne, ale również najbardziej dochodowe w ujęciu globalnym.</p>
 <div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code>Suma kosztów organizacji lotów: 235924 </code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Suma kosztów utrzymania klientów: 3131250 </code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Suma wypłat dla pracowników: 1403725 </code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Całkowity koszt: 4770899 </code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Całkowity przychód: 8430000 </code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Zysk firmy: 3659101 </code></pre>
-</div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="Raport_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="864"></p>
+<p><img src="Raport_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="1344"></p>
 </figure>
 </div>
 </div>
 </div>
+</section>
+<section id="ostateczny-bilans-finansowy" class="level4">
+<h4 class="anchored" data-anchor-id="ostateczny-bilans-finansowy">Ostateczny bilans finansowy</h4>
+<p>W końcowym etapie analizy działalności firmy turystycznej dokonano całościowego podsumowania bilansu finansowego, obejmującego wszystkie kluczowe kategorie wpływające na rentowność przedsiębiorstwa. Zestawiono trzy główne elementy: koszty, przychody oraz zysk.</p>
+<p>W skład całkowitych kosztów weszły:</p>
+<ul>
+<li><p>Koszty organizacji wyjazdów,</p></li>
+<li><p>Koszty utrzymania klientów podczas wycieczki,</p></li>
+<li><p>Koszty utrzymania pracowników.</p></li>
+</ul>
+<p>Przychody uwzględniają wszystkie wpływy uzyskane od klientów za zakupione wycieczki, bez względu na ich rodzaj czy kierunek. Dzięki temu możliwe było określenie ogólnej wartości sprzedaży usług turystycznych w analizowanym okresie.</p>
+<p>Zysk został obliczony jako różnica między całkowitymi przychodami a sumą wszystkich kosztów – zarówno bezpośrednich (organizacja wyjazdów), jak i pośrednich (utrzymanie pracowników).</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Raport_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="864"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Ostatecznie uzyskano:</p>
+<ul>
+<li>Koszt organizacji lotów wyniósł 235 924. Obejmuje on głównie wydatki związane z transportem oraz logistyką podróży.</li>
+<li>Koszt utrzymania klientów podczas wycieczek wyniósł 3 131 250. W skład tej kategorii wchodzą m.in. zakwaterowanie, wyżywienie, usługi przewodników i atrakcje w ramach programu wycieczki.</li>
+<li>Wypłaty dla pracowników stanowiły 1 403 725.</li>
+</ul>
+<p>Łącznie koszty operacyjne firmy osiągnęły poziom 4 770 899.<br>
+Z kolei przychód uzyskany ze sprzedaży wycieczek wyniósł 8 430 000.<br>
+Na tej podstawie obliczono zysk firmy, który wyniósł 3 659 101.</p>
+</section>
 </section>
 <section id="czy-na-podstawie-wykresu-liczby-obsłużonych-klientów-w-każdym-miesiącu-działalności-firmy-możemy-wyciągnąć-wnioski-że-firma-się-rozwija-lub-podupada" class="level3">
 <h3 class="anchored" data-anchor-id="czy-na-podstawie-wykresu-liczby-obsłużonych-klientów-w-każdym-miesiącu-działalności-firmy-możemy-wyciągnąć-wnioski-że-firma-się-rozwija-lub-podupada">Czy na podstawie wykresu liczby obsłużonych klientów w każdym miesiącu działalności firmy możemy wyciągnąć wnioski, że firma się rozwija lub podupada?</h3>
@@ -144,17 +166,17 @@ ul.task-list li input[type="checkbox"] {
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="Raport_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="864"></p>
+<p><img src="Raport_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="864"></p>
 </figure>
 </div>
 </div>
 </div>
-<p>Klienci, którzy zdecydowali się wziąć udział w więcej niż jednym wyjeździe, najczęściej wykupowali za pierwszym razem następujące wycieczki: Escape Room, Jaskinie zaginionych, Survival: Awaria 09. Najpopularniejszą wycieczką wśród nich była wycieczka o nazwie Escape Room, na którą wybrało się 9 klientów. Może to oznaczać, że zwiedzającym spodobał się klimat wycieczki, a w planie firmy na najbliższy czas należy uwzględnić organizację większej liczby wycieczek tego typu bądź wprowadzić do oferty więcej rodzajów wyjazdów w podobnym klimacie.</p>
+<p>Klienci, którzy zdecydowali się wziąć udział w więcej niż jednym wyjeździe, najczęściej wykupowali za pierwszym razem następujące wycieczki: Escape Room, Survival: Awaria 09, Śnieżna fantazja. Najpopularniejszą wycieczką wśród nich była wycieczka o nazwie Escape Room, na którą wybrało się 9 klientów. Może to oznaczać, że zwiedzającym spodobał się klimat wycieczki, a w planie firmy na najbliższy czas należy uwzględnić organizację większej liczby wycieczek tego typu bądź wprowadzić do oferty więcej rodzajów wyjazdów w podobnym klimacie.</p>
 <div class="cell">
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="Raport_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="864"></p>
+<p><img src="Raport_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="864"></p>
 </figure>
 </div>
 </div>
@@ -168,7 +190,7 @@ ul.task-list li input[type="checkbox"] {
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="Raport_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="864"></p>
+<p><img src="Raport_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="864"></p>
 </figure>
 </div>
 </div>
@@ -188,7 +210,7 @@ ul.task-list li input[type="checkbox"] {
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="Raport_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" width="864"></p>
+<p><img src="Raport_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid figure-img" width="864"></p>
 </figure>
 </div>
 </div>
