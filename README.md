@@ -20,4 +20,4 @@ Projekt oparty jest na relacyjnej bazie danych, do której przygotowano pełny m
 - *customer_names.csv*:	Lista imion i nazwisk potencjalnych klientów.
 
 ## 👥 Autorzy projektu
-Projekt został zrealizowany we współpracy z: [Magda](https://github.com/MagdalenaSudol), [Magda](https://github.com/MagdalenaRys), [Zuzia](https://github.com/prog-zuzanna-sosnowska), [Peweł](https://github.com/Pawel-Stepien1).
+Projekt został zrealizowany we współpracy z: [Magda](https://github.com/MagdalenaSudol), [Magda](https://github.com/MagdalenaRys), [Zuzia](https://github.com/prog-zuzanna-sosnowska), [Paweł](https://github.com/Pawel-Stepien1).
