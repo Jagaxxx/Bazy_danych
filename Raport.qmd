@@ -25,6 +25,15 @@ Podczas analizy posłużymy się następującymi pytaniami badawczymi:
 ```{r}
 #| echo: false
 #| warning: false
+
+library(dplyr)
+library(DBI)
+library(tidyr)
+```
+
+```{r}
+#| echo: false
+#| warning: false
 library(RMariaDB)
 library(ggplot2)
 
@@ -39,7 +48,350 @@ con <- dbConnect(RMariaDB::MariaDB(),
 ### Które z proponowanych przez firmę rodzajów wycieczek cieszą się największą popularnością? Jak kształtuje się ich bilans zysków i strat? Czy są dla firmy opłacalne?
 
 ```{r}
+#| echo: false
+#| warning: false
+#| fig.width: 9
+#| fig.height: 8
 
+### POPULARNOŚĆ WYCIECZEK ###
+
+# Pobieramy dane
+query1_1 <- "
+SELECT trip_type.planet_name, trip_type.force_side
+FROM spaceflight
+JOIN trip_type ON spaceflight.id_trip = trip_type.id_trip;
+"
+
+df1_1 <- dbGetQuery(con, query1_1)
+
+# Zliczanie lotów na planetę
+df1_1_summary <- df1_1 %>%
+  group_by(planet_name) %>%
+  summarise(
+    liczba_lotow = n(),
+    force_side = first(force_side),
+    .groups = "drop"
+  )
+
+# Wykres
+ggplot(df1_1_summary, aes(x = reorder(planet_name, -liczba_lotow),
+                       y = liczba_lotow,
+                       fill = force_side)) +
+  geom_col() +
+  scale_fill_manual(values = c("Jasna" = "blue", "Ciemna" = "red")) +
+  labs(title = "Popularność wycieczek",
+       x = "Planeta",
+       y = "Liczba lotów",
+       fill = "Strona Mocy") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 18, face = "bold", hjust = 0.5),
+    axis.title.x = element_text(size = 14),
+    axis.title.y = element_text(size = 14),
+    axis.text.x = element_text(size = 12, angle = 45, hjust = 1),
+    axis.text.y = element_text(size = 12),
+    legend.title = element_text(size = 13),
+    legend.text = element_text(size = 12)
+  )
+```
+
+```{r}
+#| echo: false
+#| warning: false
+#| fig.width: 9
+#| fig.height: 8
+
+# Pobranie danych
+query <- "
+SELECT 
+  spaceflight.id_spaceflight,
+  spaceflight.id_trip,
+  spaceflight.departure_date,
+  spaceflight.return_date,
+  spaceflight.organization_cost,
+  trip_type.planet_name,
+  trip_type.daily_cost_per_participant,
+  trip_type.customer_price_total,
+  payment.id_payment
+FROM spaceflight
+JOIN trip_type ON spaceflight.id_trip = trip_type.id_trip
+LEFT JOIN payment ON spaceflight.id_spaceflight = payment.id_spaceflight
+"
+
+df <- dbGetQuery(con, query)
+
+# Przetwarzanie dat i czasu trwania
+df <- df %>%
+  mutate(
+    departure_date = as.Date(departure_date),
+    return_date = as.Date(return_date),
+    duration_days = as.numeric(return_date - departure_date)
+  )
+
+# Liczbę klientów dla każdego lotu
+liczba_klientow_df <- df %>%
+  group_by(id_spaceflight) %>%
+  summarise(liczba_klientow = n(), .groups = "drop")
+
+# Scalenie z oryginalną ramką i usunięcie duplikatów płatności
+df_unique <- df %>%
+  distinct(id_spaceflight, .keep_all = TRUE) %>%
+  left_join(liczba_klientow_df, by = "id_spaceflight")
+
+# Koszty i przychody dla każdego lotu
+df_obliczone <- df_unique %>%
+  mutate(
+    koszt_organizacji = organization_cost,
+    koszt_utrzymania = duration_days * daily_cost_per_participant * liczba_klientow,
+    koszt_calkowity = koszt_organizacji + koszt_utrzymania,
+    przychod = liczba_klientow * customer_price_total
+  )
+
+# Średnie wartości dla każdej planety
+srednie <- df_obliczone %>%
+  group_by(planet_name) %>%
+  summarise(
+    sredni_koszt_organizacji = mean(koszt_organizacji),
+    sredni_koszt_utrzymania = mean(koszt_utrzymania),
+    sredni_koszt_lacznie = mean(koszt_calkowity),
+    sredni_przychod = mean(przychod),
+    srednia_roznica = sredni_przychod - sredni_koszt_lacznie,
+    .groups = "drop"
+  )
+
+# Long format
+dane_long <- srednie %>%
+  select(planet_name, Koszty = sredni_koszt_lacznie, Przychód = sredni_przychod, Zysk = srednia_roznica) %>%
+  pivot_longer(cols = -planet_name, names_to = "typ", values_to = "wartosc")
+
+# Wykres
+ggplot(dane_long, aes(x = planet_name, y = wartosc, fill = typ)) +
+  geom_col(position = position_dodge(width = 0.9)) +
+  geom_text(aes(label = round(wartosc)), 
+            position = position_dodge(width = 0.9), 
+            vjust = -0.5, size = 4) +
+  scale_fill_manual(values = c("Koszty" = "red", "Przychód" = "blue", "Zysk" = "green")) +
+  labs(
+    title = "Średnie koszty, przychody i zysk z wycieczek na planetę",
+    x = "Planeta",
+    y = "Kwota (zł)",
+    fill = "Rodzaj"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 18, face = "bold", hjust = 0.5),
+    axis.title.x = element_text(size = 14),
+    axis.title.y = element_text(size = 14),
+    axis.text.x = element_text(size = 12, angle = 45, hjust = 1),
+    axis.text.y = element_text(size = 12),
+    legend.title = element_text(size = 13),
+    legend.text = element_text(size = 12)
+  )
+```
+
+```{r}
+#| echo: false
+#| warning: false
+#| fig.width: 9
+#| fig.height: 8
+
+query <- "
+SELECT 
+  spaceflight.id_spaceflight,
+  spaceflight.id_trip,
+  spaceflight.departure_date,
+  spaceflight.return_date,
+  spaceflight.organization_cost,
+  trip_type.planet_name,
+  trip_type.daily_cost_per_participant,
+  trip_type.customer_price_total,
+  payment.id_payment
+FROM spaceflight
+JOIN trip_type ON spaceflight.id_trip = trip_type.id_trip
+LEFT JOIN payment ON spaceflight.id_spaceflight = payment.id_spaceflight
+"
+
+df <- dbGetQuery(con, query)
+
+# Przetwarzanie dat i czasu trwania
+df <- df %>%
+  mutate(
+    departure_date = as.Date(departure_date),
+    return_date = as.Date(return_date),
+    duration_days = as.numeric(return_date - departure_date)
+  )
+
+# Liczba klientów na każdy lot
+liczba_klientow_df <- df %>%
+  group_by(id_spaceflight) %>%
+  summarise(liczba_klientow = n(), .groups = "drop")
+
+# Scalenie z oryginalną ramką i usunięcie duplikatów płatności
+df_unique <- df %>%
+  distinct(id_spaceflight, .keep_all = TRUE) %>%
+  left_join(liczba_klientow_df, by = "id_spaceflight")
+
+# Koszty i przychody dla każdego lotu
+df_obliczone <- df_unique %>%
+  mutate(
+    koszt_organizacji = organization_cost,
+    koszt_utrzymania = duration_days * daily_cost_per_participant * liczba_klientow,
+    koszt_calkowity = koszt_organizacji + koszt_utrzymania,
+    przychod = liczba_klientow * customer_price_total
+  )
+
+# Sumowanie po planetach
+suma <- df_obliczone %>%
+  group_by(planet_name) %>%
+  summarise(
+    suma_koszt_organizacji = sum(koszt_organizacji),
+    suma_koszt_utrzymania = sum(koszt_utrzymania),
+    suma_koszt_lacznie = sum(koszt_calkowity),
+    suma_przychod = sum(przychod),
+    zysk = suma_przychod - suma_koszt_lacznie,
+    .groups = "drop"
+  )
+
+# Long format
+dane_long <- suma %>%
+  select(planet_name, Koszty = suma_koszt_lacznie, Przychód = suma_przychod, Zysk = zysk) %>%
+  pivot_longer(cols = -planet_name, names_to = "typ", values_to = "wartosc")
+
+# Wykres
+ggplot(dane_long, aes(x = planet_name, y = wartosc, fill = typ)) +
+  geom_col(position = position_dodge(width = 0.9)) +
+  geom_text(aes(label = round(wartosc)), 
+            position = position_dodge(width = 0.9), 
+            vjust = -0.5, size = 4) +
+  scale_fill_manual(values = c("Koszty" = "red", "Przychód" = "blue", "Zysk" = "green")) +
+  labs(
+    title = "Suma kosztów, przychodów i zysków z wycieczek na każdą planetę",
+    x = "Planeta",
+    y = "Kwota (zł)",
+    fill = "Rodzaj"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 18, face = "bold", hjust = 0.5),
+    axis.title.x = element_text(size = 14),
+    axis.title.y = element_text(size = 14),
+    axis.text.x = element_text(size = 12, angle = 45, hjust = 1),
+    axis.text.y = element_text(size = 12),
+    legend.title = element_text(size = 13),
+    legend.text = element_text(size = 12)
+  )
+```
+
+```{r}
+#| echo: false
+#| warning: false
+#| fig.width: 9
+#| fig.height: 8
+
+query <- "
+SELECT 
+  spaceflight.id_spaceflight,
+  spaceflight.id_trip,
+  spaceflight.departure_date,
+  spaceflight.return_date,
+  spaceflight.organization_cost,
+  trip_type.daily_cost_per_participant,
+  trip_type.customer_price_total,
+  payment.id_payment
+FROM spaceflight
+JOIN trip_type ON spaceflight.id_trip = trip_type.id_trip
+LEFT JOIN payment ON spaceflight.id_spaceflight = payment.id_spaceflight
+"
+df <- dbGetQuery(con, query)
+
+# Dane o pracownikach
+employee_df <- dbGetQuery(con, "SELECT hire_date, leave_date, salary FROM employee")
+
+# Czas trwania lotów
+df <- df %>%
+  mutate(
+    departure_date = as.Date(departure_date),
+    return_date = as.Date(return_date),
+    duration_days = as.numeric(return_date - departure_date)
+  )
+
+# Liczba klientów na każdy lot
+liczba_klientow_df <- df %>%
+  group_by(id_spaceflight) %>%
+  summarise(liczba_klientow = n(), .groups = "drop")
+
+# Połączenie i usunięcie duplikatów płatności
+df_unique <- df %>%
+  distinct(id_spaceflight, .keep_all = TRUE) %>%
+  left_join(liczba_klientow_df, by = "id_spaceflight")
+
+# Koszty i przychody na lot
+df_obliczone <- df_unique %>%
+  mutate(
+    koszt_organizacji = organization_cost,
+    koszt_utrzymania = duration_days * daily_cost_per_participant * liczba_klientow,
+    przychod = liczba_klientow * customer_price_total
+  )
+
+# SUMA kosztów i przychodów z lotów
+suma_koszt_organizacji <- sum(df_obliczone$koszt_organizacji, na.rm = TRUE)
+suma_koszt_utrzymania <- sum(df_obliczone$koszt_utrzymania, na.rm = TRUE)
+suma_przychod <- sum(df_obliczone$przychod, na.rm = TRUE)
+
+# Koszt wypłat pracowników
+dzisiaj <- as.Date("2100-01-01")
+
+employee_df <- employee_df %>%
+  mutate(
+    hire_date = as.Date(hire_date),
+    leave_date = as.character(leave_date),
+    leave_date = ifelse(is.na(leave_date) | leave_date == "None",
+                        as.character(dzisiaj),
+                        leave_date),
+    leave_date = as.Date(leave_date),
+    dni_pracy = as.numeric(leave_date - hire_date),
+    miesiace_pracy = dni_pracy / 30,
+    wyplata = miesiace_pracy * salary
+  )
+
+suma_wyplaty <- sum(employee_df$wyplata, na.rm = TRUE)
+
+# Całkowite koszty i zysk
+suma_koszt_calkowity <- suma_koszt_organizacji + suma_koszt_utrzymania + suma_wyplaty
+zysk_firmy <- suma_przychod - suma_koszt_calkowity
+
+# Wynik
+cat("Suma kosztów organizacji lotów:", round(suma_koszt_organizacji), "\n")
+cat("Suma kosztów utrzymania klientów:", round(suma_koszt_utrzymania), "\n")
+cat("Suma wypłat dla pracowników:", round(suma_wyplaty), "\n")
+cat("Całkowity koszt:", round(suma_koszt_calkowity), "\n\n")
+
+cat("Całkowity przychód:", round(suma_przychod), "\n")
+cat("Zysk firmy:", round(zysk_firmy), "\n")
+
+df_wykres <- data.frame(
+  Rodzaj = c("Koszty", "Przychód", "Zysk"),
+  Kwota = c(suma_koszt_calkowity, suma_przychod, zysk_firmy)
+)
+
+# Wykres
+ggplot(df_wykres, aes(x = Rodzaj, y = Kwota, fill = Rodzaj)) +
+  geom_col(width = 0.6) +
+  geom_text(aes(label = round(Kwota)), vjust = -0.5, size = 5) +
+  scale_fill_manual(values = c("Koszty" = "red", "Przychód" = "blue", "Zysk" = "green")) +
+  labs(
+    title = "Podsumowanie finansowe firmy",
+    x = "",
+    y = "Kwota (zł)"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 18, face = "bold", hjust = 0.5),
+    axis.title.y = element_text(size = 14),
+    axis.text.x = element_text(size = 13),
+    axis.text.y = element_text(size = 12),
+    legend.position = "none"
+  )
 ```
 
 ### Czy na podstawie wykresu liczby obsłużonych klientów w każdym miesiącu działalności firmy możemy wyciągnąć wnioski, że firma się rozwija lub podupada?
@@ -177,6 +529,7 @@ ggplot(df4, aes(x = df4$strona_mocy, y = df4$liczba_klientów)) +
   geom_col(fill = "lightblue") +
   labs(title = "Liczba klientów w zależności od strony mocy", x = "Strona mocy", y = "Liczba klientów")
 ```
+
 Z powyższego wykresu odczytać można, że to `r more_popular_force_side$strona_mocy` strona mocy cieszy się większą popularnością wśród klientów firmy - na wycieczki tego typu wybrało się `r more_popular_force_side$liczba_klientów` klientów. Dla porównania, wycieczki oznaczone jako "`r less_popular_force_side$strona_mocy` strona mocy" wybrało `r less_popular_force_side$liczba_klientów` klientów. Wobec dużego zainteresowania klientów wyjazdami oznaczonymi jako "`r more_popular_force_side$strona_mocy` strona mocy", można wprowadzić do oferty firmy więcej wycieczek tego typu.
 
 ### Jak często podczas wyjazdów zdarzają się wypadki konkretnych typów i jaka część klientów jest ubezpieczona na wypadek ich wystąpienia?
@@ -194,6 +547,7 @@ Z powyższego wykresu odczytać można, że to `r more_popular_force_side$strona
 ### Którzy spośród naszych pracowników (pilot i przewodnik) najczęściej latali wspólnie na wycieczki?
 
 Ostatnie pytanie dotyczy załogi statków - którzy spośród pracowników firmy najczęściej wybierają się wspólnie na wycieczki. Aby na nie odpowiedzieć, korzystamy z tabeli, w której opisano wszystkie zorganizowane wyjazdy - wybieramy wszystkie możliwe połączenia pilotów i przewodników oraz liczymy, jak często wyruszają ze sobą w podróże.
+
 ```{r}
 #| echo: false
 #| warning: false
@@ -225,7 +579,7 @@ ggplot(df7, aes(x = df7$imiona, y = df7$liczba_wyjazdów)) +
 
 ```
 
-Z wykresu powyżej możemy odczytać, że `r df7_1$imiona` są członkami załogi, którzy wylatują ze sobą na wycieczki najczęściej. Może to oznaczać, że zgłaszają się do wyjazdów wspólnie, ponieważ dobrze im się współpracuje. Firma powinna wziąć to pod uwagę podczas planowania kolejnych lotów - jeżeli relacje pomiędzy pracownikami są dobre, znajduje to przełożenie na atmosferę całej wycieczki, a dzięki temu - również na pozytywną opinię klientów. 
+Z wykresu powyżej możemy odczytać, że `r df7_1$imiona` są członkami załogi, którzy wylatują ze sobą na wycieczki najczęściej. Może to oznaczać, że zgłaszają się do wyjazdów wspólnie, ponieważ dobrze im się współpracuje. Firma powinna wziąć to pod uwagę podczas planowania kolejnych lotów - jeżeli relacje pomiędzy pracownikami są dobre, znajduje to przełożenie na atmosferę całej wycieczki, a dzięki temu - również na pozytywną opinię klientów.
 
 ```{r}
 #| echo: false
