@@ -43,7 +43,49 @@ con <- dbConnect(RMariaDB::MariaDB(),
 ### Czy na podstawie wykresu liczby obsłużonych klientów w każdym miesiącu działalności firmy możemy wyciągnąć wnioski, że firma się rozwija lub podupada?
 
 ```{r}
+#| echo: false
+#| warning: false
 
+query_2g <- "SELECT COUNT(p.id_customer) AS liczba_klientow,
+                 DATE_FORMAT(spf.departure_date, '%Y-%m') AS data
+FROM spaceflight AS spf
+INNER JOIN payment AS p ON spf.id_spaceflight = p.id_spaceflight
+GROUP BY data
+ORDER BY data;"
+
+df <- dbGetQuery(con, query_2g)
+
+df$rok <- as.numeric(substr(df$data, 1, 4))
+
+ggplot(df, aes(x = data, y = liczba_klientow, fill = as.factor(rok))) + 
+  geom_col() + 
+  labs(title = "Liczba klientów według miesiąca",
+       x = "Rok-miesiąc",
+       y = "Liczba klientów",
+       fill = "Rok") + 
+  scale_fill_manual(values = c("2098" = "red", "2099" = "blue")) + 
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+```{r}
+#| echo: false
+#| warning: false
+
+query_2g_2 <- "SELECT COUNT(p.id_customer) AS liczba_klientow,
+                 DATE_FORMAT(spf.departure_date, '%Y') AS rok
+FROM spaceflight AS spf
+INNER JOIN payment AS p ON spf.id_spaceflight = p.id_spaceflight
+GROUP BY rok
+ORDER BY rok;"
+
+df <- dbGetQuery(con, query_2g_2)
+
+ggplot(df, aes(x = rok, y = liczba_klientow)) +
+  geom_col(fill = "lightblue") +
+  labs(title = "Liczba klientów według miesiąca",
+       x = "Rok",
+       y = "Liczba klientów") + 
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
 ### Po których z proponowanych wycieczek klienci są skłonni wybrać się na kolejne, a po których nie wracają do firmy? Czy można na tej podstawie wycofać niektóre wycieczki z oferty?
@@ -126,7 +168,62 @@ ggplot(df4, aes(x = df4$strona_mocy, y = df4$liczba_klientów)) +
 ### Jak często podczas wyjazdów zdarzają się wypadki konkretnych typów i jaka część klientów jest ubezpieczona na wypadek ich wystąpienia?
 
 ```{r}
+#| echo: false
+#| warning: false
 
+query_2 <- "SELECT COUNT(ar.id_accident) AS liczba_wypadkow, at.accident_type AS rodzaj_wypadku
+FROM accident_report AS ar
+INNER JOIN accident_type AS at ON ar.id_accident = at.id_accident
+GROUP BY ar.id_accident;"
+
+df <- dbGetQuery(con, query_2)
+
+ggplot(df, aes(x = rodzaj_wypadku, y = liczba_wypadkow)) + 
+  geom_col() + 
+  labs(title = "Liczba wypadków podczas podróży",
+       x = "Rodzaj wypadku",
+       y = "Liczba wypadków") + 
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+```{r}
+#| echo: false
+#| warning: false
+
+query_2_2 <- "SELECT
+    ar.id_report,
+    at.accident_type,
+    i.type,
+    IF(ic.id_accident IS NOT NULL, 1, 0) AS czy_pokrywa
+FROM
+    accident_report AS ar
+        LEFT JOIN
+    payment AS p ON p.id_payment = ar.id_payment
+        LEFT JOIN
+    insurance_coverage AS ic ON ic.id_insurance = p.id_insurance
+        AND ic.id_accident = ar.id_accident
+        LEFT JOIN
+    insurance AS i ON p.id_insurance = i.id_insurance
+        LEFT JOIN
+    accident_type AS at ON ar.id_accident = at.id_accident
+
+ORDER BY
+    ar.id_report;"
+
+df <- dbGetQuery(con, query_2_2)
+
+df$czy_pokrywa <- ifelse(df$czy_pokrywa == 1, "Tak", "Nie")
+df$czy_pokrywa <- factor(df$czy_pokrywa, levels = c("Nie", "Tak"))
+
+
+ggplot(df, aes(x = accident_type, fill = czy_pokrywa)) + 
+  geom_bar() + 
+  labs(title = "Liczba wypadków według rodzaju", 
+       x = "Rodzaj wypadku", 
+       y = "Liczba wypadków", 
+       fill = "Czy ubezpieczenie \npokrywa wypadek") + 
+  scale_fill_manual(values = c("Nie" = "red", "Tak" = "blue")) + 
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
 ### Czy wycieczki, którym klienci wystawiają najwyższe oceny, są również najchętniej wybierane?
