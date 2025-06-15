@@ -4,8 +4,8 @@
   "settings": {
     "width": 2000,
     "height": 2000,
-    "scrollTop": -852.3514,
-    "scrollLeft": -800,
+    "scrollTop": -398.7514,
+    "scrollLeft": -565.28,
     "zoomLevel": 0.79,
     "show": 511,
     "database": 1,
@@ -736,7 +736,7 @@
         "comment": "",
         "dataType": "VARCHAR(25)",
         "default": "",
-        "options": 0,
+        "options": 8,
         "ui": {
           "keys": 0,
           "widthName": 60,
@@ -745,7 +745,7 @@
           "widthDefault": 60
         },
         "meta": {
-          "updateAt": 1748620553019,
+          "updateAt": 1750023339714,
           "createAt": 1748618490538
         }
       },
@@ -1094,7 +1094,7 @@
         "tableId": "zuyVxPwNIbeTOMQe0BPAu",
         "name": "departure_date",
         "comment": "",
-        "dataType": "DATE",
+        "dataType": "DATETIME",
         "default": "",
         "options": 8,
         "ui": {
@@ -1105,7 +1105,7 @@
           "widthDefault": 60
         },
         "meta": {
-          "updateAt": 1748619817954,
+          "updateAt": 1750023218496,
           "createAt": 1748619802010
         }
       },
@@ -1114,7 +1114,7 @@
         "tableId": "zuyVxPwNIbeTOMQe0BPAu",
         "name": "return_date",
         "comment": "",
-        "dataType": "DATE",
+        "dataType": "DATETIME",
         "default": "",
         "options": 8,
         "ui": {
@@ -1125,7 +1125,7 @@
           "widthDefault": 60
         },
         "meta": {
-          "updateAt": 1748619829749,
+          "updateAt": 1750023222850,
           "createAt": 1748619821416
         }
       },
