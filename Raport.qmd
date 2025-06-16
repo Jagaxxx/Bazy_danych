@@ -896,7 +896,7 @@ suma_ratio_min <- wynik$suma[idx_ratio_min]
 
 ```
 
-Dla najczęściej pojawiającego się rodzaju wypadku, jakim jest "`r accident_suma_max`", `round(ratio_suma_max * 100, 2)`% klientów posiada ubezpieczenie pokrywające koszty związane z tym wypadkiem. Dla wypadku: "`r accident_ratio_max`" stosunek klientów ubezpieczonych do wszystkich klientów, którzy tego wypadku doświadczyli, jest największy i wynosi `r ratio_max * 100`%. Liczba tych wypadków wynosi `r suma_ratio_max`. Z kolei klienci najrzadziej posiadają ubezpieczenie na "`r accident_ratio_min`" w stosunku do liczby wypadków tego typu.
+Dla najczęściej pojawiającego się rodzaju wypadku, jakim jest "`r accident_suma_max`", `r round(ratio_suma_max * 100, 2)`% klientów posiada ubezpieczenie pokrywające koszty związane z tym wypadkiem. Dla wypadku: "`r accident_ratio_max`" stosunek klientów ubezpieczonych do wszystkich klientów, którzy tego wypadku doświadczyli, jest największy i wynosi `r ratio_max * 100`%. Liczba tych wypadków wynosi `r suma_ratio_max`. Z kolei klienci najrzadziej posiadają ubezpieczenie na "`r accident_ratio_min`" w stosunku do liczby wypadków tego typu.
 
 ### 7. Ocena ofert
 
