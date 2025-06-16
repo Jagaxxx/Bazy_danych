@@ -183,7 +183,7 @@ W tym celu posłużmy się najpierw średnią ceną wycieczki.
 #| echo: false
 #| warning: false
 #| fig.width: 14
-#| fig.height: 8
+#| fig.height: 10
 
 # Pobranie danych
 query <- "
@@ -283,7 +283,7 @@ W celu uzyskania pełniejszego obrazu rentowności działalności firmy, przepro
 #| echo: false
 #| warning: false
 #| fig.width: 14
-#| fig.height: 8
+#| fig.height: 10
 
 query <- "
 SELECT 
@@ -399,7 +399,7 @@ Zysk został obliczony jako różnica między całkowitymi przychodami a sumą w
 #| echo: false
 #| warning: false
 #| fig.width: 9
-#| fig.height: 8
+#| fig.height: 6
 
 query <- "
 SELECT 
