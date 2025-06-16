@@ -1,0 +1,3 @@
+"0","idx_max <- which.max(wynik$suma)"
+"0","ratio <- wynik$ratio[idx_max]"
+"0","suma <- wynik$suma[idx_max]"

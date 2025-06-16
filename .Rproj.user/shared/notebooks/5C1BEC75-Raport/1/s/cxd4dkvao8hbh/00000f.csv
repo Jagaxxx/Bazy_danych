@@ -1,0 +1,21 @@
+"0","#| echo: false"
+"0","#| warning: false"
+"0",""
+"0","library(dplyr)"
+"2","G3;
+Dołączanie pakietu: ‘dplyr’
+
+g"
+"2","G3;Następujące obiekty zostały zakryte z ‘package:stats’:
+
+    filter, lag
+
+g"
+"2","G3;Następujące obiekty zostały zakryte z ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+g"
+"0","library(DBI)"
+"0","library(tidyr)"
+"0","library(scales)"

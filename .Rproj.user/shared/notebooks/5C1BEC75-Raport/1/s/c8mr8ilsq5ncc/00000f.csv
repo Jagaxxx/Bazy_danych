@@ -1,0 +1,27 @@
+"0","#| echo: false"
+"0","#| warning: false"
+"0","library(RMariaDB)"
+"0","library(ggplot2)"
+"0","library(dplyr)"
+"2","G3;
+Dołączanie pakietu: ‘dplyr’
+
+g"
+"2","G3;Następujące obiekty zostały zakryte z ‘package:stats’:
+
+    filter, lag
+
+g"
+"2","G3;Następujące obiekty zostały zakryte z ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+g"
+"0","library(tidyr)"
+"0",""
+"0","#połączenie z bazą danych"
+"0","con <- dbConnect(RMariaDB::MariaDB(),"
+"0","                 dbname = ""team12"","
+"0","                 username = ""team12"","
+"0","                 password = ""te@mliz"","
+"0","                 host = ""giniewicz.it"")"

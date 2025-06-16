@@ -1,0 +1,2 @@
+"0",""
+"0","max_incident_idx <- which.max(df$liczba_wypadkow)"

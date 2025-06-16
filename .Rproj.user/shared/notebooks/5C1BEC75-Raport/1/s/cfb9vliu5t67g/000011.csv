@@ -1,0 +1,5 @@
+"0",""
+"0","max_incident_idx <- which.max(df$liczba_wypadkow)"
+"0","df[max_incident_idx, ""rodzaj_wypadku""]"
+"1","[1] ""Wypadek medyczny""
+"
