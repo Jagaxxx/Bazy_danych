@@ -1017,6 +1017,24 @@ ggplot(df7, aes(x = df7$imiona, y = df7$liczba_wyjazdów)) +
 
 Z wykresu powyżej możemy odczytać, że `r df7_1$imiona` są członkami załogi, którzy wylatują ze sobą na wycieczki najczęściej. Może to oznaczać, że zgłaszają się do wyjazdów wspólnie, ponieważ dobrze im się współpracuje. Firma powinna wziąć to pod uwagę podczas planowania kolejnych lotów - jeżeli relacje pomiędzy pracownikami są dobre, znajduje to przełożenie na atmosferę całej wycieczki, a dzięki temu - również na pozytywną opinię klientów.
 
+### 9. Podsumowanie
+
+Przeprowadzone analizy umożliwiły wszechstronną ocenę sytuacji dotyczącej organizacji wypraw w kosmos. Stworzona baza danych stanowiła podstawę do przeanalizowania wielu kluczowych obszarów działalności firmy.
+
+Dokonano analizy zysków i kosztów utrzymania, sprawdzono sezonowość popytu na wyprawy, jak również preferencje klientów dotyczące wyboru „jasnej” lub „ciemnej strony mocy”. Dodatkowo przeanalizowano przypadki wypadków podczas wypraw — określono ich rodzaje, skutki oraz sprawdzono, jak wygląda ubezpieczenie klientów w takiej sytuacji.
+
+Najważniejsze wnioski z badań to:
+
+- Analiza klientów powracających i jednorazowych pokazała, które wycieczki cieszą się największą lojalnością i które wymagają poprawy, by zwiększyć wskaźnik powrotów.
+
+- Preferencje względem „strony mocy” ujawniły wyraźne zainteresowanie jedną stroną, co wskazuje na potrzebę rozbudowy oferty w tym kierunku.
+
+- Bezpieczeństwo i ubezpieczenia wykazały, że nie wszyscy klienci mają odpowiednie zabezpieczenie na najczęściej występujące wypadki, co sugeruje konieczność lepszego informowania i dostosowania produktów ubezpieczeniowych.
+
+- Oceny wycieczek pozwoliły wskazać najlepsze i najsłabsze oferty, dając kierunek do optymalizacji programów wypraw.
+
+Tak przeprowadzone badania umożliwiły pełniejsze zrozumienie funkcjonowania firmy oraz identyfikowanie obszarów wymagających uwagi lub zmian. Wyniki stanowią solidną podstawę do podejmowania skuteczniejszych decyzji zarządczych w zakresie organizacji wypraw w kosmos, pozwalając na lepsze dopasowanie oferty do oczekiwań klientów i zwiększenie satysfakcji oraz bezpieczeństwa uczestników.
+
 ```{r}
 #| echo: false
 #zamykanie połączenia
