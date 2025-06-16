@@ -128,30 +128,27 @@ df_max_miesiac <- df %>%
 
 months <- c("styczeń", "luty", "marzec", "kwiecień", "maj", "czerwiec", "lipiec", "sierpień", "wrzesień", "październik", "listopad", "grudzień")
 
-best_month_best_year <- df_max_miesiac[df_max_miesiac[, "rok"] == best_year, "miesiac"]
-best_month_worse_year <- df_max_miesiac[df_max_miesiac[, "rok"] == worse_year, "miesiac"]
+best_month_best_year <- df_max_miesiac[df_max_miesiac[, "rok"] == best_year, "miesiac"]$miesiac
+best_month_worse_year <- df_max_miesiac[df_max_miesiac[, "rok"] == worse_year, "miesiac"]$miesiac
 
-bm_by_number_of_clients <- df_max_miesiac[df_max_miesiac[, "rok"] == best_year, "liczba_klientow"]
+bm_by_number_of_clients <- df_max_miesiac[df_max_miesiac[, "rok"] == best_year, "liczba_klientow"]$liczba_klientow
 
-bm_wy_number_of_clients <- df_max_miesiac[df_max_miesiac[, "rok"] == worse_year, "liczba_klientow"]
+bm_wy_number_of_clients <- df_max_miesiac[df_max_miesiac[, "rok"] == worse_year, "liczba_klientow"]$liczba_klientow
 
 if (best_year > worse_year){
   if (bm_by_number_of_clients > bm_wy_number_of_clients){
     text <- paste("W roku", best_year, "najwięcej klientów skorzystało z usługi w", best_month_best_year, "miesiącu. Dla porównania w roku", worse_year, "najbardziej zyskownym miesiącem był", months[best_month_worse_year], ". Sugeruje to, że z roku na rok do firmy przybywa coraz więcej klientów.")
-  }
-  else {
+  } else {
     text <- paste("W roku", best_year, "najwięcej klientów skorzystało z usługi w", best_month_best_year, "miesiącu. Dla porównania w roku", worse_year, "najbardziej zyskownym miesiącem był", months[best_month_worse_year], ". Mimo tego, że najbardziej zyskownym miesiącem w historii istnienia firmy był ", months[best_month_worse_year], ", to w roku ", best_year, " było więcej klientów ogółem.")
   }
-}
-else {
+} else {
   if (bm_by_number_of_clients < bm_wy_number_of_clients){
     text <- paste("W roku ", best_year, " najwięcej klientów skorzystało z usługi w ", best_month_best_year, " miesiącu. Dla porównania w roku ", worse_year, " najbardziej zyskownym miesiącem był ", months[best_month_worse_year], ". Sugeruje to, że z roku na rok liczba klientów naszej firmy maleje.")
-  }
-  else {
+  } else {
     text <- paste("W roku ", best_year, " najwięcej klientów skorzystało z usługi w ", best_month_best_year, " miesiącu. Dla porównania w roku ", worse_year, " najbardziej zyskownym miesiącem był ", months[best_month_worse_year], ". Mimo tego, że najbardziej zyskownym miesiącem w historii naszej firmy był ", months[best_month_best_year], " to niestety liczba klientów z roku na rok spada.")
   }
-  }
 }
+
 ```
 
 `r text`
