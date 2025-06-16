@@ -25,6 +25,8 @@ Podczas analizy posłużymy się następującymi pytaniami badawczymi:
 #| warning: false
 library(RMariaDB)
 library(ggplot2)
+library(dplyr)
+library(tidyr)
 
 #połączenie z bazą danych
 con <- dbConnect(RMariaDB::MariaDB(),
@@ -46,31 +48,6 @@ con <- dbConnect(RMariaDB::MariaDB(),
 #| echo: false
 #| warning: false
 
-query_2g <- "SELECT COUNT(p.id_customer) AS liczba_klientow,
-                 DATE_FORMAT(spf.departure_date, '%Y-%m') AS data
-FROM spaceflight AS spf
-INNER JOIN payment AS p ON spf.id_spaceflight = p.id_spaceflight
-GROUP BY data
-ORDER BY data;"
-
-df <- dbGetQuery(con, query_2g)
-
-df$rok <- as.numeric(substr(df$data, 1, 4))
-
-ggplot(df, aes(x = data, y = liczba_klientow, fill = as.factor(rok))) + 
-  geom_col() + 
-  labs(title = "Liczba klientów według miesiąca",
-       x = "Rok-miesiąc",
-       y = "Liczba klientów",
-       fill = "Rok") + 
-  scale_fill_manual(values = c("2098" = "red", "2099" = "blue")) + 
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
-```
-
-```{r}
-#| echo: false
-#| warning: false
-
 query_2g_2 <- "SELECT COUNT(p.id_customer) AS liczba_klientow,
                  DATE_FORMAT(spf.departure_date, '%Y') AS rok
 FROM spaceflight AS spf
@@ -82,11 +59,80 @@ df <- dbGetQuery(con, query_2g_2)
 
 ggplot(df, aes(x = rok, y = liczba_klientow)) +
   geom_col(fill = "lightblue") +
-  labs(title = "Liczba klientów według miesiąca",
+  labs(title = "Liczba klientów - zestawienie lat",
        x = "Rok",
        y = "Liczba klientów") + 
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+max_idx <- which.max(df$liczba_klientow)
+min_idx <- which.min(df$liczba_klientow)
+
+best_year <- as.character(df$rok[max_idx]) 
+worse_year <- as.character(df$rok[min_idx])
+
+b_number_of_clients <- df$liczba_klientow[max_idx]
+w_number_of_clients <- df$liczba_klientow[min_idx]
+difference <- abs(b_number_of_clients - w_number_of_clients)
+
+# Tworzenie informacji tekstowej
+if (best_year > worse_year) {
+  str <- paste("możemy stwierdzić, że z roku na rok w naszej firmie przybywa coraz więcej klientów. W roku", 
+               best_year, "było", b_number_of_clients,"klientów. To o", 
+               difference,"klientów więcejniż w roku", 
+               worse_year,".")
+} else if (best_year < worse_year) {
+  str <- paste("możemy stwierdzić, że z roku na rok w naszej firmie ubywa klientów. W roku", 
+               worse_year,"było", w_number_of_clients,"klientów. To o", 
+               difference,"klientów mniej niż w roku", 
+               best_year,".")
+} else {
+  str <- "możemy stwierdzić, że liczba klientów się nie zmieniła na przestrzeni lat."
+}
 ```
+
+Porównując dane na tle lat `r str`
+
+```{r}
+#| echo: false
+#| warning: false
+#| fig.width: 9
+#| fig.height: 7
+
+query_2g <- "SELECT COUNT(p.id_customer) AS liczba_klientow,
+                 DATE_FORMAT(spf.departure_date, '%Y-%m') AS data
+FROM spaceflight AS spf
+INNER JOIN payment AS p ON spf.id_spaceflight = p.id_spaceflight
+GROUP BY data
+ORDER BY data;"
+
+df <- dbGetQuery(con, query_2g)
+
+df$rok <- as.numeric(substr(df$data, 1, 4))
+
+df$miesiac <- as.numeric(substr(df$data, 6, 7))
+
+ggplot(df, aes(x = data, y = liczba_klientow, fill = as.factor(rok))) + 
+  geom_col() + 
+  labs(title = "Liczba klientów według miesiąca",
+       x = "Rok-miesiąc",
+       y = "Liczba klientów",
+       fill = "Rok") + 
+  scale_fill_manual(values = c("2098" = "red", "2099" = "blue")) + 
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+df_max_miesiac <- df %>%
+  group_by(rok) %>%
+  slice_max(liczba_klientow, n = 1, with_ties = FALSE)
+
+months <- c("styczeń", "luty", "marzec", "kwiecień", "maj", "czerwiec", "lipiec", "sierpień", "wrzesień", "październik", "listopad", "grudzień")
+
+best_month_best_year <- df_max_miesiac[df_max_miesiac[, "rok"] == best_year, "miesiac"]
+best_month_worse_year <- df_max_miesiac[df_max_miesiac[, "rok"] == worse_year, "miesiac"]
+
+
+```
+
+
 
 ### Po których z proponowanych wycieczek klienci są skłonni wybrać się na kolejne, a po których nie wracają do firmy? Czy można na tej podstawie wycofać niektóre wycieczki z oferty?
 
@@ -179,11 +225,14 @@ GROUP BY ar.id_accident;"
 df <- dbGetQuery(con, query_2)
 
 ggplot(df, aes(x = rodzaj_wypadku, y = liczba_wypadkow)) + 
-  geom_col() + 
+  geom_col(fill="lightblue") + 
   labs(title = "Liczba wypadków podczas podróży",
        x = "Rodzaj wypadku",
        y = "Liczba wypadków") + 
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+max_incident_idx <- which.max(df$liczba_wypadkow)
+df[max_incident_idx, "rodzaj_wypadku"]
 ```
 
 ```{r}
@@ -222,8 +271,25 @@ ggplot(df, aes(x = accident_type, fill = czy_pokrywa)) +
        x = "Rodzaj wypadku", 
        y = "Liczba wypadków", 
        fill = "Czy ubezpieczenie \npokrywa wypadek") + 
-  scale_fill_manual(values = c("Nie" = "red", "Tak" = "blue")) + 
+  scale_fill_manual(values = c("Nie" = "lightpink", "Tak" = "lightblue")) + 
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+tak_df <- df %>%
+  filter(czy_pokrywa == "Tak") %>%
+  count(accident_type, name = "tak")
+
+nie_df <- df %>%
+  filter(czy_pokrywa == "Nie") %>%
+  count(accident_type, name = "nie")
+
+wynik <- full_join(tak_df, nie_df, by = "accident_type") %>%
+  mutate(
+    tak = replace_na(tak, 0),
+    nie = replace_na(nie, 0),
+    ratio = tak / (tak + nie)
+  )
+
+wynik
 ```
 
 ### Czy wycieczki, którym klienci wystawiają najwyższe oceny, są również najchętniej wybierane?
