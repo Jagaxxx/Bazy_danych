@@ -14,7 +14,7 @@ execute:
 
 #### 1.1. Cel i zakres raportu
 
-Niniejszy raport został wykonany na zlecenie firmy „Space-U”, organizującej konsumenckie załogowe loty kosmiczne, a w szczególności wycieczki z jasną i ciemną stroną mocy w świecie Star Wars. Celem raportu jest analiza danych zebranych przez firmę podczas 2 lat obecności na rynku, która pozwoli na wyciągnięcie wniosków na temat dotychczasowej działalności: związanych z nią kosztów oraz zysków, a także stosunku klientów do proponowanych ofert. Dzięki temu, możliwe będzie wskazanie kierunku rozwoju dla firmy w najbliższej przyszłości.
+Niniejszy raport został wykonany na zlecenie firmy „Space-U”, organizującej konsumenckie załogowe loty kosmiczne, a w szczególności wycieczki z jasną i ciemną stroną mocy w świecie Star Wars. Celem raportu jest analiza danych zebranych przez firmę podczas 2 lat obecności na rynku, która pozwoli na wyciągnięcie wniosków na temat dotychczasowej działalności - związanych z nią kosztów oraz zysków, a także stosunku klientów do proponowanych ofert. Dzięki temu, możliwe będzie wskazanie kierunku rozwoju dla firmy w najbliższej przyszłości.
 
 W niniejszej analizie skoncentrujemy się na udzieleniu odpowiedzi na następujące pytania:
 
@@ -38,6 +38,8 @@ library(tidyr)
 library(scales)
 ```
 
+Jednym z ważnych aspektów działalności firmy turystycznej jest dopasowanie oferty do oczekiwań klientów. Dlatego analiza popularności poszczególnych typów wycieczek ma kluczowe znaczenie – pozwala lepiej planować działania marketingowe, rozwijać ofertę oraz skupić się na tych wyjazdach, które cieszą się największym zainteresowaniem. Dzięki temu firma może efektywniej wykorzystywać zasoby i zwiększać satysfakcję klientów.
+
 ```{r}
 #| echo: false
 #| warning: false
@@ -54,9 +56,7 @@ con <- dbConnect(RMariaDB::MariaDB(),
 
 #### 2.1. Liczba lotów według rodzajów wycieczek
 
-Jednym z kluczowych elementów działalności firmy turystycznej jest dostosowywanie oferty do potrzeb i preferencji klientów. Dlatego analiza popularności poszczególnych rodzajów wycieczek jest niezwykle istotna z punktu widzenia planowania przyszłych działań marketingowych oraz rozwoju oferty. Pozwala to nie tylko na optymalizację zasobów, ale również na zwiększenie satysfakcji klientów poprzez oferowanie wyjazdów, które cieszą się największym zainteresowaniem.
-
-Na podstawie danych zgromadzonych w bazie danych, możliwe było określenie, które wycieczki cieszyły się największą popularnością wśród klientów. Spójrzmy teraz na liczbę zorganizowanych lotów na poszczególne planety.
+Na podstawie danych zgromadzonych w bazie danych, możliwe było określenie, które wycieczki cieszyły się największą popularnością wśród klientów. Spójrzmy teraz na liczbę zorganizowanych wylotów dla poszczególnych wycieczek.
 
 ```{r}
 #| echo: false
@@ -117,11 +117,11 @@ ggplot(df1_1_summary, aes(x = reorder(trip_name, -liczba_lotow),
 
 ```
 
-Łącznie zorganizowana liczba wylotów wynosi `r laczna_liczba_wycieczek`. Najpopularniejsza wycieczka pod względem liczby wylotów to: `r najpopularniejsza[1]`, z liczbą wylotów `r najpopularniejsza[2]`, natomiast zyskująca dopiero popularność okazała się: `r najmniej_popularna[1]`, z liczbą wylotów `r najmniej_popularna[2]`.
+Łącznie zorganizowano `r laczna_liczba_wycieczek` wyjazdów. Najczęściej wybieraną wycieczką była: "`r najpopularniejsza[1]`", która odbyła się `r najpopularniejsza[2]` razy. Z kolei najmniej popularna okazała się wycieczka: "`r najmniej_popularna[1]`", z liczbą wylotów równą `r najmniej_popularna[2]`.
 
 #### 2.2. Liczba klientów w podziale na typy wycieczek
 
-Teraz możemy zobaczyć, jak wygląda to w przypadku ilości obsłużonych podróżnych.
+Sprawdźmy jak wygląda to w przypadku ilości obsłużonych podróżnych.
 
 ```{r}
 #| echo: false
@@ -182,7 +182,7 @@ ggplot(klienci_na_wycieczke, aes(x = reorder(trip_name, -liczba_klientow), y = l
   )
 ```
 
-Łącznie firma obsłużyła `r laczna_liczba_klientow` klientów. Najpopularniejsza wycieczka pod względem liczby klientów to: `r najwiecej_klientow[1]`, z liczbą klientów `r najwiecej_klientow[3]`, natomiast zyskująca dopiero popularność okazała się: `r najmniej_klientow[1]`, gdzie zdecydowało się na nią tyle osób: `r najmniej_klientow[3]`.
+Łącznie firma obsłużyła `r laczna_liczba_klientow` klientów. Najpopularniejsza wycieczka pod względem liczby klientów to: "`r najwiecej_klientow[1]`" (`r najwiecej_klientow[3]` klientów), najmniej popularna okazała się: "`r najmniej_klientow[1]`" (`r najmniej_klientow[3]` klientów).
 
 #### 2.3. Bilans zysków i strat dla poszczególnych wycieczek
 
@@ -397,19 +397,19 @@ ggplot(dane_long, aes(x = trip_name, y = wartosc, fill = typ)) +
 
 #### 2.4. Łączna dochodowość – analiza ogólna
 
-W końcowym etapie analizy działalności firmy turystycznej dokonano całościowego podsumowania bilansu finansowego, obejmującego wszystkie kluczowe kategorie wpływające na rentowność przedsiębiorstwa. Zestawiono trzy główne elementy: koszty, przychody oraz zysk.
+Na zakończenie analizy działalności firmy dokonano zestawienia podstawowych danych finansowych. Uwzględniono trzy kluczowe elementy: koszty, przychody oraz zysk. 
 
-W skład całkowitych kosztów weszły:
+Na całkowite koszty złożyły się:
 
 -   Koszty organizacji wyjazdów,
 
--   Koszty utrzymania klientów podczas wycieczki,
+-   Koszty związane z zakwaterowaniem i wyżywieniem klientów podczas wycieczki,
 
--   Koszty utrzymania pracowników.
+-   Koszty wynagrodzeń pracowników.
 
-Przychody uwzględniają wszystkie wpływy uzyskane od klientów za zakupione wycieczki, bez względu na ich rodzaj czy kierunek. Dzięki temu możliwe było określenie ogólnej wartości sprzedaży usług turystycznych w analizowanym okresie.
+Przychody, czyli łączna kwota uzyskana od klientów za wszystkie sprzedane wycieczki.
 
-Zysk został obliczony jako różnica między całkowitymi przychodami a sumą wszystkich kosztów – zarówno bezpośrednich (organizacja wyjazdów), jak i pośrednich (utrzymanie pracowników).
+Zysk został obliczony jako różnica między przychodami a kosztami.
 
 ```{r}
 #| echo: false
@@ -523,13 +523,13 @@ ggplot(df_wykres, aes(x = Rodzaj, y = Kwota, fill = Rodzaj)) +
 
 Ostatecznie uzyskano:
 
--   Koszt organizacji lotów wyniósł `r format(suma_koszt_organizacji, big.mark = " ", scientific = FALSE)`. Obejmuje on głównie wydatki związane z transportem oraz logistyką podróży.
--   Koszt utrzymania klientów podczas wycieczek wyniósł `r format(suma_koszt_utrzymania, big.mark = " ", scientific = FALSE)`. W skład tej kategorii wchodzą m.in. zakwaterowanie, wyżywienie, usługi przewodników i atrakcje w ramach programu wycieczki.
--   Wypłaty dla pracowników stanowiły `r format(suma_wyplaty, big.mark = " ", scientific = FALSE)`.
+-   Koszt organizacji lotów wyniósł `r format(suma_koszt_organizacji, big.mark = " ", scientific = FALSE)` SpaceCoinów. Obejmuje on głównie wydatki związane z transportem oraz logistyką podróży.
+-   Koszt utrzymania klientów podczas wycieczek wyniósł `r format(suma_koszt_utrzymania, big.mark = " ", scientific = FALSE)` SpaceCoinów. W skład tej kategorii wchodzą m.in. zakwaterowanie, wyżywienie, usługi przewodników i atrakcje w ramach programu wycieczki.
+-   Wypłaty dla pracowników stanowiły `r format(suma_wyplaty, big.mark = " ", scientific = FALSE)` SpaceCoinów.
 
-Łącznie koszty operacyjne firmy osiągnęły poziom `r format(suma_koszt_calkowity, big.mark = " ", scientific = FALSE)`.\
-Z kolei przychód uzyskany ze sprzedaży wycieczek wyniósł `r format(suma_przychod, big.mark = " ", scientific = FALSE)`.\
-Na tej podstawie obliczono zysk firmy, który wyniósł `r format(zysk_firmy, big.mark = " ", scientific = FALSE)`.
+Łącznie koszty operacyjne firmy osiągnęły poziom `r format(suma_koszt_calkowity, big.mark = " ", scientific = FALSE)` SpaceCoinów.\
+Z kolei przychód uzyskany ze sprzedaży wycieczek wyniósł `r format(suma_przychod, big.mark = " ", scientific = FALSE)` SpaceCoinów.\
+Na tej podstawie obliczono zysk firmy, który wyniósł `r format(zysk_firmy, big.mark = " ", scientific = FALSE)` SpaceCoinów.
 
 ### 3. Rozwój firmy na przestrzeni lat
 
@@ -651,9 +651,9 @@ if (best_year > worse_year){
 
 ### 4. Powrót klientów i ich preferencje
 
-#### 4.1. Klienci powracający
-
 Kolejnym obszarem analizy była skłonność klientów do ponownego skorzystania z oferty firmy „Space-U”. W tym celu klienci zostali podzieleni na 2 grupy: osoby, które w ciągu 2 lat działalności firmy wzięły udział wyłącznie w jednej wycieczce, oraz tych, którzy zdecydowali się na więcej niż jeden wyjazd. Dla każdej z grup zliczono wycieczki, które wybrano podczas pierwszych wylotów – pierwsze wrażenia zdecydowały o tym, czy klienci ponownie obdarzyli firmę zaufaniem, czy też nie.
+
+#### 4.1. Klienci powracający
 
 ```{r}
 #| echo: false
@@ -704,7 +704,7 @@ ggplot(df3_1, aes(x = df3_1$nazwa_wycieczki, y = df3_1$liczba_klientów)) +
 
 ```
 
-Klienci, którzy zdecydowali się wziąć udział w więcej niż jednym wyjeździe, najczęściej wykupowali za pierwszym razem następujące wycieczki: `r df3_1$nazwa_wycieczki[1]`, `r df3_1$nazwa_wycieczki[2]`, `r df3_1$nazwa_wycieczki[3]`. Najpopularniejszą wycieczką wśród nich była wycieczka o nazwie `r most_repeated_trip`, na którą wybrało się `r df3_1_1$liczba_klientów` klientów. Może to oznaczać, że zwiedzającym spodobał się klimat wycieczki, a w planie firmy na najbliższy czas należy uwzględnić organizację większej liczby wycieczek tego typu bądź wprowadzić do oferty więcej rodzajów wyjazdów w podobnym klimacie.
+Analizując powracających klientów, zauważyliśmy, że osoby, które zdecydowały się na więcej niż jeden wyjazd, najczęściej wybierały podczas pierwszej podróży następujące wycieczki:`r df3_1$nazwa_wycieczki[1]`, `r df3_1$nazwa_wycieczki[2]`, `r df3_1$nazwa_wycieczki[3]`. Najwięcej klientów, którzy wrócili ponownie byli klienci, którzy za pierwszym razem wybrali wycieczkę: `r most_repeated_trip`(łącznie`r df3_1_1$liczba_klientów` klientów). Może to oznaczać, że zwiedzającym spodobał się klimat wycieczki, a w planie firmy na najbliższy czas należy uwzględnić organizację większej liczby wycieczek tego typu bądź wprowadzić do oferty więcej rodzajów wyjazdów w podobnym klimacie.
 
 #### 4.2. Klienci jednorazowi
 
@@ -750,7 +750,7 @@ ggplot(df3_2, aes(x = df3_2$nazwa_wycieczki, y = df3_2$liczba_klientów)) +
 
 ```
 
-Klienci, którzy nie zdecydowali się ponownie wziąć udziału w wyjeździe organizowanym przez „Space-U", najczęściej wykupowali za pierwszym razem następujące wycieczki: `r df3_2$nazwa_wycieczki[1]`, `r df3_2$nazwa_wycieczki[2]`, `r df3_2$nazwa_wycieczki[3]`. Najczęściej wybieraną wśród nich wycieczką była wycieczka o nazwie `r df3_2_1$nazwa_wycieczki`, na którą wybrało się `r df3_2_1$liczba_klientów` klientów. Może to oznaczać, że zaproponowana wycieczka nie spotyka się z pozytywnym odbiorem wszystkich klientów, zatem należy wprowadzić zmiany w jej plan. W przypadku dalszego braku zainteresowania kolejnymi wyjazdami z firmą wśród klientów, którzy wybrali się na wycieczkę tego typu, należy zastanowić się nad wycofaniem wycieczki z oferty i zastąpieniem jej inną propozycją.
+Klienci, którzy nie zdecydowali się na ponowny udział w wyjazdach organizowanych przez „Space-U”, najczęściej wybierali na pierwszym wyjeździe następujące wycieczki: `r df3_2$nazwa_wycieczki[1]`, `r df3_2$nazwa_wycieczki[2]`, `r df3_2$nazwa_wycieczki[3]`. Najczęściej wybieraną wśród nich wycieczką była wycieczka o nazwie `r df3_2_1$nazwa_wycieczki`, na którą wybrało się `r df3_2_1$liczba_klientów` klientów. Może to wskazywać, że oferta tych wycieczek nie spełnia w pełni oczekiwań znacznej części klientów, co może być przyczyną ich decyzji o niekorzystaniu z kolejnych wyjazdów organizowanych przez firmę. Warto w związku z tym rozważyć wprowadzenie zmian w programie tych wycieczek. Jeśli mimo to zainteresowanie pozostanie niskie, należy rozważyć wycofanie ich z oferty i zastąpienie bardziej atrakcyjnymi propozycjami.
 
 ### 5. Jasna czy ciemna strona mocy?
 
@@ -820,7 +820,7 @@ ggplot(df, aes(x = rodzaj_wypadku, y = liczba_wypadkow)) +
 max_incident_idx <- which.max(df$liczba_wypadkow)
 ```
 
-Powyższy wykres przedstawia liczbę wypadków podczas podróży w zależności od rodzaju wypadku. Jak możemy zauważyć najczęściej pojawiającym się wypadkiem jest `r df[max_incident_idx, "rodzaj_wypadku"]`. Sugeruje nam to, że na ten rodzaj wypadku powinniśmy jako firma zalecać ubezpieczenie się naszym klientom.
+Powyższy wykres przedstawia liczbę wypadków podczas podróży w zależności od rodzaju wypadku. Jak możemy zauważyć najczęściej pojawiającym się wypadkiem jest "`r df[max_incident_idx, "rodzaj_wypadku"]`". Sugeruje nam to, że na ten rodzaj wypadku powinniśmy jako firma zalecać ubezpieczenie się naszym klientom.
 
 #### 6.2. Ubezpieczenia klientów w razie wypadków
 
@@ -896,13 +896,13 @@ suma_ratio_min <- wynik$suma[idx_ratio_min]
 
 ```
 
-Dla najczęściej pojawiającego się rodzaju wypadku, jakim jest `r accident_suma_max`, `r ratio_suma_max * 100`% klientów posiada ubezpieczenie pokrywające koszty związane z tym wypadkiem. Dla wypadku: "`r accident_ratio_max`" stosunek klientów ubezpieczonych do wszystkich klientów, którzy tego wypadku doświadczyli, jest największy i wynosi `r ratio_max * 100`%. Liczba tych wypadków wynosi `r suma_ratio_max`. Z kolei klienci najrzadziej posiadają ubezpieczenie na `r accident_ratio_min` w stosunku do liczby wypadków tego typu.
+Dla najczęściej pojawiającego się rodzaju wypadku, jakim jest "`r accident_suma_max`", `round(ratio_suma_max * 100, 2)`% klientów posiada ubezpieczenie pokrywające koszty związane z tym wypadkiem. Dla wypadku: "`r accident_ratio_max`" stosunek klientów ubezpieczonych do wszystkich klientów, którzy tego wypadku doświadczyli, jest największy i wynosi `r ratio_max * 100`%. Liczba tych wypadków wynosi `r suma_ratio_max`. Z kolei klienci najrzadziej posiadają ubezpieczenie na "`r accident_ratio_min`" w stosunku do liczby wypadków tego typu.
 
 ### 7. Ocena ofert
 
 #### 7.1. Najlepiej oceniane wycieczki
 
-Oceny wystawiane przez klientów po zakończonych wycieczkach stanowią istotny element oceny jakości oferty turystycznej. Są one nie tylko subiektywnym wyrazem zadowolenia uczestników, ale również cennym źródłem informacji dla firmy, pozwalającym na identyfikację mocnych i słabych stron. Dzięki gromadzeniu ocen firma może monitorować poziom satysfakcji uczestników, identyfikować najbardziej doceniane elementy oferty (np. konkretne kierunki, przewodników, atrakcje) oraz podejmować trafne decyzje dotyczące udoskonalania wyjazdów. Wysokie oceny stanowią również wartość marketingową – mogą budować zaufanie nowych klientów i pozytywnie wpływać na wizerunek firmy. Klienci firmy Space-U mają możliwość oceny wycieczki w pięciostopiowej skali (1-5). Przyjrzyjmy się jak jakie mają odczucia.
+Oceny wystawiane przez klientów po zakończonych wycieczkach są istotnym wskaźnikiem jakości oferty turystycznej. Stanowią one cenne źródło informacji dla firmy, pozwalające na identyfikację mocnych i słabych stron oraz monitorowanie poziomu satysfakcji uczestników. Klienci mają możliwość oceny wycieczki w pięciostopiowej skali (1-5). Przyjrzyjmy się zatem, jak klienci oceniają poszczególne wycieczki.
 
 ```{r}
 #| echo: false
@@ -959,52 +959,21 @@ ggplot(srednie_oceny, aes(x = reorder(trip_name, -srednia_ocena), y = srednia_oc
 
 Najlepiej ocenianą wycieczką jest `r najlepsza_wycieczka[1]`, z oceną `r najlepsza_wycieczka[3]`. Najmniej do gustu przypadła za to wycieczka `r najgorsza_wycieczka[1]`, gdzie ocena wyniosła `r najgorsza_wycieczka[3]`.
 
-Dla porównania spójrzmy na wykres popularności, który już wcześniej widzieliśmy.
 
 ```{r}
 #| echo: false
 #| warning: false
-#| fig.width: 6
-#| fig.height: 4
-#| fig.align: "center"
 
-df <- dbGetQuery(con, "
-  SELECT 
-    payment.id_payment,
-    payment.id_spaceflight,
-    spaceflight.id_trip,
-    trip_type.trip_name,
-    trip_type.force_side
-  FROM payment
-  JOIN spaceflight ON payment.id_spaceflight = spaceflight.id_spaceflight
-  JOIN trip_type ON spaceflight.id_trip = trip_type.id_trip
-")
+# Sprawdzenie, czy najlepiej oceniana wycieczka jest też najpopularniejszą
+czy_najlepsza_jest_najpopularniejsza <- najlepsza_wycieczka$trip_name == najwiecej_klientow$trip_name
 
-# Liczby klientów
-klienci_na_wycieczke <- df %>%
-  group_by(trip_name, force_side) %>%
-  summarise(liczba_klientow = n(), .groups = "drop") %>%
-  arrange(desc(liczba_klientow))
-
-# Wykres
-ggplot(klienci_na_wycieczke, aes(x = reorder(trip_name, -liczba_klientow), y = liczba_klientow, fill = force_side)) +
-  geom_col() +
-  geom_text(aes(label = liczba_klientow), vjust = -0.3, size = 3) +
-  scale_fill_manual(values = c("jasna" = "lightblue", "ciemna" = "pink")) +
-  labs(
-    title = "Liczba klientów na wycieczkę",
-    x = "Wycieczka",
-    y = "Liczba klientów",
-    fill = "Strona mocy"
-  ) +
-  theme_minimal() +
-  theme(
-    plot.title = element_text(size = 11, face = "bold", hjust = 0.5),
-    axis.title = element_text(size = 9),
-    axis.text.x = element_text(angle = 45, hjust = 1, size = 8),
-    axis.text.y = element_text(size = 8)
-  )
 ```
+`r if (czy_najlepsza_jest_najpopularniejsza) {
+  "Jak możemy zauważyć, najlepiej oceniana wycieczka pokrywa się z tą, która cieszy się największą popularnością wśród klientów. Potwierdza to wykres z części **2.2**, przedstawiający liczbę uczestników poszczególnych wycieczek."
+} else {
+  "Warto zauważyć, że najlepiej oceniana wycieczka nie jest jednocześnie tą najczęściej wybieraną przez klientów. Potwierdza to wykres z części **2.2**, przedstawiający liczbę uczestników poszczególnych wycieczek. Może to oznaczać, że choć wycieczka cieszy się dużym uznaniem wśród uczestników, to jej charakter, cena lub dostępność sprawiają, że trafia do węższego grona."
+}`
+
 
 ### 8. Załoga i współpraca
 
