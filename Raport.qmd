@@ -62,32 +62,41 @@ Na podstawie danych zgromadzonych w bazie danych, możliwe było określenie, kt
 
 # Pobieramy dane
 query1_1 <- "
-SELECT trip_type.planet_name, trip_type.force_side
+SELECT trip_type.trip_name, trip_type.force_side
 FROM spaceflight
 JOIN trip_type ON spaceflight.id_trip = trip_type.id_trip;
 "
 
 df1_1 <- dbGetQuery(con, query1_1)
 
-# Zliczanie lotów na planetę
+# Zliczanie lotów na wycieczkę
 df1_1_summary <- df1_1 %>%
-  group_by(planet_name) %>%
+  group_by(trip_name) %>%
   summarise(
     liczba_lotow = n(),
     force_side = first(force_side),
     .groups = "drop"
   )
 
+# Łączna liczba wycieczek
+laczna_liczba_wycieczek <- sum(df1_1_summary$liczba_lotow)
+
+najpopularniejsza <- df1_1_summary %>%
+  slice_max(order_by = liczba_lotow, n = 1, with_ties = FALSE)
+
+najmniej_popularna <- df1_1_summary %>%
+  slice_min(order_by = liczba_lotow, n = 1, with_ties = FALSE)
+
 # Wykres
-ggplot(df1_1_summary, aes(x = reorder(planet_name, -liczba_lotow),
+ggplot(df1_1_summary, aes(x = reorder(trip_name, -liczba_lotow),
                           y = liczba_lotow,
                           fill = force_side)) +
   geom_col() +
   geom_text(aes(label = liczba_lotow),
-            vjust = -0.5, size = 5) +  # <- to dodaje wartości nad słupkami
+            vjust = -0.5, size = 5) +
   scale_fill_manual(values = c("jasna" = "blue", "ciemna" = "red")) +
   labs(title = "Popularność wycieczek",
-       x = "Planeta",
+       x = "Wycieczka",
        y = "Liczba lotów",
        fill = "Strona Mocy") +
   theme_minimal() +
@@ -100,8 +109,9 @@ ggplot(df1_1_summary, aes(x = reorder(planet_name, -liczba_lotow),
     legend.title = element_text(size = 13),
     legend.text = element_text(size = 12)
   )
-
 ```
+
+Łącznie zorganizowana liczba wylotów wynosi `r laczna_liczba_wycieczek`. Najpopularniejsza wycieczka pod względem liczby wylotów to: `r najpopularniejsza[1]`, z liczbą wylotów `r najpopularniejsza[2]`, natomiast zyskująca dopiero popularność okazała się: `r najmniej_popularna[1]`, z liczbą wylotów `r najmniej_popularna[2]`.
 
 Teraz możemy zobaczyć, jak wygląda to w przypadku ilości obsłużonych podróżnych.
 
@@ -116,7 +126,7 @@ df <- dbGetQuery(con, "
     payment.id_payment,
     payment.id_spaceflight,
     spaceflight.id_trip,
-    trip_type.planet_name,
+    trip_type.trip_name,
     trip_type.force_side
   FROM payment
   JOIN spaceflight ON payment.id_spaceflight = spaceflight.id_spaceflight
@@ -124,19 +134,30 @@ df <- dbGetQuery(con, "
 ")
 
 # Liczby klientów
-klienci_na_planete <- df %>%
-  group_by(planet_name, force_side) %>%
+klienci_na_wycieczke <- df %>%
+  group_by(trip_name, force_side) %>%
   summarise(liczba_klientow = n(), .groups = "drop") %>%
   arrange(desc(liczba_klientow))
 
+# Łączna liczba klientów
+laczna_liczba_klientow <- sum(klienci_na_wycieczke$liczba_klientow)
+
+# Wycieczka z największą liczbą klientów
+najwiecej_klientow <- klienci_na_wycieczke %>%
+  slice_max(order_by = liczba_klientow, n = 1, with_ties = FALSE)
+
+# Wycieczka z najmniejszą liczbą klientów
+najmniej_klientow <- klienci_na_wycieczke %>%
+  slice_min(order_by = liczba_klientow, n = 1, with_ties = FALSE)
+
 # Wykres
-ggplot(klienci_na_planete, aes(x = reorder(planet_name, -liczba_klientow), y = liczba_klientow, fill = force_side)) +
+ggplot(klienci_na_wycieczke, aes(x = reorder(trip_name, -liczba_klientow), y = liczba_klientow, fill = force_side)) +
   geom_col() +
   geom_text(aes(label = liczba_klientow), vjust = -0.5, size = 5) +
   scale_fill_manual(values = c("jasna" = "blue", "ciemna" = "red")) +
   labs(
-    title = "Liczba klientów na planetę według strony mocy",
-    x = "Planeta",
+    title = "Liczba klientów na wycieczkę",
+    x = "Wycieczka",
     y = "Liczba klientów",
     fill = "Strona mocy"
   ) +
@@ -148,6 +169,7 @@ ggplot(klienci_na_planete, aes(x = reorder(planet_name, -liczba_klientow), y = l
     axis.text.y = element_text(size = 12)
   )
 ```
+Łącznie firma obsłużyła `r laczna_liczba_klientow` klientów. Najpopularniejsza wycieczka pod względem liczby klientów to: `r najwiecej_klientow[1]`, z liczbą klientów `r najwiecej_klientow[3]`, natomiast zyskująca dopiero popularność okazała się: `r najmniej_klientow[1]`, gdzie zdecydowało się na nią tyle osób: `r najmniej_klientow[3]`.
 
 #### Bilans zysków i strat poszczególnych rodzajów wycieczek
 
@@ -171,7 +193,7 @@ SELECT
   spaceflight.departure_date,
   spaceflight.return_date,
   spaceflight.organization_cost,
-  trip_type.planet_name,
+  trip_type.trip_name,
   trip_type.daily_cost_per_participant,
   trip_type.customer_price_total,
   payment.id_payment
@@ -190,7 +212,7 @@ df <- df %>%
     duration_days = as.numeric(return_date - departure_date)
   )
 
-# Liczbę klientów dla każdego lotu
+# Liczba klientów dla każdego lotu
 liczba_klientow_df <- df %>%
   group_by(id_spaceflight) %>%
   summarise(liczba_klientow = n(), .groups = "drop")
@@ -209,9 +231,9 @@ df_obliczone <- df_unique %>%
     przychod = liczba_klientow * customer_price_total
   )
 
-# Średnie wartości dla każdej planety
+# Średnie wartości dla każdej wycieczki
 srednie <- df_obliczone %>%
-  group_by(planet_name) %>%
+  group_by(trip_name) %>%
   summarise(
     sredni_koszt_organizacji = mean(koszt_organizacji),
     sredni_koszt_utrzymania = mean(koszt_utrzymania),
@@ -223,11 +245,11 @@ srednie <- df_obliczone %>%
 
 # Long format
 dane_long <- srednie %>%
-  select(planet_name, Koszty = sredni_koszt_lacznie, Przychód = sredni_przychod, Zysk = srednia_roznica) %>%
-  pivot_longer(cols = -planet_name, names_to = "typ", values_to = "wartosc")
+  select(trip_name, Koszty = sredni_koszt_lacznie, Przychód = sredni_przychod, Zysk = srednia_roznica) %>%
+  pivot_longer(cols = -trip_name, names_to = "typ", values_to = "wartosc")
 
 # Wykres
-ggplot(dane_long, aes(x = planet_name, y = wartosc, fill = typ)) +
+ggplot(dane_long, aes(x = trip_name, y = wartosc, fill = typ)) +
   geom_col(position = position_dodge(width = 0.9)) +
   geom_text(aes(label = ifelse(wartosc >= 1e6,
                                paste0(round(wartosc / 1e6, 1), " M"),
@@ -239,8 +261,8 @@ ggplot(dane_long, aes(x = planet_name, y = wartosc, fill = typ)) +
   scale_y_continuous(labels = scales::label_number(big.mark = " ", decimal.mark = ",")) +
   scale_fill_manual(values = c("Koszty" = "red", "Przychód" = "blue", "Zysk" = "green")) +
   labs(
-    title = "Średnie koszty, przychody i zysk z wycieczek na planetę",
-    x = "Planeta",
+    title = "Średnie koszty, przychody i zysk z każdej wycieczki",
+    x = "Wycieczka",
     y = "Kwota",
     fill = "Rodzaj"
   ) +
@@ -255,7 +277,6 @@ ggplot(dane_long, aes(x = planet_name, y = wartosc, fill = typ)) +
     legend.text = element_text(size = 12)
   )
 ```
-
 W celu uzyskania pełniejszego obrazu rentowności działalności firmy, przeprowadzono także analizę łącznych zysków generowanych przez wycieczki do poszczególnych planet, z uwzględnieniem liczby uczestników. W odróżnieniu od wcześniejszego zestawienia, które bazowało na średnich wartościach dla jednej wycieczki (jeden wylot), niniejsze podsumowanie uwzględnia realną skalę sprzedaży – czyli ilość podróżnych, którzy skorzystali z każdej z ofert. Takie podejście pozwala precyzyjnie określić, które kierunki nie tylko są popularne, ale również najbardziej dochodowe w ujęciu globalnym.
 
 ```{r}
@@ -271,7 +292,7 @@ SELECT
   spaceflight.departure_date,
   spaceflight.return_date,
   spaceflight.organization_cost,
-  trip_type.planet_name,
+  trip_type.trip_name,
   trip_type.daily_cost_per_participant,
   trip_type.customer_price_total,
   payment.id_payment
@@ -309,9 +330,9 @@ df_obliczone <- df_unique %>%
     przychod = liczba_klientow * customer_price_total
   )
 
-# Sumowanie po planetach
+# Sumowanie po nazwach wycieczek
 suma <- df_obliczone %>%
-  group_by(planet_name) %>%
+  group_by(trip_name) %>%
   summarise(
     suma_koszt_organizacji = sum(koszt_organizacji),
     suma_koszt_utrzymania = sum(koszt_utrzymania),
@@ -323,11 +344,11 @@ suma <- df_obliczone %>%
 
 # Long format
 dane_long <- suma %>%
-  select(planet_name, Koszty = suma_koszt_lacznie, Przychód = suma_przychod, Zysk = zysk) %>%
-  pivot_longer(cols = -planet_name, names_to = "typ", values_to = "wartosc")
+  select(trip_name, Koszty = suma_koszt_lacznie, Przychód = suma_przychod, Zysk = zysk) %>%
+  pivot_longer(cols = -trip_name, names_to = "typ", values_to = "wartosc")
 
 # Wykres
-ggplot(dane_long, aes(x = planet_name, y = wartosc, fill = typ)) +
+ggplot(dane_long, aes(x = trip_name, y = wartosc, fill = typ)) +
   geom_col(position = position_dodge(width = 0.9)) +
   geom_text(aes(label = ifelse(wartosc >= 1e6,
                                paste0(round(wartosc / 1e6, 1), " M"),
@@ -337,12 +358,12 @@ ggplot(dane_long, aes(x = planet_name, y = wartosc, fill = typ)) +
             position = position_dodge(width = 0.9), 
             vjust = -0.5, size = 4) +
   scale_y_continuous(
-    labels = label_number(big.mark = " ", decimal.mark = ",")
+    labels = scales::label_number(big.mark = " ", decimal.mark = ",")
   ) +
   scale_fill_manual(values = c("Koszty" = "red", "Przychód" = "blue", "Zysk" = "green")) +
   labs(
-    title = "Suma kosztów, przychodów i zysków z wycieczek na każdą planetę",
-    x = "Planeta",
+    title = "Suma kosztów, przychodów i zysków z każdej wycieczki",
+    x = "Wycieczka",
     y = "Kwota",
     fill = "Rodzaj"
   ) +
@@ -489,8 +510,8 @@ Ostatecznie uzyskano:
 -   Koszt utrzymania klientów podczas wycieczek wyniósł `r format(suma_koszt_utrzymania, big.mark = " ", scientific = FALSE)`. W skład tej kategorii wchodzą m.in. zakwaterowanie, wyżywienie, usługi przewodników i atrakcje w ramach programu wycieczki.
 -   Wypłaty dla pracowników stanowiły `r format(suma_wyplaty, big.mark = " ", scientific = FALSE)`.
 
-Łącznie koszty operacyjne firmy osiągnęły poziom `r format(suma_koszt_calkowity, big.mark = " ", scientific = FALSE)`. \
-Z kolei przychód uzyskany ze sprzedaży wycieczek wyniósł `r format(suma_przychod, big.mark = " ", scientific = FALSE)`. \
+Łącznie koszty operacyjne firmy osiągnęły poziom `r format(suma_koszt_calkowity, big.mark = " ", scientific = FALSE)`.\
+Z kolei przychód uzyskany ze sprzedaży wycieczek wyniósł `r format(suma_przychod, big.mark = " ", scientific = FALSE)`.\
 Na tej podstawie obliczono zysk firmy, który wyniósł `r format(zysk_firmy, big.mark = " ", scientific = FALSE)`.
 
 ### Czy na podstawie wykresu liczby obsłużonych klientów w każdym miesiącu działalności firmy możemy wyciągnąć wnioski, że firma się rozwija lub podupada?
@@ -639,8 +660,106 @@ Z powyższego wykresu odczytać można, że to `r more_popular_force_side$strona
 
 ### Czy wycieczki, którym klienci wystawiają najwyższe oceny, są również najchętniej wybierane?
 
-```{r}
+Oceny wystawiane przez klientów po zakończonych wycieczkach stanowią istotny element oceny jakości oferty turystycznej. Są one nie tylko subiektywnym wyrazem zadowolenia uczestników, ale również cennym źródłem informacji dla firmy, pozwalającym na identyfikację mocnych i słabych stron. Dzięki gromadzeniu ocen firma może monitorować poziom satysfakcji uczestników, identyfikować najbardziej doceniane elementy oferty (np. konkretne kierunki, przewodników, atrakcje) oraz podejmować trafne decyzje dotyczące udoskonalania wyjazdów. Wysokie oceny stanowią również wartość marketingową – mogą budować zaufanie nowych klientów i pozytywnie wpływać na wizerunek firmy. Klienci firmy Space-U mają możliwość oceny wycieczki w pięciostopiowej skali (1-5). Przyjrzyjmy się jak jakie mają odczucia.
 
+```{r}
+#| echo: false
+#| warning: false
+#| fig.width: 9
+#| fig.height: 8
+
+# Pobieramy dane
+df <- dbGetQuery(con, "
+  SELECT 
+    opinion.rating,
+    trip_type.trip_name,
+    trip_type.force_side
+  FROM opinion
+  JOIN payment ON opinion.id_payment = payment.id_payment
+  JOIN spaceflight ON payment.id_spaceflight = spaceflight.id_spaceflight
+  JOIN trip_type ON spaceflight.id_trip = trip_type.id_trip
+")
+
+# Średnia ocena dla każdej wycieczki
+srednie_oceny <- df %>%
+  group_by(trip_name, force_side) %>%
+  summarise(srednia_ocena = mean(rating, na.rm = TRUE), .groups = "drop") %>%
+  arrange(desc(srednia_ocena))
+
+# Wycieczka z najlepszą oceną
+najlepsza_wycieczka <- srednie_oceny %>%
+  slice_max(order_by = srednia_ocena, n = 1)
+
+# Wycieczka z najgorszą oceną
+najgorsza_wycieczka <- srednie_oceny %>%
+  slice_min(order_by = srednia_ocena, n = 1)
+
+# Wykres
+ggplot(srednie_oceny, aes(x = reorder(trip_name, -srednia_ocena), y = srednia_ocena, fill = force_side)) +
+  geom_col() +
+  geom_text(aes(label = round(srednia_ocena, 2)), vjust = -0.5, size = 5) +
+  scale_fill_manual(values = c("jasna" = "blue", "ciemna" = "red")) +
+  labs(
+    title = "Średnia ocena wycieczki",
+    x = "Wycieczka",
+    y = "Średnia ocena",
+    fill = "Strona mocy"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 18, face = "bold", hjust = 0.5),
+    axis.title = element_text(size = 14),
+    axis.text.x = element_text(angle = 45, hjust = 1, size = 12),
+    axis.text.y = element_text(size = 12)
+  )
+```
+
+Najlepiej ocenianą wycieczką jest `r najlepsza_wycieczka[1]`, z oceną `r najlepsza_wycieczka[3]`. Najmniej do gustu przypadła za to wycieczka `r najgorsza_wycieczka[1]`, gdzie ocena wyniosła `r najgorsza_wycieczka[3]`.
+
+Dla porównania spójrzmy na wykres popularności, który już wcześniej widzieliśmy.
+
+```{r}
+#| echo: false
+#| warning: false
+#| fig.width: 9
+#| fig.height: 8
+
+df <- dbGetQuery(con, "
+  SELECT 
+    payment.id_payment,
+    payment.id_spaceflight,
+    spaceflight.id_trip,
+    trip_type.trip_name,
+    trip_type.force_side
+  FROM payment
+  JOIN spaceflight ON payment.id_spaceflight = spaceflight.id_spaceflight
+  JOIN trip_type ON spaceflight.id_trip = trip_type.id_trip
+")
+
+# Liczby klientów
+klienci_na_wycieczke <- df %>%
+  group_by(trip_name, force_side) %>%
+  summarise(liczba_klientow = n(), .groups = "drop") %>%
+  arrange(desc(liczba_klientow))
+
+# Wykres
+ggplot(klienci_na_wycieczke, aes(x = reorder(trip_name, -liczba_klientow), y = liczba_klientow, fill = force_side)) +
+  geom_col() +
+  geom_text(aes(label = liczba_klientow), vjust = -0.5, size = 5) +
+  scale_fill_manual(values = c("jasna" = "blue", "ciemna" = "red")) +
+  labs(
+    title = "Liczba klientów na wycieczkę",
+    x = "Wycieczka",
+    y = "Liczba klientów",
+    fill = "Strona mocy"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 18, face = "bold", hjust = 0.5),
+    axis.title = element_text(size = 14),
+    axis.text.x = element_text(angle = 45, hjust = 1, size = 12),
+    axis.text.y = element_text(size = 12)
+  )
 ```
 
 ### Którzy spośród naszych pracowników (pilot i przewodnik) najczęściej latali wspólnie na wycieczki?
