@@ -957,7 +957,7 @@ ggplot(srednie_oceny, aes(x = reorder(trip_name, -srednia_ocena), y = srednia_oc
   )
 ```
 
-Najlepiej ocenianą wycieczką jest `r najlepsza_wycieczka[1]`, z oceną `r najlepsza_wycieczka[3]`. Najmniej do gustu przypadła za to wycieczka `r najgorsza_wycieczka[1]`, gdzie ocena wyniosła `r najgorsza_wycieczka[3]`.
+Najlepiej ocenianą wycieczką jest `r najlepsza_wycieczka[1]`, z oceną `r round(najlepsza_wycieczka[3],2)`. Najmniej do gustu przypadła za to wycieczka `r najgorsza_wycieczka[1]`, gdzie ocena wyniosła `r round(najgorsza_wycieczka[3],2)`.
 
 
 ```{r}
