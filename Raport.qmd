@@ -56,7 +56,8 @@ Na podstawie danych zgromadzonych w bazie danych, możliwe było określenie, kt
 #| echo: false
 #| warning: false
 #| fig.width: 9
-#| fig.height: 8
+#| fig.height: 7
+#| fig.align: "center"
 
 ### POPULARNOŚĆ WYCIECZEK ###
 
@@ -94,7 +95,7 @@ ggplot(df1_1_summary, aes(x = reorder(trip_name, -liczba_lotow),
   geom_col() +
   geom_text(aes(label = liczba_lotow),
             vjust = -0.5, size = 5) +
-  scale_fill_manual(values = c("jasna" = "blue", "ciemna" = "red")) +
+  scale_fill_manual(values = c("jasna" = "lightblue", "ciemna" = "pink")) +
   labs(title = "Popularność wycieczek",
        x = "Wycieczka",
        y = "Liczba lotów",
@@ -119,7 +120,8 @@ Teraz możemy zobaczyć, jak wygląda to w przypadku ilości obsłużonych podr�
 #| echo: false
 #| warning: false
 #| fig.width: 9
-#| fig.height: 8
+#| fig.height: 7
+#| fig.align: "center"
 
 df <- dbGetQuery(con, "
   SELECT 
@@ -154,7 +156,7 @@ najmniej_klientow <- klienci_na_wycieczke %>%
 ggplot(klienci_na_wycieczke, aes(x = reorder(trip_name, -liczba_klientow), y = liczba_klientow, fill = force_side)) +
   geom_col() +
   geom_text(aes(label = liczba_klientow), vjust = -0.5, size = 5) +
-  scale_fill_manual(values = c("jasna" = "blue", "ciemna" = "red")) +
+  scale_fill_manual(values = c("jasna" = "lightblue", "ciemna" = "pink")) +
   labs(
     title = "Liczba klientów na wycieczkę",
     x = "Wycieczka",
@@ -169,6 +171,7 @@ ggplot(klienci_na_wycieczke, aes(x = reorder(trip_name, -liczba_klientow), y = l
     axis.text.y = element_text(size = 12)
   )
 ```
+
 Łącznie firma obsłużyła `r laczna_liczba_klientow` klientów. Najpopularniejsza wycieczka pod względem liczby klientów to: `r najwiecej_klientow[1]`, z liczbą klientów `r najwiecej_klientow[3]`, natomiast zyskująca dopiero popularność okazała się: `r najmniej_klientow[1]`, gdzie zdecydowało się na nią tyle osób: `r najmniej_klientow[3]`.
 
 #### Bilans zysków i strat poszczególnych rodzajów wycieczek
@@ -182,8 +185,9 @@ W tym celu posłużmy się najpierw średnią ceną wycieczki.
 ```{r}
 #| echo: false
 #| warning: false
-#| fig.width: 14
+#| fig.width: 12
 #| fig.height: 10
+#| fig.align: "center"
 
 # Pobranie danych
 query <- "
@@ -259,7 +263,7 @@ ggplot(dane_long, aes(x = trip_name, y = wartosc, fill = typ)) +
             position = position_dodge(width = 0.9),
             vjust = -0.5, size = 4) +
   scale_y_continuous(labels = scales::label_number(big.mark = " ", decimal.mark = ",")) +
-  scale_fill_manual(values = c("Koszty" = "red", "Przychód" = "blue", "Zysk" = "green")) +
+  scale_fill_manual(values = c("Koszty" = "pink", "Przychód" = "lightblue", "Zysk" = "lightgreen")) +
   labs(
     title = "Średnie koszty, przychody i zysk z każdej wycieczki",
     x = "Wycieczka",
@@ -277,13 +281,15 @@ ggplot(dane_long, aes(x = trip_name, y = wartosc, fill = typ)) +
     legend.text = element_text(size = 12)
   )
 ```
+
 W celu uzyskania pełniejszego obrazu rentowności działalności firmy, przeprowadzono także analizę łącznych zysków generowanych przez wycieczki do poszczególnych planet, z uwzględnieniem liczby uczestników. W odróżnieniu od wcześniejszego zestawienia, które bazowało na średnich wartościach dla jednej wycieczki (jeden wylot), niniejsze podsumowanie uwzględnia realną skalę sprzedaży – czyli ilość podróżnych, którzy skorzystali z każdej z ofert. Takie podejście pozwala precyzyjnie określić, które kierunki nie tylko są popularne, ale również najbardziej dochodowe w ujęciu globalnym.
 
 ```{r}
 #| echo: false
 #| warning: false
-#| fig.width: 14
+#| fig.width: 12
 #| fig.height: 10
+#| fig.align: "center"
 
 query <- "
 SELECT 
@@ -360,7 +366,7 @@ ggplot(dane_long, aes(x = trip_name, y = wartosc, fill = typ)) +
   scale_y_continuous(
     labels = scales::label_number(big.mark = " ", decimal.mark = ",")
   ) +
-  scale_fill_manual(values = c("Koszty" = "red", "Przychód" = "blue", "Zysk" = "green")) +
+  scale_fill_manual(values = c("Koszty" = "pink", "Przychód" = "lightblue", "Zysk" = "lightgreen")) +
   labs(
     title = "Suma kosztów, przychodów i zysków z każdej wycieczki",
     x = "Wycieczka",
@@ -399,7 +405,8 @@ Zysk został obliczony jako różnica między całkowitymi przychodami a sumą w
 #| echo: false
 #| warning: false
 #| fig.width: 9
-#| fig.height: 6
+#| fig.height: 7
+#| fig.align: "center"
 
 query <- "
 SELECT 
@@ -488,7 +495,7 @@ ggplot(df_wykres, aes(x = Rodzaj, y = Kwota, fill = Rodzaj)) +
   scale_y_continuous(
     labels = label_number(big.mark = " ", decimal.mark = ",")
   ) +
-  scale_fill_manual(values = c("Koszty" = "red", "Przychód" = "blue", "Zysk" = "green")) +
+  scale_fill_manual(values = c("Koszty" = "pink", "Przychód" = "lightblue", "Zysk" = "lightgreen")) +
   labs(
     title = "Podsumowanie finansowe firmy",
     x = "",
@@ -527,8 +534,9 @@ Kolejne zagadnienie dotyczy badania chęci wybierania się klientów na kolejne 
 ```{r}
 #| echo: false
 #| warning: false
-#| fig.width: 9
-#| fig.height: 12
+#| fig.width: 6
+#| fig.height: 4
+#| fig.align: "center"
 
 query3_1 <- "WITH more_than_one_trip AS (SELECT payment.id_customer AS id_customer, spaceflight.id_trip AS id_trip, trip_type.trip_name AS trip_name
 FROM payment INNER JOIN spaceflight ON payment.id_spaceflight = spaceflight.id_spaceflight INNER JOIN trip_type ON spaceflight.id_trip = trip_type.id_trip
@@ -545,6 +553,7 @@ WHERE rn = 1
 GROUP BY trip_name ORDER BY COUNT(*) DESC LIMIT 3"
 
 df3_1 <- dbGetQuery(con, query3_1)
+df3_1$liczba_klientów <- as.integer(df3_1$liczba_klientów)
 
 query3_1_1 <- "WITH more_than_one_trip AS (SELECT payment.id_customer AS id_customer, spaceflight.id_trip AS id_trip, trip_type.trip_name AS trip_name
 FROM payment INNER JOIN spaceflight ON payment.id_spaceflight = spaceflight.id_spaceflight INNER JOIN trip_type ON spaceflight.id_trip = trip_type.id_trip
@@ -576,8 +585,9 @@ Klienci, którzy zdecydowali się wziąć udział w więcej niż jednym wyjeźdz
 ```{r}
 #| echo: false
 #| warning: false
-#| fig.width: 9
-#| fig.height: 12
+#| fig.width: 6
+#| fig.height: 4
+#| fig.align: "center"
 
 query3_2 <- "WITH one_trip AS (SELECT payment.id_customer AS id_customer, spaceflight.id_trip AS id_trip, trip_type.trip_name AS trip_name
 FROM payment INNER JOIN spaceflight ON payment.id_spaceflight = spaceflight.id_spaceflight INNER JOIN trip_type ON spaceflight.id_trip = trip_type.id_trip
@@ -591,6 +601,7 @@ FROM one_trip
 GROUP BY trip_name ORDER BY COUNT(*) DESC LIMIT 3"
 
 df3_2 <- dbGetQuery(con, query3_2)
+df3_2$liczba_klientów <- as.integer(df3_2$liczba_klientów)
 
 query3_2_1 <- "WITH one_trip AS (SELECT payment.id_customer AS id_customer, spaceflight.id_trip AS id_trip, trip_type.trip_name AS trip_name
 FROM payment INNER JOIN spaceflight ON payment.id_spaceflight = spaceflight.id_spaceflight INNER JOIN trip_type ON spaceflight.id_trip = trip_type.id_trip
@@ -604,6 +615,7 @@ FROM one_trip
 GROUP BY trip_name ORDER BY COUNT(*) DESC LIMIT 1"
 
 df3_2_1 <- dbGetQuery(con, query3_2_1)
+
 
 ggplot(df3_2, aes(x = df3_2$nazwa_wycieczki, y = df3_2$liczba_klientów)) +
   geom_col(fill = "lightblue") +
@@ -621,8 +633,9 @@ Firmę „Space-U” interesuje również, która ze stron mocy cieszy się wię
 ```{r}
 #| echo: false
 #| warning: false
-#| fig.width: 9
-#| fig.height: 12
+#| fig.width: 6
+#| fig.height: 4
+#| fig.align: "center"
 
 query4 <- "SELECT force_side AS strona_mocy, COUNT(*) AS liczba_klientów
 FROM spaceflight INNER JOIN trip_type ON spaceflight.id_trip = trip_type.id_trip
@@ -630,6 +643,7 @@ INNER JOIN payment ON spaceflight.id_spaceflight = payment.id_spaceflight
 GROUP BY force_side ORDER BY COUNT(*) DESC"
 
 df4 <- dbGetQuery(con, query4)
+df4$liczba_klientów <- as.integer(df4$liczba_klientów)
 
 query4_1 <- "SELECT force_side AS strona_mocy, COUNT(*) AS liczba_klientów
 FROM spaceflight INNER JOIN trip_type ON spaceflight.id_trip = trip_type.id_trip
@@ -666,7 +680,8 @@ Oceny wystawiane przez klientów po zakończonych wycieczkach stanowią istotny 
 #| echo: false
 #| warning: false
 #| fig.width: 9
-#| fig.height: 8
+#| fig.height: 7
+#| fig.align: "center"
 
 # Pobieramy dane
 df <- dbGetQuery(con, "
@@ -698,7 +713,7 @@ najgorsza_wycieczka <- srednie_oceny %>%
 ggplot(srednie_oceny, aes(x = reorder(trip_name, -srednia_ocena), y = srednia_ocena, fill = force_side)) +
   geom_col() +
   geom_text(aes(label = round(srednia_ocena, 2)), vjust = -0.5, size = 5) +
-  scale_fill_manual(values = c("jasna" = "blue", "ciemna" = "red")) +
+  scale_fill_manual(values = c("jasna" = "lightblue", "ciemna" = "pink")) +
   labs(
     title = "Średnia ocena wycieczki",
     x = "Wycieczka",
@@ -722,7 +737,8 @@ Dla porównania spójrzmy na wykres popularności, który już wcześniej widzie
 #| echo: false
 #| warning: false
 #| fig.width: 9
-#| fig.height: 8
+#| fig.height: 7
+#| fig.align: "center"
 
 df <- dbGetQuery(con, "
   SELECT 
@@ -746,7 +762,7 @@ klienci_na_wycieczke <- df %>%
 ggplot(klienci_na_wycieczke, aes(x = reorder(trip_name, -liczba_klientow), y = liczba_klientow, fill = force_side)) +
   geom_col() +
   geom_text(aes(label = liczba_klientow), vjust = -0.5, size = 5) +
-  scale_fill_manual(values = c("jasna" = "blue", "ciemna" = "red")) +
+  scale_fill_manual(values = c("jasna" = "lightblue", "ciemna" = "pink")) +
   labs(
     title = "Liczba klientów na wycieczkę",
     x = "Wycieczka",
@@ -769,8 +785,9 @@ Ostatnie pytanie dotyczy załogi statków - którzy spośród pracowników firmy
 ```{r}
 #| echo: false
 #| warning: false
-#| fig.width: 9
-#| fig.height: 12
+#| fig.width: 6
+#| fig.height: 6
+#| fig.align: "center"
 
 query7 <- "SELECT s.id_pilot AS id_pilota, s.id_guide AS id_przewodnika, CONCAT(e1.first_name, ' ', e1.last_name, ', ', e2.first_name, ' ', 
 e2.last_name) AS imiona, COUNT(*) AS liczba_wyjazdów
@@ -780,6 +797,7 @@ GROUP BY s.id_pilot, s.id_guide
 ORDER BY COUNT(*) DESC"
 
 df7 <- dbGetQuery(con, query7)
+df7$liczba_wyjazdów <- as.integer(df7$liczba_wyjazdów)
 
 query7_1 <- "SELECT s.id_pilot AS id_pilota, s.id_guide AS id_przewodnika, CONCAT(e1.first_name, ' ', e1.last_name, ', ', e2.first_name, ' ', 
 e2.last_name) AS imiona, COUNT(*) AS liczba_wyjazdów
@@ -790,10 +808,11 @@ ORDER BY COUNT(*) DESC LIMIT 1"
 
 df7_1 <- dbGetQuery(con, query7_1)
 
+
 ggplot(df7, aes(x = df7$imiona, y = df7$liczba_wyjazdów)) +
   geom_col(fill = "lightblue") +
   labs(title = "Liczba wspólnych wyjazdów wybranych członków załogi", x = "Załoga", y = "Liczba wyjazdów") +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  theme(axis.text.x = element_text(angle = 45, hjust = 1), plot.margin = margin(1, 1, 2, 2, "cm"))
 
 ```
 
