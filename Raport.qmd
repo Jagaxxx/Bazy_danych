@@ -523,9 +523,115 @@ Na tej podstawie obliczono zysk firmy, który wyniósł `r format(zysk_firmy, bi
 
 ### Czy na podstawie wykresu liczby obsłużonych klientów w każdym miesiącu działalności firmy możemy wyciągnąć wnioski, że firma się rozwija lub podupada?
 
-```{r}
+Celem przeprowadzonej analizy jest sprawdzenie, czy na podstawie wykresu liczby obsłużonych klientów w poszczególnych miesiącach można ocenić, czy firma się rozwija, czy podupada. W tym celu dane zostały przedstawione na wykresach, które umożliwiają identyfikowanie trendów oraz zmian w liczbie klientów na przestrzeni czasu.
 
+```{r}
+#| echo: false
+#| warning: false
+#| fig.width: 9
+#| fig.height: 7
+
+query_2g_2 <- "SELECT COUNT(p.id_customer) AS liczba_klientow,
+                 DATE_FORMAT(spf.departure_date, '%Y') AS rok
+FROM spaceflight AS spf
+INNER JOIN payment AS p ON spf.id_spaceflight = p.id_spaceflight
+GROUP BY rok
+ORDER BY rok;"
+
+df <- dbGetQuery(con, query_2g_2)
+
+ggplot(df, aes(x = rok, y = liczba_klientow)) +
+  geom_col(fill = "lightblue") +
+  labs(title = "Liczba klientów - zestawienie lat",
+       x = "Rok",
+       y = "Liczba klientów") + 
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+max_idx <- which.max(df$liczba_klientow)
+min_idx <- which.min(df$liczba_klientow)
+
+best_year <- as.character(df$rok[max_idx]) 
+worse_year <- as.character(df$rok[min_idx])
+
+b_number_of_clients <- df$liczba_klientow[max_idx]
+w_number_of_clients <- df$liczba_klientow[min_idx]
+difference <- abs(b_number_of_clients - w_number_of_clients)
+
+# Tworzenie informacji tekstowej
+if (best_year > worse_year) {
+  str <- paste("możemy stwierdzić, że z roku na rok w naszej firmie przybywa coraz więcej klientów. W roku", 
+               best_year, "było", b_number_of_clients,"klientów. To o", 
+               difference,"klientów więcejniż w roku", 
+               worse_year,".")
+} else if (best_year < worse_year) {
+  str <- paste("możemy stwierdzić, że z roku na rok w naszej firmie ubywa klientów. W roku", 
+               worse_year,"było", w_number_of_clients,"klientów. To o", 
+               difference,"klientów mniej niż w roku", 
+               best_year,".")
+} else {
+  str <- "możemy stwierdzić, że liczba klientów się nie zmieniła na przestrzeni lat. Świadczyć to może o tym, że sytuacja firmy jest stabilna."
+}
 ```
+
+Porównując dane na tle lat `r str`
+
+```{r}
+#| echo: false
+#| warning: false
+#| fig.width: 9
+#| fig.height: 7
+
+query_2g <- "SELECT COUNT(p.id_customer) AS liczba_klientow,
+                 DATE_FORMAT(spf.departure_date, '%Y-%m') AS data
+FROM spaceflight AS spf
+INNER JOIN payment AS p ON spf.id_spaceflight = p.id_spaceflight
+GROUP BY data
+ORDER BY data;"
+
+df <- dbGetQuery(con, query_2g)
+
+df$rok <- as.numeric(substr(df$data, 1, 4))
+
+df$miesiac <- as.numeric(substr(df$data, 6, 7))
+
+ggplot(df, aes(x = data, y = liczba_klientow, fill = as.factor(rok))) + 
+  geom_col() + 
+  labs(title = "Liczba klientów według miesiąca",
+       x = "Rok-miesiąc",
+       y = "Liczba klientów",
+       fill = "Rok") + 
+  scale_fill_manual(values = c("2098" = "red", "2099" = "blue")) + 
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+df_max_miesiac <- df %>%
+  group_by(rok) %>%
+  slice_max(liczba_klientow, n = 1, with_ties = FALSE)
+
+months <- c("styczeń", "luty", "marzec", "kwiecień", "maj", "czerwiec", "lipiec", "sierpień", "wrzesień", "październik", "listopad", "grudzień")
+
+best_month_best_year <- df_max_miesiac[df_max_miesiac[, "rok"] == best_year, "miesiac"]$miesiac
+best_month_worse_year <- df_max_miesiac[df_max_miesiac[, "rok"] == worse_year, "miesiac"]$miesiac
+
+bm_by_number_of_clients <- df_max_miesiac[df_max_miesiac[, "rok"] == best_year, "liczba_klientow"]$liczba_klientow
+
+bm_wy_number_of_clients <- df_max_miesiac[df_max_miesiac[, "rok"] == worse_year, "liczba_klientow"]$liczba_klientow
+
+if (best_year > worse_year){
+  if (bm_by_number_of_clients > bm_wy_number_of_clients){
+    text <- paste("W roku", best_year, "najwięcej klientów skorzystało z usługi w", best_month_best_year, "miesiącu. Dla porównania w roku", worse_year, "najbardziej zyskownym miesiącem był", months[best_month_worse_year], ". Sugeruje to, że z roku na rok do firmy przybywa coraz więcej klientów.")
+  } else {
+    text <- paste("W roku", best_year, "najwięcej klientów skorzystało z usługi w", best_month_best_year, "miesiącu. Dla porównania w roku", worse_year, "najbardziej zyskownym miesiącem był", months[best_month_worse_year], ". Mimo tego, że najbardziej zyskownym miesiącem w historii istnienia firmy był ", months[best_month_worse_year], ", to w roku ", best_year, " było więcej klientów ogółem.")
+  }
+} else {
+  if (bm_by_number_of_clients < bm_wy_number_of_clients){
+    text <- paste("W roku ", best_year, " najwięcej klientów skorzystało z usługi w ", best_month_best_year, " miesiącu. Dla porównania w roku ", worse_year, " najbardziej zyskownym miesiącem był ", months[best_month_worse_year], ". Sugeruje to, że z roku na rok liczba klientów naszej firmy maleje.")
+  } else {
+    text <- paste("W roku ", best_year, " najwięcej klientów skorzystało z usługi w ", best_month_best_year, " miesiącu. Dla porównania w roku ", worse_year, " najbardziej zyskownym miesiącem był ", months[best_month_worse_year], ". Mimo tego, że najbardziej zyskownym miesiącem w historii naszej firmy był ", months[best_month_best_year], " to niestety liczba klientów z roku na rok spada.")
+  }
+}
+```
+
+`r text`
 
 ### Po których z proponowanych wycieczek klienci są skłonni wybrać się na kolejne, a po których nie wracają do firmy? Czy można na tej podstawie wycofać niektóre wycieczki z oferty?
 
@@ -668,9 +774,102 @@ Z powyższego wykresu odczytać można, że to `r more_popular_force_side$strona
 
 ### Jak często podczas wyjazdów zdarzają się wypadki konkretnych typów i jaka część klientów jest ubezpieczona na wypadek ich wystąpienia?
 
-```{r}
+Celem przeprowadzonej analizy jest sprawdzenie, jak często podczas podróży dochodzi do wypadków poszczególnych typów oraz jak duża część klientów jest ubezpieczona od skutków takiej sytuacji. W tym celu dane zostały przedstawione na wykresie, umożliwiającym identyfikowanie najczęściej występujących wypadków oraz ocenę stopnia ubezpieczenia klientów w obliczu takiego ryzyka.
 
+```{r}
+#| echo: false
+#| warning: false
+
+query_2 <- "SELECT COUNT(ar.id_accident) AS liczba_wypadkow, at.accident_type AS rodzaj_wypadku
+FROM accident_report AS ar
+INNER JOIN accident_type AS at ON ar.id_accident = at.id_accident
+GROUP BY ar.id_accident;"
+
+df <- dbGetQuery(con, query_2)
+
+ggplot(df, aes(x = rodzaj_wypadku, y = liczba_wypadkow)) + 
+  geom_col(fill="lightblue") + 
+  labs(title = "Liczba wypadków podczas podróży",
+       x = "Rodzaj wypadku",
+       y = "Liczba wypadków") + 
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+max_incident_idx <- which.max(df$liczba_wypadkow)
 ```
+
+Powyższy wykres przedstawia liczbę wypadków podczas podróży w zależności od rodzaju wypadku. Jak możemy zauważyć najczęściej pojawiającym się wypadkiem jest `r df[max_incident_idx, "rodzaj_wypadku"]`. Sugeruje nam to, że na ten rodzaj wypadku powinniśmy jako firma zalecać ubezpieczenie się naszym klientom.
+
+```{r}
+#| echo: false
+#| warning: false
+
+query_2_2 <- "SELECT
+    ar.id_report,
+    at.accident_type,
+    i.type,
+    IF(ic.id_accident IS NOT NULL, 1, 0) AS czy_pokrywa
+FROM
+    accident_report AS ar
+        LEFT JOIN
+    payment AS p ON p.id_payment = ar.id_payment
+        LEFT JOIN
+    insurance_coverage AS ic ON ic.id_insurance = p.id_insurance
+        AND ic.id_accident = ar.id_accident
+        LEFT JOIN
+    insurance AS i ON p.id_insurance = i.id_insurance
+        LEFT JOIN
+    accident_type AS at ON ar.id_accident = at.id_accident
+
+ORDER BY
+    ar.id_report;"
+
+df <- dbGetQuery(con, query_2_2)
+
+df$czy_pokrywa <- ifelse(df$czy_pokrywa == 1, "Tak", "Nie")
+df$czy_pokrywa <- factor(df$czy_pokrywa, levels = c("Nie", "Tak"))
+
+
+ggplot(df, aes(x = accident_type, fill = czy_pokrywa)) + 
+  geom_bar() + 
+  labs(title = "Liczba wypadków według rodzaju", 
+       x = "Rodzaj wypadku", 
+       y = "Liczba wypadków", 
+       fill = "Czy ubezpieczenie \npokrywa wypadek") + 
+  scale_fill_manual(values = c("Nie" = "lightpink", "Tak" = "lightblue")) + 
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+tak_df <- df %>%
+  filter(czy_pokrywa == "Tak") %>%
+  count(accident_type, name = "tak")
+
+nie_df <- df %>%
+  filter(czy_pokrywa == "Nie") %>%
+  count(accident_type, name = "nie")
+
+wynik <- full_join(tak_df, nie_df, by = "accident_type") %>%
+  mutate(
+    tak = replace_na(tak, 0),
+    nie = replace_na(nie, 0),
+    ratio = tak / (tak + nie),
+    suma = tak + nie
+  )
+
+idx_suma_max <- which.max(wynik$suma)
+ratio_suma_max <- wynik$ratio[idx_suma_max]
+accident_suma_max <- wynik$accident_type[idx_suma_max]
+
+idx_ratio_max <- which.max(wynik$ratio)
+ratio_max <- wynik$ratio[idx_ratio_max]
+accident_ratio_max <- wynik$accident_type[idx_ratio_max]
+suma_ratio_max <- wynik$suma[idx_ratio_max]
+
+idx_ratio_min <- which.min(wynik$ratio)
+ratio_min <- wynik$ratio[idx_ratio_min]
+accident_ratio_min <- wynik$accident_type[idx_ratio_min]
+suma_ratio_min <- wynik$suma[idx_ratio_min]
+```
+
+Dla najczęściej pojawiającego się rodzaju wypadku, jakim jest `r accident_suma_max`, `r ratio_suma_max * 100`% klientów posiada ubezpieczenie pokrywające koszty związane z tym wypadkiem. Dla wypadku: "`r accident_ratio_max`" stosunek klientów ubezpieczonych do wszystkich klientów, którzy tego wypadku doświadczyli, jest największy i wynosi `r ratio_max * 100`%. Liczba tych wypadków wynosi `r suma_ratio_max`. Z kolei klienci najrzadziej posiadają ubezpieczenie na `r accident_ratio_min` w stosunku do liczby wypadków tego typu.
 
 ### Czy wycieczki, którym klienci wystawiają najwyższe oceny, są również najchętniej wybierane?
 

@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.39">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Raport</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="Raport_files/libs/clipboard/clipboard.min.js"></script>
+<script src="Raport_files/libs/quarto-html/quarto.js"></script>
+<script src="Raport_files/libs/quarto-html/popper.min.js"></script>
+<script src="Raport_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="Raport_files/libs/quarto-html/anchor.min.js"></script>
+<link href="Raport_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="Raport_files/libs/quarto-html/quarto-syntax-highlighting-e26003cea8cd680ca0c55a263523d882.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="Raport_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="Raport_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="Raport_files/libs/bootstrap/bootstrap-8a79a254b8e706d3c925cde0a310d4f0.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Raport</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="analiza-danych-firmy-space-u" class="level1">
+<h1>Analiza danych firmy „Space-U”</h1>
+<p>Niniejszy raport został wykonany na zlecenie firmy „Space-U”, organizującej konsumenckie załogowe loty kosmiczne, a w szczególności wycieczki z jasną i ciemną stroną mocy w świecie Star Wars. Celem raportu jest analiza danych zebranych przez firmę podczas 2 lat obecności na rynku, która pozwoli na wyciągnięcie wniosków na temat dotychczasowej działalności: związanych z nią kosztów oraz zysków, a także stosunku klientów do proponowanej oferty. Dzięki temu, możliwe będzie wskazanie kierunku rozwoju dla firmy w najbliższej przyszłości.</p>
+<p>Podczas analizy posłużymy się następującymi pytaniami badawczymi:</p>
+<ul>
+<li>Które z proponowanych przez firmę rodzajów wycieczek cieszą się największą popularnością? Jak kształtuje się ich bilans zysków i strat? Czy są dla firmy opłacalne?</li>
+<li>Czy na podstawie wykresu liczby obsłużonych klientów w każdym miesiącu działalności firmy możemy wyciągnąć wnioski, że firma się rozwija lub podupada?</li>
+<li>Po których z proponowanych wycieczek klienci są skłonni wybrać się na kolejne, a po których nie wracają do firmy? Czy można na tej podstawie wycofać niektóre wycieczki z oferty?</li>
+<li>Który z typów wycieczek cieszy się większą popularnością – wycieczki z jasną czy ciemną stroną mocy?</li>
+<li>Jak często podczas wyjazdów zdarzają się wypadki konkretnych typów i jaka część klientów jest ubezpieczona na wypadek ich wystąpienia?</li>
+<li>Czy wycieczki, którym klienci wystawiają najwyższe oceny, są również najchętniej wybierane?</li>
+<li>Którzy spośród naszych pracowników (pilot i przewodnik) najczęściej latali wspólnie na wycieczki?</li>
+</ul>
+<section id="analiza" class="level2">
+<h2 class="anchored" data-anchor-id="analiza">Analiza</h2>
+<section id="które-z-proponowanych-przez-firmę-rodzajów-wycieczek-cieszą-się-największą-popularnością-jak-kształtuje-się-ich-bilans-zysków-i-strat-czy-są-dla-firmy-opłacalne" class="level3">
+<h3 class="anchored" data-anchor-id="które-z-proponowanych-przez-firmę-rodzajów-wycieczek-cieszą-się-największą-popularnością-jak-kształtuje-się-ich-bilans-zysków-i-strat-czy-są-dla-firmy-opłacalne">Które z proponowanych przez firmę rodzajów wycieczek cieszą się największą popularnością? Jak kształtuje się ich bilans zysków i strat? Czy są dla firmy opłacalne?</h3>
+<p>Jednym z kluczowych elementów działalności firmy turystycznej jest dostosowywanie oferty do potrzeb i preferencji klientów. Dlatego analiza popularności poszczególnych rodzajów wycieczek jest niezwykle istotna z punktu widzenia planowania przyszłych działań marketingowych oraz rozwoju oferty. Pozwala to nie tylko na optymalizację zasobów, ale również na zwiększenie satysfakcji klientów poprzez oferowanie wyjazdów, które cieszą się największym zainteresowaniem.</p>
+<p>Na podstawie danych zgromadzonych w bazie danych, możliwe było określenie, które wycieczki cieszyły się największą popularnością wśród klientów. Spójrzmy teraz na liczbę zorganizowanych lotów na poszczególne planety.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Raport_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="864"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Łącznie zorganizowana liczba wylotów wynosi 28. Najpopularniejsza wycieczka pod względem liczby wylotów to: Głębie oceanów, z liczbą wylotów 6, natomiast zyskująca dopiero popularność okazała się: Jaskinie zaginionych, z liczbą wylotów 3.</p>
+<p>Teraz możemy zobaczyć, jak wygląda to w przypadku ilości obsłużonych podróżnych.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Raport_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="864"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Łącznie firma obsłużyła 200 klientów. Najpopularniejsza wycieczka pod względem liczby klientów to: Głębie oceanów, z liczbą klientów 51, natomiast zyskująca dopiero popularność okazała się: Kosmiczne SPA, gdzie zdecydowało się na nią tyle osób: 20.</p>
+<section id="bilans-zysków-i-strat-poszczególnych-rodzajów-wycieczek" class="level4">
+<h4 class="anchored" data-anchor-id="bilans-zysków-i-strat-poszczególnych-rodzajów-wycieczek">Bilans zysków i strat poszczególnych rodzajów wycieczek</h4>
+<p>Analiza bilansu zysków i strat dla różnych typów wycieczek oferowanych przez firmę stanowi kluczowy element oceny rentowności działalności. Pozwala ona nie tylko ocenić, które rodzaje wycieczek generują największe przychody, ale również które wiążą się z najwyższymi kosztami operacyjnymi, co ma bezpośredni wpływ na ostateczny zysk netto.</p>
+<p>W ramach analizy zestawiono przychody uzyskane z tytułu sprzedaży konkretnych rodzajów wycieczek z odpowiadającymi im kosztami – takimi jak zakwaterowanie, wyżywienie, opłaty przewodników, transport, naprawy pojazdów czy wydatki logistyczne. Dzięki temu możliwe było określenie, które typy wyjazdów są najbardziej opłacalne, a które przynoszą mniejsze zyski lub wręcz straty.</p>
+<p>W tym celu posłużmy się najpierw średnią ceną wycieczki.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Raport_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="1152"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>W celu uzyskania pełniejszego obrazu rentowności działalności firmy, przeprowadzono także analizę łącznych zysków generowanych przez wycieczki do poszczególnych planet, z uwzględnieniem liczby uczestników. W odróżnieniu od wcześniejszego zestawienia, które bazowało na średnich wartościach dla jednej wycieczki (jeden wylot), niniejsze podsumowanie uwzględnia realną skalę sprzedaży – czyli ilość podróżnych, którzy skorzystali z każdej z ofert. Takie podejście pozwala precyzyjnie określić, które kierunki nie tylko są popularne, ale również najbardziej dochodowe w ujęciu globalnym.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Raport_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="1152"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="ostateczny-bilans-finansowy" class="level4">
+<h4 class="anchored" data-anchor-id="ostateczny-bilans-finansowy">Ostateczny bilans finansowy</h4>
+<p>W końcowym etapie analizy działalności firmy turystycznej dokonano całościowego podsumowania bilansu finansowego, obejmującego wszystkie kluczowe kategorie wpływające na rentowność przedsiębiorstwa. Zestawiono trzy główne elementy: koszty, przychody oraz zysk.</p>
+<p>W skład całkowitych kosztów weszły:</p>
+<ul>
+<li><p>Koszty organizacji wyjazdów,</p></li>
+<li><p>Koszty utrzymania klientów podczas wycieczki,</p></li>
+<li><p>Koszty utrzymania pracowników.</p></li>
+</ul>
+<p>Przychody uwzględniają wszystkie wpływy uzyskane od klientów za zakupione wycieczki, bez względu na ich rodzaj czy kierunek. Dzięki temu możliwe było określenie ogólnej wartości sprzedaży usług turystycznych w analizowanym okresie.</p>
+<p>Zysk został obliczony jako różnica między całkowitymi przychodami a sumą wszystkich kosztów – zarówno bezpośrednich (organizacja wyjazdów), jak i pośrednich (utrzymanie pracowników).</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Raport_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="864"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Ostatecznie uzyskano:</p>
+<ul>
+<li>Koszt organizacji lotów wyniósł 235 924. Obejmuje on głównie wydatki związane z transportem oraz logistyką podróży.</li>
+<li>Koszt utrzymania klientów podczas wycieczek wyniósł 3 131 250. W skład tej kategorii wchodzą m.in. zakwaterowanie, wyżywienie, usługi przewodników i atrakcje w ramach programu wycieczki.</li>
+<li>Wypłaty dla pracowników stanowiły 1 403 725.</li>
+</ul>
+<p>Łącznie koszty operacyjne firmy osiągnęły poziom 4 770 899.<br>
+Z kolei przychód uzyskany ze sprzedaży wycieczek wyniósł 8 430 000.<br>
+Na tej podstawie obliczono zysk firmy, który wyniósł 3 659 101.</p>
+</section>
+</section>
+<section id="czy-na-podstawie-wykresu-liczby-obsłużonych-klientów-w-każdym-miesiącu-działalności-firmy-możemy-wyciągnąć-wnioski-że-firma-się-rozwija-lub-podupada" class="level3">
+<h3 class="anchored" data-anchor-id="czy-na-podstawie-wykresu-liczby-obsłużonych-klientów-w-każdym-miesiącu-działalności-firmy-możemy-wyciągnąć-wnioski-że-firma-się-rozwija-lub-podupada">Czy na podstawie wykresu liczby obsłużonych klientów w każdym miesiącu działalności firmy możemy wyciągnąć wnioski, że firma się rozwija lub podupada?</h3>
+<p>Celem przeprowadzonej analizy jest sprawdzenie, czy na podstawie wykresu liczby obsłużonych klientów w poszczególnych miesiącach można ocenić, czy firma się rozwija, czy podupada. W tym celu dane zostały przedstawione na wykresach, które umożliwiają identyfikowanie trendów oraz zmian w liczbie klientów na przestrzeni czasu.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Raport_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="864"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Porównując dane na tle lat możemy stwierdzić, że z roku na rok w naszej firmie przybywa coraz więcej klientów. W roku 2099 było 151 klientów. To o 102 klientów więcejniż w roku 2098 .</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Raport_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="864"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>W roku 2099 najwięcej klientów skorzystało z usługi w 6 miesiącu. Dla porównania w roku 2098 najbardziej zyskownym miesiącem był lipiec . Sugeruje to, że z roku na rok do firmy przybywa coraz więcej klientów.</p>
+</section>
+<section id="po-których-z-proponowanych-wycieczek-klienci-są-skłonni-wybrać-się-na-kolejne-a-po-których-nie-wracają-do-firmy-czy-można-na-tej-podstawie-wycofać-niektóre-wycieczki-z-oferty" class="level3">
+<h3 class="anchored" data-anchor-id="po-których-z-proponowanych-wycieczek-klienci-są-skłonni-wybrać-się-na-kolejne-a-po-których-nie-wracają-do-firmy-czy-można-na-tej-podstawie-wycofać-niektóre-wycieczki-z-oferty">Po których z proponowanych wycieczek klienci są skłonni wybrać się na kolejne, a po których nie wracają do firmy? Czy można na tej podstawie wycofać niektóre wycieczki z oferty?</h3>
+<p>Kolejne zagadnienie dotyczy badania chęci wybierania się klientów na kolejne wycieczki z firmą. W tym celu klienci zostali podzieleni na 2 grupy: tych, którzy w ciągu 2 lat działalności „Space-U” wybrali się tylko na jeden wyjazd, oraz tych, którzy odwiedzili kilka miejsc. Dla każdej z grup zliczono wycieczki, które wybrano podczas pierwszych wylotów – pierwsze wrażenia zdecydowały o tym, czy klienci ponownie obdarzyli firmę zaufaniem, czy też nie.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Raport_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="576"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Klienci, którzy zdecydowali się wziąć udział w więcej niż jednym wyjeździe, najczęściej wykupowali za pierwszym razem następujące wycieczki: Escape Room, Jaskinie zaginionych, Survival: Awaria 09. Najpopularniejszą wycieczką wśród nich była wycieczka o nazwie Escape Room, na którą wybrało się 8 klientów. Może to oznaczać, że zwiedzającym spodobał się klimat wycieczki, a w planie firmy na najbliższy czas należy uwzględnić organizację większej liczby wycieczek tego typu bądź wprowadzić do oferty więcej rodzajów wyjazdów w podobnym klimacie.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Raport_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="576"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Klienci, którzy nie zdecydowali się ponownie wziąć udziału w wyjeździe organizowanym przez „Space-U”, najczęściej wykupowali za pierwszym razem następujące wycieczki: Głębie oceanów, Survival: Awaria 09, Jaskinie zaginionych. Najczęściej wybieraną wśród nich wycieczką była wycieczka o nazwie Głębie oceanów, na którą wybrało się 49 klientów. Może to oznaczać, że zaproponowana wycieczka nie spotyka się z pozytywnym odbiorem wszystkich klientów, zatem należy wprowadzić zmiany w jej plan. W przypadku dalszego braku zainteresowania kolejnymi wyjazdami z firmą wśród klientów, którzy wybrali się na wycieczkę tego typu, należy zastanowić się nad wycofaniem wycieczki z oferty i zastąpieniem jej inną propozycją.</p>
+</section>
+<section id="który-z-typów-wycieczek-cieszy-się-większą-popularnością-wycieczki-z-jasną-czy-ciemną-stroną-mocy" class="level3">
+<h3 class="anchored" data-anchor-id="który-z-typów-wycieczek-cieszy-się-większą-popularnością-wycieczki-z-jasną-czy-ciemną-stroną-mocy">Który z typów wycieczek cieszy się większą popularnością – wycieczki z jasną czy ciemną stroną mocy?</h3>
+<p>Firmę „Space-U” interesuje również, która ze stron mocy cieszy się większą popularnością wśród turystów - czy więcej osób wybiera się na wycieczki z jasną, czy z ciemną stroną mocy? Odpowiedź na to pytanie pomoże firmie lepiej dopasować ofertę wycieczek do oczekiwań klientów w najbliższej przyszłości. Aby uzyskać odpowiedź, liczymy, ile było rezerwacji wycieczek każdego z dwóch typów.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Raport_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="576"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Z powyższego wykresu odczytać można, że to jasna strona mocy cieszy się większą popularnością wśród klientów firmy - na wycieczki tego typu wybrało się 122 klientów. Dla porównania, wycieczki oznaczone jako “ciemna strona mocy” wybrało 78 klientów. Wobec dużego zainteresowania klientów wyjazdami oznaczonymi jako “jasna strona mocy”, można wprowadzić do oferty firmy więcej wycieczek tego typu.</p>
+</section>
+<section id="jak-często-podczas-wyjazdów-zdarzają-się-wypadki-konkretnych-typów-i-jaka-część-klientów-jest-ubezpieczona-na-wypadek-ich-wystąpienia" class="level3">
+<h3 class="anchored" data-anchor-id="jak-często-podczas-wyjazdów-zdarzają-się-wypadki-konkretnych-typów-i-jaka-część-klientów-jest-ubezpieczona-na-wypadek-ich-wystąpienia">Jak często podczas wyjazdów zdarzają się wypadki konkretnych typów i jaka część klientów jest ubezpieczona na wypadek ich wystąpienia?</h3>
+<p>Celem przeprowadzonej analizy jest sprawdzenie, jak często podczas podróży dochodzi do wypadków poszczególnych typów oraz jak duża część klientów jest ubezpieczona od skutków takiej sytuacji. W tym celu dane zostały przedstawione na wykresie, umożliwiającym identyfikowanie najczęściej występujących wypadków oraz ocenę stopnia ubezpieczenia klientów w obliczu takiego ryzyka.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Raport_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Powyższy wykres przedstawia liczbę wypadków podczas podróży w zależności od rodzaju wypadku. Jak możemy zauważyć najczęściej pojawiającym się wypadkiem jest Wypadek medyczny. Sugeruje nam to, że na ten rodzaj wypadku powinniśmy jako firma zalecać ubezpieczenie się naszym klientom.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Raport_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Dla najczęściej pojawiającego się rodzaju wypadku, jakim jest Wypadek medyczny, 64.2857143% klientów posiada ubezpieczenie pokrywające koszty związane z tym wypadkiem. Dla wypadku: “Pomoc w przypadku utraty dokumentów” stosunek klientów ubezpieczonych do wszystkich klientów, którzy tego wypadku doświadczyli, jest największy i wynosi 100%. Liczba tych wypadków wynosi 2. Z kolei klienci najrzadziej posiadają ubezpieczenie na Klonowanie w razie śmierci w stosunku do liczby wypadków tego typu.</p>
+</section>
+<section id="czy-wycieczki-którym-klienci-wystawiają-najwyższe-oceny-są-również-najchętniej-wybierane" class="level3">
+<h3 class="anchored" data-anchor-id="czy-wycieczki-którym-klienci-wystawiają-najwyższe-oceny-są-również-najchętniej-wybierane">Czy wycieczki, którym klienci wystawiają najwyższe oceny, są również najchętniej wybierane?</h3>
+<p>Oceny wystawiane przez klientów po zakończonych wycieczkach stanowią istotny element oceny jakości oferty turystycznej. Są one nie tylko subiektywnym wyrazem zadowolenia uczestników, ale również cennym źródłem informacji dla firmy, pozwalającym na identyfikację mocnych i słabych stron. Dzięki gromadzeniu ocen firma może monitorować poziom satysfakcji uczestników, identyfikować najbardziej doceniane elementy oferty (np. konkretne kierunki, przewodników, atrakcje) oraz podejmować trafne decyzje dotyczące udoskonalania wyjazdów. Wysokie oceny stanowią również wartość marketingową – mogą budować zaufanie nowych klientów i pozytywnie wpływać na wizerunek firmy. Klienci firmy Space-U mają możliwość oceny wycieczki w pięciostopiowej skali (1-5). Przyjrzyjmy się jak jakie mają odczucia.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Raport_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="864"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Najlepiej ocenianą wycieczką jest Escape Room, z oceną 4.15. Najmniej do gustu przypadła za to wycieczka Survival: Awaria 09, gdzie ocena wyniosła 3.25.</p>
+<p>Dla porównania spójrzmy na wykres popularności, który już wcześniej widzieliśmy.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Raport_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="864"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="którzy-spośród-naszych-pracowników-pilot-i-przewodnik-najczęściej-latali-wspólnie-na-wycieczki" class="level3">
+<h3 class="anchored" data-anchor-id="którzy-spośród-naszych-pracowników-pilot-i-przewodnik-najczęściej-latali-wspólnie-na-wycieczki">Którzy spośród naszych pracowników (pilot i przewodnik) najczęściej latali wspólnie na wycieczki?</h3>
+<p>Ostatnie pytanie dotyczy załogi statków - którzy spośród pracowników firmy najczęściej wybierają się wspólnie na wycieczki. Aby na nie odpowiedzieć, korzystamy z tabeli, w której opisano wszystkie zorganizowane wyjazdy - wybieramy wszystkie możliwe połączenia pilotów i przewodników oraz liczymy, jak często wyruszają ze sobą w podróże.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Raport_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="576"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Z wykresu powyżej możemy odczytać, że Han Solo, Sheev Palpatine są członkami załogi, którzy wylatują ze sobą na wycieczki najczęściej. Może to oznaczać, że zgłaszają się do wyjazdów wspólnie, ponieważ dobrze im się współpracuje. Firma powinna wziąć to pod uwagę podczas planowania kolejnych lotów - jeżeli relacje pomiędzy pracownikami są dobre, znajduje to przełożenie na atmosferę całej wycieczki, a dzięki temu - również na pozytywną opinię klientów.</p>
+</section>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
