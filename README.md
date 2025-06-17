@@ -3,7 +3,7 @@
 
 **Siedziba firmy**: Naboo
 
-**Rok założenia**: 03.01.2098
+**Rok założenia**: 01.03.2098
 
 **Obecny rok operacyjny**: 01.01.2100
 
