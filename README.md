@@ -18,6 +18,7 @@ Projekt oparty jest na relacyjnej bazie danych, do której przygotowano pełny m
 - *StarWars.json.vuerd*:	Schemat ERD bazy danych.
 - *bazy_projekt.xlsx*:	Wstępne wyliczenia kosztów, które pomogły ustalić ceny oferowanych usług.
 - *customer_names.csv*:	Lista imion i nazwisk potencjalnych klientów - oryginalne dane pobrano z [Kaggle](https://www.kaggle.com/datasets/sushamnandi/customer-names-dataset?resource=download).
+- *Raport.qmd*: Analiza działalności firmy (m.in. popularność wycieczek, bilans kosztów, ocena ofert)
 
 ## 👥 Autorzy projektu
 Projekt został zrealizowany we współpracy z: [Magda](https://github.com/MagdalenaSudol), [Magda](https://github.com/MagdalenaRys), [Zuzia](https://github.com/prog-zuzanna-sosnowska), [Paweł](https://github.com/Pawel-Stepien1).
