@@ -5,6 +5,7 @@ format:
     toc: true
     toc-title: "Spis treści"
     toc-depth: 4
+    css: styles.css
 editor: visual
 execute:
   eval: true
@@ -919,7 +920,7 @@ Oceny wystawiane przez klientów po zakończonych wycieczkach są istotnym wska�
 ```{r}
 #| echo: false
 #| warning: false
-#| fig.width: 6
+#| fig.width: 7
 #| fig.height: 4
 #| fig.align: "center"
 #| fig-cap: "Wykres 13: Średnia ocena wycieczki w skali 1-5"
@@ -944,11 +945,11 @@ srednie_oceny <- df %>%
 
 # Wycieczka z najlepszą oceną
 najlepsza_wycieczka <- srednie_oceny %>%
-  slice_max(order_by = srednia_ocena, n = 1)
+  slice_max(order_by = srednia_ocena, n = 1, with_ties = FALSE)
 
 # Wycieczka z najgorszą oceną
 najgorsza_wycieczka <- srednie_oceny %>%
-  slice_min(order_by = srednia_ocena, n = 1)
+  slice_min(order_by = srednia_ocena, n = 1, with_ties = FALSE)
 
 # Wykres
 ggplot(srednie_oceny, aes(x = reorder(trip_name, -srednia_ocena), y = srednia_ocena, fill = force_side)) +
