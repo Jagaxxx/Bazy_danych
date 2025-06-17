@@ -64,7 +64,7 @@ Na podstawie danych zgromadzonych w bazie danych, możliwe było określenie, kt
 #| fig.width: 6
 #| fig.height: 4
 #| fig.align: "center"
-#| fig-cap: "Wykres 1: Liczba lotów przypadających na poszczególne wycieczki"
+#| fig-cap: "Wykres 1. Liczba lotów przypadających na poszczególne wycieczki"
 
 # Pobieramy dane
 query1_1 <- "
@@ -130,7 +130,7 @@ Sprawdźmy jak wygląda to w przypadku ilości obsłużonych podróżnych.
 #| fig.width: 6
 #| fig.height: 4
 #| fig.align: "center"
-#| fig-cap: "Wykres 2: Liczba klientów przypadających na poszczególne wycieczki"
+#| fig-cap: "Wykres 2. Liczba klientów przypadających na poszczególne wycieczki"
 
 df <- dbGetQuery(con, "
   SELECT 
@@ -200,7 +200,7 @@ W tym celu posłużmy się najpierw średnią ceną wycieczki.
 #| fig.width: 8
 #| fig.height: 6
 #| fig.align: "center"
-#| fig-cap: "Wykres 3: Średnie koszty, przychody i zysk z każdej wycieczki"
+#| fig-cap: "Wykres 3. Średnie koszty, przychody i zysk z każdej wycieczki"
 
 # Pobranie danych
 query <- "
@@ -303,7 +303,7 @@ W celu uzyskania pełniejszego obrazu rentowności działalności firmy, przepro
 #| fig.width: 8
 #| fig.height: 6
 #| fig.align: "center"
-#| fig-cap: "Wykres 4: Suma kosztów, przychodów i zysków z każdej wycieczki"
+#| fig-cap: "Wykres 4. Suma kosztów, przychodów i zysków z każdej wycieczki"
 
 query <- "
 SELECT 
@@ -421,7 +421,7 @@ Zysk został obliczony jako różnica między przychodami a kosztami.
 #| fig.width: 6
 #| fig.height: 4
 #| fig.align: "center"
-#| fig-cap: "Wykres 5: Podsumowanie finansowe firmy - łączne koszty, przychód i zysk"
+#| fig-cap: "Wykres 5. Podsumowanie finansowe firmy - łączne koszty, przychód i zysk"
 
 query <- "
 SELECT 
@@ -548,7 +548,7 @@ Celem przeprowadzonej analizy jest sprawdzenie, czy na podstawie wykresu liczby 
 #| fig.width: 6
 #| fig.height: 4
 #| fig.align: "center"
-#| fig-cap: "Wykres 6: Liczba klientów w podziale na lata"
+#| fig-cap: "Wykres 6. Liczba klientów w podziale na lata"
 
 query_2g_2 <- "SELECT COUNT(p.id_customer) AS liczba_klientow,
                  DATE_FORMAT(spf.departure_date, '%Y') AS rok
@@ -602,7 +602,7 @@ Porównując dane na tle lat `r str`
 #| fig.width: 6
 #| fig.height: 4
 #| fig.align: "center"
-#| fig-cap: "Wykres 7: Liczba klientów według miesiąca"
+#| fig-cap: "Wykres 7. Liczba klientów według miesiąca"
 
 query_2g <- "SELECT COUNT(p.id_customer) AS liczba_klientow,
                  DATE_FORMAT(spf.departure_date, '%Y-%m') AS data
@@ -668,7 +668,7 @@ Kolejnym obszarem analizy była skłonność klientów do ponownego skorzystania
 #| fig.width: 6
 #| fig.height: 4
 #| fig.align: "center"
-#| fig-cap: "Wykres 8: Liczba klientów, którzy wrócili do firmy po danej wycieczce"
+#| fig-cap: "Wykres 8. Liczba klientów, którzy wrócili do firmy po danej wycieczce"
 
 query3_1 <- "WITH more_than_one_trip AS (SELECT payment.id_customer AS id_customer, spaceflight.id_trip AS id_trip, trip_type.trip_name AS trip_name
 FROM payment INNER JOIN spaceflight ON payment.id_spaceflight = spaceflight.id_spaceflight INNER JOIN trip_type ON spaceflight.id_trip = trip_type.id_trip
@@ -722,7 +722,7 @@ Analizując powracających klientów, zauważyliśmy, że osoby, które zdecydow
 #| fig.width: 6
 #| fig.height: 4
 #| fig.align: "center"
-#| fig-cap: "Wykres 9: Liczba klientów, którzy nie wrócili do firmy po danej wycieczce"
+#| fig-cap: "Wykres 9. Liczba klientów, którzy nie wrócili do firmy po danej wycieczce"
 
 query3_2 <- "WITH one_trip AS (SELECT payment.id_customer AS id_customer, spaceflight.id_trip AS id_trip, trip_type.trip_name AS trip_name
 FROM payment INNER JOIN spaceflight ON payment.id_spaceflight = spaceflight.id_spaceflight INNER JOIN trip_type ON spaceflight.id_trip = trip_type.id_trip
@@ -771,7 +771,7 @@ Firmę „Space-U” interesuje również, która ze stron mocy cieszy się wię
 #| fig.width: 6
 #| fig.height: 4
 #| fig.align: "center"
-#| fig-cap: "Wykres 10: Liczba klientów w zależności od strony mocy"
+#| fig-cap: "Wykres 10. Liczba klientów w zależności od strony mocy"
 
 query4 <- "SELECT force_side AS strona_mocy, COUNT(*) AS liczba_klientów
 FROM spaceflight INNER JOIN trip_type ON spaceflight.id_trip = trip_type.id_trip
@@ -812,7 +812,7 @@ Celem przeprowadzonej analizy jest sprawdzenie, jak często podczas podróży do
 #| echo: false
 #| warning: false
 #| fig.align: "center"
-#| fig-cap: "Wykres 11: Liczba wypadków podczas podróży"
+#| fig-cap: "Wykres 11. Liczba wypadków podczas podróży"
 
 query_2 <- "SELECT COUNT(ar.id_accident) AS liczba_wypadkow, at.accident_type AS rodzaj_wypadku
 FROM accident_report AS ar
@@ -820,6 +820,8 @@ INNER JOIN accident_type AS at ON ar.id_accident = at.id_accident
 GROUP BY ar.id_accident;"
 
 df <- dbGetQuery(con, query_2)
+df$liczba_wypadkow <- as.integer(df$liczba_wypadkow)
+
 
 ggplot(df, aes(x = rodzaj_wypadku, y = liczba_wypadkow)) + 
   geom_col(fill="lightblue") + 
@@ -839,7 +841,7 @@ Powyższy wykres przedstawia liczbę wypadków podczas podróży w zależności 
 #| echo: false
 #| warning: false
 #| fig.align: "center"
-#| fig-cap: "Wykres 12: Liczba wypadków według rodzaju"
+#| fig-cap: "Wykres 12. Liczba wypadków według rodzaju"
 
 query_2_2 <- "SELECT
     ar.id_report,
@@ -908,7 +910,7 @@ suma_ratio_min <- wynik$suma[idx_ratio_min]
 
 ```
 
-Dla najczęściej pojawiającego się rodzaju wypadku, jakim jest "`r accident_suma_max`", `r round(ratio_suma_max * 100, 2)`% klientów posiada ubezpieczenie pokrywające koszty związane z tym wypadkiem. Dla wypadku: "`r accident_ratio_max`" stosunek klientów ubezpieczonych do wszystkich klientów, którzy tego wypadku doświadczyli, jest największy i wynosi `r ratio_max * 100`%. Liczba tych wypadków wynosi `r suma_ratio_max`. Z kolei klienci najrzadziej posiadają ubezpieczenie na "`r accident_ratio_min`" w stosunku do liczby wypadków tego typu.
+Dla najczęściej pojawiającego się rodzaju wypadku, jakim jest "`r accident_suma_max`", `r round(ratio_suma_max * 100, 2)`% klientów posiada ubezpieczenie pokrywające koszty związane z tym wypadkiem. Dla wypadku: "`r accident_ratio_max`" stosunek klientów ubezpieczonych do wszystkich klientów, którzy tego wypadku doświadczyli, jest największy i wynosi `r round(ratio_max * 100,2)`%. Liczba tych wypadków wynosi `r suma_ratio_max`. Z kolei klienci najrzadziej posiadają ubezpieczenie na "`r accident_ratio_min`" w stosunku do liczby wypadków tego typu.
 
 ### 7. Ocena ofert
 
@@ -922,7 +924,7 @@ Oceny wystawiane przez klientów po zakończonych wycieczkach są istotnym wska�
 #| fig.width: 6
 #| fig.height: 4
 #| fig.align: "center"
-#| fig-cap: "Wykres 13: Średnia ocena wycieczki w skali 1-5"
+#| fig-cap: "Wykres 13. Średnia ocena wycieczki w skali 1-5"
 
 # Pobieramy dane
 df <- dbGetQuery(con, "
@@ -995,7 +997,7 @@ W ostatnim etapie analizy przyjrzano się składom załóg uczestniczących w wy
 #| fig.width: 6
 #| fig.height: 6
 #| fig.align: "center"
-#| fig-cap: "Wykres 14: Heatmapa wspólnych wyjazdów wybranych członków załogi"
+#| fig-cap: "Wykres 14. Heatmapa wspólnych wyjazdów wybranych członków załogi"
 
 query7 <- "SELECT s.id_pilot AS id_pilota, s.id_guide AS id_przewodnika, CONCAT(e1.first_name, ' ', e1.last_name, ', ', e2.first_name, ' ', 
 e2.last_name) AS imiona, COUNT(*) AS liczba_wyjazdów
