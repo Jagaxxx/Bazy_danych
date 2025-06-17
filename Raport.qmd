@@ -921,8 +921,8 @@ Oceny wystawiane przez klientów po zakończonych wycieczkach są istotnym wska�
 ```{r}
 #| echo: false
 #| warning: false
-#| fig.width: 6
-#| fig.height: 4
+#| fig.width: 7
+#| fig.height: 5
 #| fig.align: "center"
 #| fig-cap: "Wykres 13. Średnia ocena wycieczki w skali 1-5"
 
@@ -968,7 +968,8 @@ ggplot(srednie_oceny, aes(x = reorder(trip_name, -srednia_ocena), y = srednia_oc
     plot.title = element_text(size = 11, face = "bold", hjust = 0.5),
     axis.title = element_text(size = 9),
     axis.text.x = element_text(angle = 45, hjust = 1, size = 9),
-    axis.text.y = element_text(size = 8)
+    axis.text.y = element_text(size = 8),
+    plot.margin = margin(1, 1, 2, 2, "cm") 
   )
 ```
 
@@ -983,7 +984,7 @@ czy_najlepsza_jest_najpopularniejsza <- najlepsza_wycieczka$trip_name == najwiec
 
 ```
 
-`r if (czy_najlepsza_jest_najpopularniejsza) {   "Jak możemy zauważyć, najlepiej oceniana wycieczka pokrywa się z tą, która cieszy się największą popularnością wśród klientów. Potwierdza to wykres z części **2.2**, przedstawiający liczbę uczestników poszczególnych wycieczek." } else {   "Warto zauważyć, że najlepiej oceniana wycieczka nie jest jednocześnie tą najczęściej wybieraną przez klientów. Potwierdza to wykres z części **2.2**, przedstawiający liczbę uczestników poszczególnych wycieczek. Może to oznaczać, że choć wycieczka cieszy się dużym uznaniem wśród uczestników, to jej charakter, cena lub dostępność sprawiają, że trafia do węższego grona." }`
+`r if (czy_najlepsza_jest_najpopularniejsza) {   "Jak możemy zauważyć, najlepiej oceniana wycieczka pokrywa się z tą, która cieszy się największą popularnością wśród klientów. Potwierdza to **wykres 2.**, przedstawiający liczbę uczestników poszczególnych wycieczek." } else {   "Warto zauważyć, że najlepiej oceniana wycieczka nie jest jednocześnie tą najczęściej wybieraną przez klientów. Potwierdza to **wykres 2.**, przedstawiający liczbę uczestników poszczególnych wycieczek. Może to oznaczać, że choć wycieczka cieszy się dużym uznaniem wśród uczestników, to jej charakter, cena lub dostępność sprawiają, że trafia do węższego grona." }`
 
 ### 8. Załoga i współpraca
 
