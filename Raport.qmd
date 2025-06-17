@@ -64,6 +64,7 @@ Na podstawie danych zgromadzonych w bazie danych, możliwe było określenie, kt
 #| fig.width: 6
 #| fig.height: 4
 #| fig.align: "center"
+#| fig-cap: "Wykres 1: Liczba lotów przypadających na poszczególne wycieczki"
 
 # Pobieramy dane
 query1_1 <- "
@@ -129,6 +130,7 @@ Sprawdźmy jak wygląda to w przypadku ilości obsłużonych podróżnych.
 #| fig.width: 6
 #| fig.height: 4
 #| fig.align: "center"
+#| fig-cap: "Wykres 2: Liczba klientów przypadających na poszczególne wycieczki"
 
 df <- dbGetQuery(con, "
   SELECT 
@@ -198,6 +200,7 @@ W tym celu posłużmy się najpierw średnią ceną wycieczki.
 #| fig.width: 8
 #| fig.height: 6
 #| fig.align: "center"
+#| fig-cap: "Wykres 3: Średnie koszty, przychody i zysk z każdej wycieczki"
 
 # Pobranie danych
 query <- "
@@ -300,6 +303,7 @@ W celu uzyskania pełniejszego obrazu rentowności działalności firmy, przepro
 #| fig.width: 8
 #| fig.height: 6
 #| fig.align: "center"
+#| fig-cap: "Wykres 4: Suma kosztów, przychodów i zysków z każdej wycieczki"
 
 query <- "
 SELECT 
@@ -397,7 +401,7 @@ ggplot(dane_long, aes(x = trip_name, y = wartosc, fill = typ)) +
 
 #### 2.4. Łączna dochodowość – analiza ogólna
 
-Na zakończenie analizy działalności firmy dokonano zestawienia podstawowych danych finansowych. Uwzględniono trzy kluczowe elementy: koszty, przychody oraz zysk. 
+Na zakończenie analizy działalności firmy dokonano zestawienia podstawowych danych finansowych. Uwzględniono trzy kluczowe elementy: koszty, przychody oraz zysk.
 
 Na całkowite koszty złożyły się:
 
@@ -417,6 +421,7 @@ Zysk został obliczony jako różnica między przychodami a kosztami.
 #| fig.width: 6
 #| fig.height: 4
 #| fig.align: "center"
+#| fig-cap: "Wykres 5: Podsumowanie finansowe firmy - łączne koszty, przychód i zysk"
 
 query <- "
 SELECT 
@@ -543,6 +548,7 @@ Celem przeprowadzonej analizy jest sprawdzenie, czy na podstawie wykresu liczby 
 #| fig.width: 6
 #| fig.height: 4
 #| fig.align: "center"
+#| fig-cap: "Wykres 6: Liczba klientów w podziale na lata"
 
 query_2g_2 <- "SELECT COUNT(p.id_customer) AS liczba_klientow,
                  DATE_FORMAT(spf.departure_date, '%Y') AS rok
@@ -596,6 +602,7 @@ Porównując dane na tle lat `r str`
 #| fig.width: 6
 #| fig.height: 4
 #| fig.align: "center"
+#| fig-cap: "Wykres 7: Liczba klientów według miesiąca"
 
 query_2g <- "SELECT COUNT(p.id_customer) AS liczba_klientow,
                  DATE_FORMAT(spf.departure_date, '%Y-%m') AS data
@@ -661,6 +668,7 @@ Kolejnym obszarem analizy była skłonność klientów do ponownego skorzystania
 #| fig.width: 6
 #| fig.height: 4
 #| fig.align: "center"
+#| fig-cap: "Wykres 8: Liczba klientów, którzy wrócili do firmy po danej wycieczce"
 
 query3_1 <- "WITH more_than_one_trip AS (SELECT payment.id_customer AS id_customer, spaceflight.id_trip AS id_trip, trip_type.trip_name AS trip_name
 FROM payment INNER JOIN spaceflight ON payment.id_spaceflight = spaceflight.id_spaceflight INNER JOIN trip_type ON spaceflight.id_trip = trip_type.id_trip
@@ -714,6 +722,7 @@ Analizując powracających klientów, zauważyliśmy, że osoby, które zdecydow
 #| fig.width: 6
 #| fig.height: 4
 #| fig.align: "center"
+#| fig-cap: "Wykres 9: Liczba klientów, którzy nie wrócili do firmy po danej wycieczce"
 
 query3_2 <- "WITH one_trip AS (SELECT payment.id_customer AS id_customer, spaceflight.id_trip AS id_trip, trip_type.trip_name AS trip_name
 FROM payment INNER JOIN spaceflight ON payment.id_spaceflight = spaceflight.id_spaceflight INNER JOIN trip_type ON spaceflight.id_trip = trip_type.id_trip
@@ -762,6 +771,7 @@ Firmę „Space-U” interesuje również, która ze stron mocy cieszy się wię
 #| fig.width: 6
 #| fig.height: 4
 #| fig.align: "center"
+#| fig-cap: "Wykres 10: Liczba klientów w zależności od strony mocy"
 
 query4 <- "SELECT force_side AS strona_mocy, COUNT(*) AS liczba_klientów
 FROM spaceflight INNER JOIN trip_type ON spaceflight.id_trip = trip_type.id_trip
@@ -802,6 +812,7 @@ Celem przeprowadzonej analizy jest sprawdzenie, jak często podczas podróży do
 #| echo: false
 #| warning: false
 #| fig.align: "center"
+#| fig-cap: "Wykres 11: Liczba wypadków podczas podróży"
 
 query_2 <- "SELECT COUNT(ar.id_accident) AS liczba_wypadkow, at.accident_type AS rodzaj_wypadku
 FROM accident_report AS ar
@@ -828,6 +839,7 @@ Powyższy wykres przedstawia liczbę wypadków podczas podróży w zależności 
 #| echo: false
 #| warning: false
 #| fig.align: "center"
+#| fig-cap: "Wykres 12: Liczba wypadków według rodzaju"
 
 query_2_2 <- "SELECT
     ar.id_report,
@@ -910,6 +922,7 @@ Oceny wystawiane przez klientów po zakończonych wycieczkach są istotnym wska�
 #| fig.width: 6
 #| fig.height: 4
 #| fig.align: "center"
+#| fig-cap: "Wykres 13: Średnia ocena wycieczki w skali 1-5"
 
 # Pobieramy dane
 df <- dbGetQuery(con, "
@@ -959,7 +972,6 @@ ggplot(srednie_oceny, aes(x = reorder(trip_name, -srednia_ocena), y = srednia_oc
 
 Najlepiej ocenianą wycieczką jest `r najlepsza_wycieczka[1]`, z oceną `r round(najlepsza_wycieczka[3],2)`. Najmniej do gustu przypadła za to wycieczka `r najgorsza_wycieczka[1]`, gdzie ocena wyniosła `r round(najgorsza_wycieczka[3],2)`.
 
-
 ```{r}
 #| echo: false
 #| warning: false
@@ -968,12 +980,8 @@ Najlepiej ocenianą wycieczką jest `r najlepsza_wycieczka[1]`, z oceną `r roun
 czy_najlepsza_jest_najpopularniejsza <- najlepsza_wycieczka$trip_name == najwiecej_klientow$trip_name
 
 ```
-`r if (czy_najlepsza_jest_najpopularniejsza) {
-  "Jak możemy zauważyć, najlepiej oceniana wycieczka pokrywa się z tą, która cieszy się największą popularnością wśród klientów. Potwierdza to wykres z części **2.2**, przedstawiający liczbę uczestników poszczególnych wycieczek."
-} else {
-  "Warto zauważyć, że najlepiej oceniana wycieczka nie jest jednocześnie tą najczęściej wybieraną przez klientów. Potwierdza to wykres z części **2.2**, przedstawiający liczbę uczestników poszczególnych wycieczek. Może to oznaczać, że choć wycieczka cieszy się dużym uznaniem wśród uczestników, to jej charakter, cena lub dostępność sprawiają, że trafia do węższego grona."
-}`
 
+`r if (czy_najlepsza_jest_najpopularniejsza) {   "Jak możemy zauważyć, najlepiej oceniana wycieczka pokrywa się z tą, która cieszy się największą popularnością wśród klientów. Potwierdza to wykres z części **2.2**, przedstawiający liczbę uczestników poszczególnych wycieczek." } else {   "Warto zauważyć, że najlepiej oceniana wycieczka nie jest jednocześnie tą najczęściej wybieraną przez klientów. Potwierdza to wykres z części **2.2**, przedstawiający liczbę uczestników poszczególnych wycieczek. Może to oznaczać, że choć wycieczka cieszy się dużym uznaniem wśród uczestników, to jej charakter, cena lub dostępność sprawiają, że trafia do węższego grona." }`
 
 ### 8. Załoga i współpraca
 
@@ -987,6 +995,7 @@ W ostatnim etapie analizy przyjrzano się składom załóg uczestniczących w wy
 #| fig.width: 6
 #| fig.height: 6
 #| fig.align: "center"
+#| fig-cap: "Wykres 14: Heatmapa wspólnych wyjazdów wybranych członków załogi"
 
 query7 <- "SELECT s.id_pilot AS id_pilota, s.id_guide AS id_przewodnika, CONCAT(e1.first_name, ' ', e1.last_name, ', ', e2.first_name, ' ', 
 e2.last_name) AS imiona, COUNT(*) AS liczba_wyjazdów
@@ -1025,13 +1034,13 @@ Dokonano analizy zysków i kosztów utrzymania, sprawdzono sezonowość popytu n
 
 Najważniejsze wnioski z badań to:
 
-- Analiza klientów powracających i jednorazowych pokazała, które wycieczki cieszą się największą lojalnością i które wymagają poprawy, by zwiększyć wskaźnik powrotów.
+-   Analiza klientów powracających i jednorazowych pokazała, które wycieczki cieszą się największą lojalnością i które wymagają poprawy, by zwiększyć wskaźnik powrotów.
 
-- Preferencje względem „strony mocy” ujawniły wyraźne zainteresowanie jedną stroną, co wskazuje na potrzebę rozbudowy oferty w tym kierunku.
+-   Preferencje względem „strony mocy” ujawniły wyraźne zainteresowanie jedną stroną, co wskazuje na potrzebę rozbudowy oferty w tym kierunku.
 
-- Bezpieczeństwo i ubezpieczenia wykazały, że nie wszyscy klienci mają odpowiednie zabezpieczenie na najczęściej występujące wypadki, co sugeruje konieczność lepszego informowania i dostosowania produktów ubezpieczeniowych.
+-   Bezpieczeństwo i ubezpieczenia wykazały, że nie wszyscy klienci mają odpowiednie zabezpieczenie na najczęściej występujące wypadki, co sugeruje konieczność lepszego informowania i dostosowania produktów ubezpieczeniowych.
 
-- Oceny wycieczek pozwoliły wskazać najlepsze i najsłabsze oferty, dając kierunek do optymalizacji programów wypraw.
+-   Oceny wycieczek pozwoliły wskazać najlepsze i najsłabsze oferty, dając kierunek do optymalizacji programów wypraw.
 
 Tak przeprowadzone badania umożliwiły pełniejsze zrozumienie funkcjonowania firmy oraz identyfikowanie obszarów wymagających uwagi lub zmian. Wyniki stanowią solidną podstawę do podejmowania skuteczniejszych decyzji zarządczych w zakresie organizacji wypraw w kosmos, pozwalając na lepsze dopasowanie oferty do oczekiwań klientów i zwiększenie satysfakcji oraz bezpieczeństwa uczestników.
 
