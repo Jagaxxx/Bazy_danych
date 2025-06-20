@@ -214,42 +214,52 @@ SELECT
   trip_type.trip_name,
   trip_type.daily_cost_per_participant,
   trip_type.customer_price_total,
-  payment.id_payment
+  payment.id_payment,
+  payment.id_insurance,
+  insurance.price AS insurance_price,
+  insurance.commission_rate
 FROM spaceflight
 JOIN trip_type ON spaceflight.id_trip = trip_type.id_trip
 LEFT JOIN payment ON spaceflight.id_spaceflight = payment.id_spaceflight
+LEFT JOIN insurance ON payment.id_insurance = insurance.id_insurance
 "
 
 df <- dbGetQuery(con, query)
 
-# Przetwarzanie dat i czasu trwania
+# Przetwarzanie dat i czasu trwania oraz obliczenie prowizji
 df <- df %>%
   mutate(
     departure_date = as.Date(departure_date),
     return_date = as.Date(return_date),
-    duration_days = as.numeric(return_date - departure_date)
+    duration_days = as.numeric(return_date - departure_date),
+    prowizja = insurance_price * commission_rate
   )
 
-# Liczba klientów dla każdego lotu
-liczba_klientow_df <- df %>%
+# Liczba klientów i suma prowizji dla każdego lotu
+lot_statystyki <- df %>%
   group_by(id_spaceflight) %>%
-  summarise(liczba_klientow = n(), .groups = "drop")
+  summarise(
+    liczba_klientow = n(),
+    suma_prowizji = sum(prowizja, na.rm = TRUE),
+    .groups = "drop"
+  )
 
-# Scalenie z oryginalną ramką i usunięcie duplikatów płatności
+# Scalenie z unikalnymi lotami i dołączenie statystyk
 df_unique <- df %>%
   distinct(id_spaceflight, .keep_all = TRUE) %>%
-  left_join(liczba_klientow_df, by = "id_spaceflight")
+  left_join(lot_statystyki, by = "id_spaceflight")
 
-# Koszty i przychody dla każdego lotu
+# Obliczenia kosztów i przychodów
 df_obliczone <- df_unique %>%
   mutate(
     koszt_organizacji = organization_cost,
     koszt_utrzymania = duration_days * daily_cost_per_participant * liczba_klientow,
     koszt_calkowity = koszt_organizacji + koszt_utrzymania,
-    przychod = liczba_klientow * customer_price_total
+    przychod_bilety = liczba_klientow * customer_price_total,
+    przychod = przychod_bilety + suma_prowizji
   )
 
-# Średnie wartości dla każdej wycieczki
+# Obliczenia średnich wartości dla każdej wycieczki
 srednie <- df_obliczone %>%
   group_by(trip_name) %>%
   summarise(
@@ -261,12 +271,12 @@ srednie <- df_obliczone %>%
     .groups = "drop"
   )
 
-# Long format
+# Przygotowanie danych do wykresu w formacie long
 dane_long <- srednie %>%
   select(trip_name, Koszty = sredni_koszt_lacznie, Przychód = sredni_przychod, Zysk = srednia_roznica) %>%
   pivot_longer(cols = -trip_name, names_to = "typ", values_to = "wartosc")
 
-# Wykres
+# Wykres słupkowy
 ggplot(dane_long, aes(x = trip_name, y = wartosc, fill = typ)) +
   geom_col(position = position_dodge(width = 0.9)) +
   geom_text(aes(label = ifelse(wartosc >= 1e6,
@@ -306,6 +316,7 @@ W celu uzyskania pełniejszego obrazu rentowności działalności firmy, przepro
 #| fig.align: "center"
 #| fig-cap: "Wykres 4. Suma kosztów, przychodów i zysków z każdej wycieczki"
 
+# Pobranie danych
 query <- "
 SELECT 
   spaceflight.id_spaceflight,
@@ -316,42 +327,52 @@ SELECT
   trip_type.trip_name,
   trip_type.daily_cost_per_participant,
   trip_type.customer_price_total,
-  payment.id_payment
+  payment.id_payment,
+  payment.id_insurance,
+  insurance.price AS insurance_price,
+  insurance.commission_rate
 FROM spaceflight
 JOIN trip_type ON spaceflight.id_trip = trip_type.id_trip
 LEFT JOIN payment ON spaceflight.id_spaceflight = payment.id_spaceflight
+LEFT JOIN insurance ON payment.id_insurance = insurance.id_insurance
 "
 
 df <- dbGetQuery(con, query)
 
-# Przetwarzanie dat i czasu trwania
+# Przetwarzanie dat i prowizji
 df <- df %>%
   mutate(
     departure_date = as.Date(departure_date),
     return_date = as.Date(return_date),
-    duration_days = as.numeric(return_date - departure_date)
+    duration_days = as.numeric(return_date - departure_date),
+    prowizja = insurance_price * commission_rate
   )
 
-# Liczba klientów na każdy lot
+# Liczba klientów i suma prowizji dla każdego lotu
 liczba_klientow_df <- df %>%
   group_by(id_spaceflight) %>%
-  summarise(liczba_klientow = n(), .groups = "drop")
+  summarise(
+    liczba_klientow = n(),
+    suma_prowizji = sum(prowizja, na.rm = TRUE),
+    .groups = "drop"
+  )
 
-# Scalenie z oryginalną ramką i usunięcie duplikatów płatności
+# Usunięcie duplikatów
 df_unique <- df %>%
   distinct(id_spaceflight, .keep_all = TRUE) %>%
   left_join(liczba_klientow_df, by = "id_spaceflight")
 
-# Koszty i przychody dla każdego lotu
+# Obliczenia kosztów i przychodów (z prowizją)
 df_obliczone <- df_unique %>%
   mutate(
     koszt_organizacji = organization_cost,
     koszt_utrzymania = duration_days * daily_cost_per_participant * liczba_klientow,
     koszt_calkowity = koszt_organizacji + koszt_utrzymania,
-    przychod = liczba_klientow * customer_price_total
+    przychod_bilety = liczba_klientow * customer_price_total,
+    przychod = przychod_bilety + suma_prowizji
   )
 
-# Sumowanie po nazwach wycieczek
+# Sumowanie po wycieczkach
 suma <- df_obliczone %>%
   group_by(trip_name) %>%
   summarise(
@@ -363,7 +384,7 @@ suma <- df_obliczone %>%
     .groups = "drop"
   )
 
-# Long format
+# Przygotowanie danych do wykresu (long format)
 dane_long <- suma %>%
   select(trip_name, Koszty = suma_koszt_lacznie, Przychód = suma_przychod, Zysk = zysk) %>%
   pivot_longer(cols = -trip_name, names_to = "typ", values_to = "wartosc")
@@ -412,7 +433,7 @@ Na całkowite koszty złożyły się:
 
 -   Koszty wynagrodzeń pracowników.
 
-Przychody, czyli łączna kwota uzyskana od klientów za wszystkie sprzedane wycieczki.
+Przychody, to łączna kwota uzyskana od klientów za wszystkie sprzedane wycieczki oraz prowizja od ubezpieczenia.
 
 Zysk został obliczony jako różnica między przychodami a kosztami.
 
@@ -424,6 +445,7 @@ Zysk został obliczony jako różnica między przychodami a kosztami.
 #| fig.align: "center"
 #| fig-cap: "Wykres 5. Podsumowanie finansowe firmy - łączne koszty, przychód i zysk"
 
+# Pobranie danych
 query <- "
 SELECT 
   spaceflight.id_spaceflight,
@@ -433,48 +455,61 @@ SELECT
   spaceflight.organization_cost,
   trip_type.daily_cost_per_participant,
   trip_type.customer_price_total,
-  payment.id_payment
+  payment.id_payment,
+  payment.id_insurance,
+  insurance.price AS insurance_price,
+  insurance.commission_rate
 FROM spaceflight
 JOIN trip_type ON spaceflight.id_trip = trip_type.id_trip
 LEFT JOIN payment ON spaceflight.id_spaceflight = payment.id_spaceflight
+LEFT JOIN insurance ON payment.id_insurance = insurance.id_insurance
 "
+
 df <- dbGetQuery(con, query)
 
 # Dane o pracownikach
 employee_df <- dbGetQuery(con, "SELECT hire_date, leave_date, salary FROM employee")
 
-# Czas trwania lotów
+# Przetwarzanie dat i obliczanie prowizji
 df <- df %>%
   mutate(
     departure_date = as.Date(departure_date),
     return_date = as.Date(return_date),
-    duration_days = as.numeric(return_date - departure_date)
+    duration_days = as.numeric(return_date - departure_date),
+    prowizja = insurance_price * commission_rate
   )
 
-# Liczba klientów na każdy lot
+# Liczba klientów i suma prowizji na każdy lot
 liczba_klientow_df <- df %>%
   group_by(id_spaceflight) %>%
-  summarise(liczba_klientow = n(), .groups = "drop")
+  summarise(
+    liczba_klientow = n(),
+    suma_prowizji = sum(prowizja, na.rm = TRUE),
+    .groups = "drop"
+  )
 
-# Połączenie i usunięcie duplikatów płatności
+# Połączenie z unikalnymi lotami
 df_unique <- df %>%
   distinct(id_spaceflight, .keep_all = TRUE) %>%
   left_join(liczba_klientow_df, by = "id_spaceflight")
 
-# Koszty i przychody na lot
+# Obliczenia kosztów i przychodów
 df_obliczone <- df_unique %>%
   mutate(
     koszt_organizacji = organization_cost,
     koszt_utrzymania = duration_days * daily_cost_per_participant * liczba_klientow,
-    przychod = liczba_klientow * customer_price_total
+    przychod_bilety = liczba_klientow * customer_price_total,
+    przychod = przychod_bilety + suma_prowizji
   )
 
 # SUMA kosztów i przychodów z lotów
 suma_koszt_organizacji <- sum(df_obliczone$koszt_organizacji, na.rm = TRUE)
 suma_koszt_utrzymania <- sum(df_obliczone$koszt_utrzymania, na.rm = TRUE)
+suma_prowizji <- sum(df_obliczone$suma_prowizji, na.rm = TRUE)
+suma_cena_biletow <- sum(df_obliczone$przychod_bilety, na.rm = TRUE)
 suma_przychod <- sum(df_obliczone$przychod, na.rm = TRUE)
 
-# Koszt wypłat pracowników
+# Koszt wynagrodzeń pracowników
 dzisiaj <- as.Date("2100-01-01")
 
 employee_df <- employee_df %>%
@@ -496,11 +531,13 @@ suma_wyplaty <- sum(employee_df$wyplata, na.rm = TRUE)
 suma_koszt_calkowity <- suma_koszt_organizacji + suma_koszt_utrzymania + suma_wyplaty
 zysk_firmy <- suma_przychod - suma_koszt_calkowity
 
+# Dane do wykresu
 df_wykres <- data.frame(
   Rodzaj = c("Koszty", "Przychód", "Zysk"),
   Kwota = c(suma_koszt_calkowity, suma_przychod, zysk_firmy)
 )
 
+# Wykres
 ggplot(df_wykres, aes(x = Rodzaj, y = Kwota, fill = Rodzaj)) +
   geom_col(width = 0.6) +
   geom_text(
@@ -509,7 +546,7 @@ ggplot(df_wykres, aes(x = Rodzaj, y = Kwota, fill = Rodzaj)) +
     size = 3
   ) +
   scale_y_continuous(
-    labels = label_number(big.mark = " ", decimal.mark = ",")
+    labels = scales::label_number(big.mark = " ", decimal.mark = ",")
   ) +
   scale_fill_manual(values = c("Koszty" = "pink", "Przychód" = "lightblue", "Zysk" = "lightgreen")) +
   labs(
@@ -525,6 +562,7 @@ ggplot(df_wykres, aes(x = Rodzaj, y = Kwota, fill = Rodzaj)) +
     axis.text.y = element_text(size = 8),
     legend.position = "none"
   )
+
 ```
 
 Ostatecznie uzyskano:
@@ -534,7 +572,7 @@ Ostatecznie uzyskano:
 -   Wypłaty dla pracowników stanowiły `r format(suma_wyplaty, big.mark = " ", scientific = FALSE)` SpaceCoinów.
 
 Łącznie koszty operacyjne firmy osiągnęły poziom `r format(suma_koszt_calkowity, big.mark = " ", scientific = FALSE)` SpaceCoinów.\
-Z kolei przychód uzyskany ze sprzedaży wycieczek wyniósł `r format(suma_przychod, big.mark = " ", scientific = FALSE)` SpaceCoinów.\
+Z kolei przychód uzyskany ze sprzedaży bilteów wycieczek wyniósł `r format(suma_cena_biletow, big.mark = " ", scientific = FALSE)` SpaceCoinów. Natomiast z racji prowizji na ubezpieczenia `r format(suma_prowizji, big.mark = " ", scientific = FALSE)` SpaceCoinów. Łączny przychód to `r format(suma_przychod, big.mark = " ", scientific = FALSE)` SpaceCoinów.
 Na tej podstawie obliczono zysk firmy, który wyniósł `r format(zysk_firmy, big.mark = " ", scientific = FALSE)` SpaceCoinów.
 
 ### 3. Rozwój firmy na przestrzeni lat
