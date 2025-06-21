@@ -572,8 +572,7 @@ Ostatecznie uzyskano:
 -   Wypłaty dla pracowników stanowiły `r format(suma_wyplaty, big.mark = " ", scientific = FALSE)` SpaceCoinów.
 
 Łącznie koszty operacyjne firmy osiągnęły poziom `r format(suma_koszt_calkowity, big.mark = " ", scientific = FALSE)` SpaceCoinów.\
-Z kolei przychód uzyskany ze sprzedaży bilteów wycieczek wyniósł `r format(suma_cena_biletow, big.mark = " ", scientific = FALSE)` SpaceCoinów. Natomiast z racji prowizji na ubezpieczenia `r format(suma_prowizji, big.mark = " ", scientific = FALSE)` SpaceCoinów. Łączny przychód to `r format(suma_przychod, big.mark = " ", scientific = FALSE)` SpaceCoinów.
-Na tej podstawie obliczono zysk firmy, który wyniósł `r format(zysk_firmy, big.mark = " ", scientific = FALSE)` SpaceCoinów.
+Z kolei przychód uzyskany ze sprzedaży bilteów wycieczek wyniósł `r format(suma_cena_biletow, big.mark = " ", scientific = FALSE)` SpaceCoinów. Natomiast z racji prowizji na ubezpieczenia `r format(suma_prowizji, big.mark = " ", scientific = FALSE)` SpaceCoinów. Łączny przychód to `r format(suma_przychod, big.mark = " ", scientific = FALSE)` SpaceCoinów. Na tej podstawie obliczono zysk firmy, który wyniósł `r format(zysk_firmy, big.mark = " ", scientific = FALSE)` SpaceCoinów.
 
 ### 3. Rozwój firmy na przestrzeni lat
 
@@ -751,7 +750,7 @@ ggplot(df3_1, aes(x = df3_1$nazwa_wycieczki, y = df3_1$liczba_klientów)) +
 
 ```
 
-Analizując powracających klientów, zauważyliśmy, że osoby, które zdecydowały się na więcej niż jeden wyjazd, najczęściej wybierały podczas pierwszej podróży następujące wycieczki:`r df3_1$nazwa_wycieczki[1]`, `r df3_1$nazwa_wycieczki[2]`, `r df3_1$nazwa_wycieczki[3]`. Najwięcej klientów, którzy wrócili ponownie byli klienci, którzy za pierwszym razem wybrali wycieczkę: `r most_repeated_trip`(łącznie`r df3_1_1$liczba_klientów` klientów). Może to oznaczać, że zwiedzającym spodobał się klimat wycieczki, a w planie firmy na najbliższy czas należy uwzględnić organizację większej liczby wycieczek tego typu bądź wprowadzić do oferty więcej rodzajów wyjazdów w podobnym klimacie.
+Analizując powracających klientów, zauważyliśmy, że osoby, które zdecydowały się na więcej niż jeden wyjazd, najczęściej wybierały podczas pierwszej podróży następujące wycieczki:`r df3_1$nazwa_wycieczki[1]`, `r df3_1$nazwa_wycieczki[2]`, `r df3_1$nazwa_wycieczki[3]`. Najwięcej klientów, którzy wrócili ponownie byli klienci, którzy za pierwszym razem wybrali wycieczkę: `r most_repeated_trip` (łącznie `r df3_1_1$liczba_klientów` klientów). Może to oznaczać, że zwiedzającym spodobał się klimat wycieczki, a w planie firmy na najbliższy czas należy uwzględnić organizację większej liczby wycieczek tego typu bądź wprowadzić do oferty więcej rodzajów wyjazdów w podobnym klimacie.
 
 #### 4.2. Klienci jednorazowi
 
@@ -1037,7 +1036,7 @@ W ostatnim etapie analizy przyjrzano się składom załóg uczestniczących w wy
 #| fig.width: 6
 #| fig.height: 6
 #| fig.align: "center"
-#| fig-cap: "Wykres 14. Heatmapa wspólnych wyjazdów wybranych członków załogi"
+#| fig-cap: "Wykres 14. Wykres liczby wspólnych wyjazdów wybranych członków załogi"
 
 query7 <- "SELECT s.id_pilot AS id_pilota, s.id_guide AS id_przewodnika, CONCAT(e1.first_name, ' ', e1.last_name, ', ', e2.first_name, ' ', 
 e2.last_name) AS imiona, COUNT(*) AS liczba_wyjazdów
@@ -1058,12 +1057,36 @@ ORDER BY COUNT(*) DESC LIMIT 1"
 
 df7_1 <- dbGetQuery(con, query7_1)
 
-
 ggplot(df7, aes(x = df7$imiona, y = df7$liczba_wyjazdów)) +
   geom_col(fill = "lightblue") +
   labs(title = "Liczba wspólnych wyjazdów wybranych członków załogi", x = "Załoga", y = "Liczba wyjazdów") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1), plot.margin = margin(1, 1, 2, 2, "cm"))
 
+```
+
+```{r}
+#| echo: false
+#| warning: false
+#| fig.width: 6
+#| fig.height: 6
+#| fig.align: "center"
+#| fig-cap: "Wykres 15. Heatmapa wspólnych wyjazdów wybranych członków załogi"
+
+crew_query <- "SELECT id_pilot, id_guide FROM spaceflight"
+crew_df <- dbGetQuery(con, crew_query)
+
+crew_heatmap <- crew_df %>%
+  count(id_pilot, id_guide, name = "flights")
+
+ggplot(crew_heatmap, aes(x = factor(id_pilot), y = factor(id_guide), fill = flights)) +
+  geom_tile(color = "white") +
+  scale_fill_gradient(low = "white", high = "darkblue") +
+  labs(title = "Liczba wspólnych lotów: Pilot vs Przewodnik",
+       x = "ID Przewodnika",
+       y = "ID Pilota",
+       fill = "Liczba lotów") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
 Z wykresu powyżej możemy odczytać, że `r df7_1$imiona` są członkami załogi, którzy wylatują ze sobą na wycieczki najczęściej. Może to oznaczać, że zgłaszają się do wyjazdów wspólnie, ponieważ dobrze im się współpracuje. Firma powinna wziąć to pod uwagę podczas planowania kolejnych lotów - jeżeli relacje pomiędzy pracownikami są dobre, znajduje to przełożenie na atmosferę całej wycieczki, a dzięki temu - również na pozytywną opinię klientów.
