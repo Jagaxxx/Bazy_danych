@@ -797,7 +797,10 @@ ggplot(df3_2, aes(x = df3_2$nazwa_wycieczki, y = df3_2$liczba_klientów)) +
 
 ```
 
-Klienci, którzy nie zdecydowali się na ponowny udział w wyjazdach organizowanych przez „Space-U”, najczęściej wybierali na pierwszym wyjeździe następujące wycieczki: `r df3_2$nazwa_wycieczki[1]`, `r df3_2$nazwa_wycieczki[2]`, `r df3_2$nazwa_wycieczki[3]`. Najczęściej wybieraną wśród nich wycieczką była wycieczka o nazwie `r df3_2_1$nazwa_wycieczki`, na którą wybrało się `r df3_2_1$liczba_klientów` klientów. Może to wskazywać, że oferta tych wycieczek nie spełnia w pełni oczekiwań znacznej części klientów, co może być przyczyną ich decyzji o niekorzystaniu z kolejnych wyjazdów organizowanych przez firmę. Warto w związku z tym rozważyć wprowadzenie zmian w programie tych wycieczek. Jeśli mimo to zainteresowanie pozostanie niskie, należy rozważyć wycofanie ich z oferty i zastąpienie bardziej atrakcyjnymi propozycjami.
+Klienci, którzy nie zdecydowali się na ponowny udział w wyjazdach organizowanych przez „Space-U”, najczęściej wybierali na pierwszym wyjeździe następujące wycieczki: `r df3_2$nazwa_wycieczki[1]`, `r df3_2$nazwa_wycieczki[2]`, `r df3_2$nazwa_wycieczki[3]`. Najczęściej wybieraną wśród nich wycieczką była wycieczka o nazwie `r df3_2_1$nazwa_wycieczki`, na którą wybrało się `r df3_2_1$liczba_klientów` klientów.
+
+Porównując obydwa wykresy, można zauważyć, że liczba osób powracających na kolejne wycieczki jest znacznie niższa niż osób niepowracających, a także że lista wycieczek, po których klienci powrócili, pokrywa się częściowo z listą wycieczek, po których nie wrócili.
+Może to wskazywać, że oferta tych wycieczek nie odpowiada w pełni oczekiwaniom znacznej części klientów, co może być przyczyną ich decyzji o niekorzystaniu z kolejnych wyjazdów organizowanych przez firmę. Warto w związku z tym rozważyć wprowadzenie zmian w programie tych wycieczek, aby spełniały oczekiwania większej liczby klientów. Jeśli mimo to zainteresowanie kolejnymi wyjazdami pozostanie niskie, należy rozważyć wycofanie danych wycieczek z oferty i zastąpienie ich bardziej atrakcyjnymi propozycjami.
 
 ### 5. Jasna czy ciemna strona mocy?
 
@@ -842,6 +845,12 @@ ggplot(df4, aes(x = df4$strona_mocy, y = df4$liczba_klientów)) +
 #| echo: false
 #| warning: false
 
+if (more_popular_force_side$liczba_klientów == less_popular_force_side$liczba_klientów) {
+  str_5_observations <- paste("Możemy zaobserwować, że liczba klientów, którzy wybrali jasną oraz ciemną stronę mocy, jest dokładnie taka sama. Każdą ze stron mocy wybrało ", more_popular_force_side$liczba_klientów, " osób.")
+} else {
+  str_5_observations <- paste("Z powyższego wykresu odczytać można, że to ", more_popular_force_side$strona_mocy, " strona mocy cieszy się większą popularnością wśród klientów firmy - na wycieczki tego typu wybrało się ", more_popular_force_side$liczba_klientów, " klientów, natomiast wycieczki oznaczone jako ", less_popular_force_side$strona_mocy, " strona mocy wybrało ", less_popular_force_side$liczba_klientów, " klientów.")
+}
+
 if (more_popular_force_side$liczba_klientów - less_popular_force_side$liczba_klientów < 10) {
   str_5 <- "Możemy zaobserwować, że liczba klientów, którzy wybrali jasną oraz ciemną stronę mocy, nie różni się znacznie - obydwie strony mocy cieszą się podobnym zainteresowaniem. Oznacza to, że firma może rozwijać swoją ofertę, przygotowując kolejne propozycje wycieczek zarówno z jasną, jak i ciemną stroną mocy."
 } else {
@@ -850,7 +859,7 @@ if (more_popular_force_side$liczba_klientów - less_popular_force_side$liczba_kl
 
 ```
 
-Z powyższego wykresu odczytać można, że to `r more_popular_force_side$strona_mocy` strona mocy cieszy się większą popularnością wśród klientów firmy - na wycieczki tego typu wybrało się `r more_popular_force_side$liczba_klientów` klientów. Dla porównania, wycieczki oznaczone jako "`r less_popular_force_side$strona_mocy` strona mocy" wybrało `r less_popular_force_side$liczba_klientów` klientów.
+`r str_5_observations`
 
 `r str_5`
 
