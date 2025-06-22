@@ -1033,34 +1033,26 @@ W ostatnim etapie analizy przyjrzano się składom załóg uczestniczących w wy
 ```{r}
 #| echo: false
 #| warning: false
-#| fig.width: 6
-#| fig.height: 6
-#| fig.align: "center"
-#| fig-cap: "Wykres 14. Wykres liczby wspólnych wyjazdów wybranych członków załogi"
 
-query7 <- "SELECT s.id_pilot AS id_pilota, s.id_guide AS id_przewodnika, CONCAT(e1.first_name, ' ', e1.last_name, ', ', e2.first_name, ' ', 
-e2.last_name) AS imiona, COUNT(*) AS liczba_wyjazdów
-FROM spaceflight AS s INNER JOIN employee AS e1 ON s.id_pilot = e1.id_employee
+query_7 <- "WITH crews_with_max_flights AS (SELECT 
+  CONCAT(e1.first_name, ' ', e1.last_name, ', ', e2.first_name, ' ', e2.last_name) AS imiona,
+  COUNT(*) AS liczba_wyjazdów
+FROM spaceflight AS s
+INNER JOIN employee AS e1 ON s.id_pilot = e1.id_employee
 INNER JOIN employee AS e2 ON s.id_guide = e2.id_employee
 GROUP BY s.id_pilot, s.id_guide
-ORDER BY COUNT(*) DESC"
+HAVING COUNT(*) = (
+  SELECT MAX(flight_count) FROM (
+    SELECT COUNT(*) AS flight_count
+    FROM spaceflight
+    GROUP BY id_pilot, id_guide
+  ) AS sub
+))
 
-df7 <- dbGetQuery(con, query7)
-df7$liczba_wyjazdów <- as.integer(df7$liczba_wyjazdów)
+SELECT GROUP_CONCAT(imiona SEPARATOR ' oraz ') AS crews_with_max_flights_combined FROM crews_with_max_flights"
 
-query7_1 <- "SELECT s.id_pilot AS id_pilota, s.id_guide AS id_przewodnika, CONCAT(e1.first_name, ' ', e1.last_name, ', ', e2.first_name, ' ', 
-e2.last_name) AS imiona, COUNT(*) AS liczba_wyjazdów
-FROM spaceflight AS s INNER JOIN employee AS e1 ON s.id_pilot = e1.id_employee
-INNER JOIN employee AS e2 ON s.id_guide = e2.id_employee
-GROUP BY s.id_pilot, s.id_guide
-ORDER BY COUNT(*) DESC LIMIT 1"
 
-df7_1 <- dbGetQuery(con, query7_1)
-
-ggplot(df7, aes(x = df7$imiona, y = df7$liczba_wyjazdów)) +
-  geom_col(fill = "lightblue") +
-  labs(title = "Liczba wspólnych wyjazdów wybranych członków załogi", x = "Załoga", y = "Liczba wyjazdów") +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1), plot.margin = margin(1, 1, 2, 2, "cm"))
+df7 <- dbGetQuery(con, query_7)
 
 ```
 
@@ -1070,7 +1062,7 @@ ggplot(df7, aes(x = df7$imiona, y = df7$liczba_wyjazdów)) +
 #| fig.width: 6
 #| fig.height: 6
 #| fig.align: "center"
-#| fig-cap: "Wykres 15. Heatmapa wspólnych wyjazdów wybranych członków załogi"
+#| fig-cap: "Wykres 14. Heatmapa wspólnych wyjazdów wybranych członków załogi"
 
 crew_query <- "WITH pilot_names AS (SELECT id_employee, CONCAT(first_name, ' ', last_name) AS pilot_name FROM employee
 WHERE id_employee IN (SELECT DISTINCT id_pilot FROM spaceflight)),
@@ -1089,8 +1081,8 @@ crew_heatmap <- crew_df %>%
 
 ggplot(crew_heatmap, aes(x = factor(pilot), y = factor(guide), fill = flights)) +
   geom_tile(color = "white") +
-  scale_fill_gradient(low = "white", high = "darkblue") +
-  labs(title = "Liczba wspólnych lotów: Pilot vs Przewodnik",
+  scale_fill_gradient(low = "white", high = "lightblue") +
+  labs(title = "Liczba wspólnych lotów: pilot i przewodnik",
        x = "Imię przewodnika",
        y = "Imię pilota",
        fill = "Liczba lotów") +
@@ -1098,7 +1090,7 @@ ggplot(crew_heatmap, aes(x = factor(pilot), y = factor(guide), fill = flights)) 
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
-Z wykresu powyżej możemy odczytać, że `r df7_1$imiona` są członkami załogi, którzy wylatują ze sobą na wycieczki najczęściej. Może to oznaczać, że zgłaszają się do wyjazdów wspólnie, ponieważ dobrze im się współpracuje. Firma powinna wziąć to pod uwagę podczas planowania kolejnych lotów - jeżeli relacje pomiędzy pracownikami są dobre, znajduje to przełożenie na atmosferę całej wycieczki, a dzięki temu - również na pozytywną opinię klientów.
+Z wykresu powyżej możemy odczytać, że `r df7$crews_with_max_flights_combined` są członkami załogi, którzy wylatują ze sobą na wycieczki najczęściej. Może to oznaczać, że zgłaszają się do wyjazdów wspólnie, ponieważ dobrze im się współpracuje. Firma powinna wziąć to pod uwagę podczas planowania kolejnych lotów - jeżeli relacje pomiędzy pracownikami są dobre, znajduje to przełożenie na atmosferę całej wycieczki, a dzięki temu - również na pozytywną opinię klientów.
 
 ### 9. Podsumowanie
 
