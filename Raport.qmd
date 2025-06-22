@@ -572,7 +572,7 @@ Ostatecznie uzyskano:
 -   Wypłaty dla pracowników stanowiły `r format(suma_wyplaty, big.mark = " ", scientific = FALSE)` SpaceCoinów.
 
 Łącznie koszty operacyjne firmy osiągnęły poziom `r format(suma_koszt_calkowity, big.mark = " ", scientific = FALSE)` SpaceCoinów.\
-Z kolei przychód uzyskany ze sprzedaży bilteów wycieczek wyniósł `r format(suma_cena_biletow, big.mark = " ", scientific = FALSE)` SpaceCoinów. Natomiast z racji prowizji na ubezpieczenia `r format(suma_prowizji, big.mark = " ", scientific = FALSE)` SpaceCoinów. Łączny przychód to `r format(suma_przychod, big.mark = " ", scientific = FALSE)` SpaceCoinów. Na tej podstawie obliczono zysk firmy, który wyniósł `r format(zysk_firmy, big.mark = " ", scientific = FALSE)` SpaceCoinów.
+Przychód ze sprzedaży biletów na wycieczki osiągnął wartość `r format(suma_cena_biletow, big.mark = " ", scientific = FALSE)` SpaceCoinów, natomiast z tytułu prowizji od ubezpieczeń uzyskano dodatkowe `r format(suma_prowizji, big.mark = " ", scientific = FALSE)` SpaceCoinów. Łączny przychód firmy wyniósł `r format(suma_przychod, big.mark = " ", scientific = FALSE)` SpaceCoinów. Na tej podstawie wyliczono zysk, który osiągnął poziom `r format(zysk_firmy, big.mark = " ", scientific = FALSE)` SpaceCoinów.
 
 ### 3. Rozwój firmy na przestrzeni lat
 
@@ -596,12 +596,14 @@ GROUP BY rok
 ORDER BY rok;"
 
 df <- dbGetQuery(con, query_2g_2)
+df$liczba_klientow <- as.integer(df$liczba_klientow)
 
 ggplot(df, aes(x = rok, y = liczba_klientow)) +
   geom_col(fill = "lightblue") +
   labs(title = "Liczba klientów - zestawienie lat",
        x = "Rok",
        y = "Liczba klientów") + 
+  theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 max_idx <- which.max(df$liczba_klientow)
@@ -650,6 +652,7 @@ GROUP BY data
 ORDER BY data;"
 
 df <- dbGetQuery(con, query_2g)
+df$liczba_klientow <- as.integer(df$liczba_klientow)
 
 df$rok <- as.numeric(substr(df$data, 1, 4))
 
@@ -662,6 +665,7 @@ ggplot(df, aes(x = data, y = liczba_klientow, fill = as.factor(rok))) +
        y = "Liczba klientów",
        fill = "Rok") + 
   scale_fill_manual(values = c("2098" = "pink", "2099" = "lightblue")) + 
+  theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 df_max_miesiac <- df %>%
@@ -746,6 +750,7 @@ most_repeated_trip <- df3_1_1$nazwa_najczesciej_powtarzanej_wycieczki
 ggplot(df3_1, aes(x = df3_1$nazwa_wycieczki, y = df3_1$liczba_klientów)) +
   geom_col(fill = "lightblue") +
   labs(title = "Liczba klientów, którzy wrócili do firmy po danej wycieczce", x = "Nazwa wycieczki", y = "Liczba klientów") +
+  theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 ```
@@ -793,6 +798,7 @@ df3_2_1 <- dbGetQuery(con, query3_2_1)
 ggplot(df3_2, aes(x = df3_2$nazwa_wycieczki, y = df3_2$liczba_klientów)) +
   geom_col(fill = "lightblue") +
   labs(title = "Liczba klientów, którzy nie wrócili do firmy po danej wycieczce", x = "Nazwa wycieczki", y = "Liczba klientów") +
+  theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 ```
@@ -836,9 +842,16 @@ GROUP BY force_side ORDER BY COUNT(*) ASC LIMIT 1"
 
 less_popular_force_side <- dbGetQuery(con, query4_2)
 
-ggplot(df4, aes(x = df4$strona_mocy, y = df4$liczba_klientów)) +
-  geom_col(fill = "lightblue") +
-  labs(title = "Liczba klientów w zależności od strony mocy", x = "Strona mocy", y = "Liczba klientów")
+ggplot(df4, aes(x = strona_mocy, y = liczba_klientów, fill = strona_mocy)) +
+  geom_col() +
+  scale_fill_manual(values = c("ciemna" = "pink", "jasna" = "lightblue")) +
+  labs(
+    title = "Liczba klientów w zależności od strony mocy",
+    x = "Strona mocy",
+    y = "Liczba klientów",
+    fill = "Strona mocy"
+  ) +
+  theme_minimal()
 ```
 
 ```{r}
@@ -889,6 +902,7 @@ ggplot(df, aes(x = rodzaj_wypadku, y = liczba_wypadkow)) +
   labs(title = "Liczba wypadków podczas podróży",
        x = "Rodzaj wypadku",
        y = "Liczba wypadków") + 
+  theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 max_incident_idx <- which.max(df$liczba_wypadkow)
@@ -937,6 +951,7 @@ ggplot(df, aes(x = accident_type, fill = czy_pokrywa)) +
        y = "Liczba wypadków", 
        fill = "Czy ubezpieczenie \npokrywa wypadek") + 
   scale_fill_manual(values = c("Nie" = "pink", "Tak" = "lightblue")) + 
+  theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 tak_df <- df %>%
@@ -1083,7 +1098,7 @@ df7 <- dbGetQuery(con, query_7)
 #| echo: false
 #| warning: false
 #| fig.width: 6
-#| fig.height: 6
+#| fig.height: 4
 #| fig.align: "center"
 #| fig-cap: "Wykres 14. Heatmapa wspólnych wyjazdów wybranych członków załogi"
 
@@ -1104,10 +1119,11 @@ crew_heatmap <- crew_df %>%
 
 ggplot(crew_heatmap, aes(x = factor(pilot), y = factor(guide), fill = flights)) +
   geom_tile(color = "white") +
-  scale_fill_gradient(low = "white", high = "lightblue") +
+  geom_text(aes(label = flights), color = "black") +
+  scale_fill_gradient(low = "lightblue", high = "blue") +
   labs(title = "Liczba wspólnych lotów: pilot i przewodnik",
-       x = "Imię przewodnika",
-       y = "Imię pilota",
+       x = "Imię pilota",
+       y = "Imię przewodnika",
        fill = "Liczba lotów") +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
