@@ -750,7 +750,7 @@ ggplot(df3_1, aes(x = df3_1$nazwa_wycieczki, y = df3_1$liczba_klientów)) +
 
 ```
 
-Analizując powracających klientów, zauważyliśmy, że osoby, które zdecydowały się na więcej niż jeden wyjazd, najczęściej wybierały podczas pierwszej podróży następujące wycieczki:`r df3_1$nazwa_wycieczki[1]`, `r df3_1$nazwa_wycieczki[2]`, `r df3_1$nazwa_wycieczki[3]`. Najwięcej klientów, którzy wrócili ponownie byli klienci, którzy za pierwszym razem wybrali wycieczkę: `r most_repeated_trip` (łącznie `r df3_1_1$liczba_klientów` klientów). Może to oznaczać, że zwiedzającym spodobał się klimat wycieczki, a w planie firmy na najbliższy czas należy uwzględnić organizację większej liczby wycieczek tego typu bądź wprowadzić do oferty więcej rodzajów wyjazdów w podobnym klimacie.
+Analizując powracających klientów, zauważyliśmy, że osoby, które zdecydowały się na więcej niż jeden wyjazd, najczęściej wybierały podczas pierwszej podróży następujące wycieczki: `r df3_1$nazwa_wycieczki[1]`, `r df3_1$nazwa_wycieczki[2]`, `r df3_1$nazwa_wycieczki[3]`. Najwięcej klientów, którzy wrócili ponownie byli klienci, którzy za pierwszym razem wybrali wycieczkę: `r most_repeated_trip` (łącznie `r df3_1_1$liczba_klientów` klientów). Może to oznaczać, że zwiedzającym spodobał się klimat wycieczki, a w planie firmy na najbliższy czas należy uwzględnić organizację większej liczby wycieczek tego typu bądź wprowadzić do oferty więcej rodzajów wyjazdów w podobnym klimacie.
 
 #### 4.2. Klienci jednorazowi
 
@@ -838,7 +838,21 @@ ggplot(df4, aes(x = df4$strona_mocy, y = df4$liczba_klientów)) +
   labs(title = "Liczba klientów w zależności od strony mocy", x = "Strona mocy", y = "Liczba klientów")
 ```
 
-Z powyższego wykresu odczytać można, że to `r more_popular_force_side$strona_mocy` strona mocy cieszy się większą popularnością wśród klientów firmy - na wycieczki tego typu wybrało się `r more_popular_force_side$liczba_klientów` klientów. Dla porównania, wycieczki oznaczone jako "`r less_popular_force_side$strona_mocy` strona mocy" wybrało `r less_popular_force_side$liczba_klientów` klientów. Wobec dużego zainteresowania klientów wyjazdami oznaczonymi jako "`r more_popular_force_side$strona_mocy` strona mocy", można wprowadzić do oferty firmy więcej wycieczek tego typu.
+```{r}
+#| echo: false
+#| warning: false
+
+if (more_popular_force_side$liczba_klientów - less_popular_force_side$liczba_klientów < 10) {
+  str_5 <- "Możemy zaobserwować, że liczba klientów, którzy wybrali jasną oraz ciemną stronę mocy, nie różni się znacznie - obydwie strony mocy cieszą się podobnym zainteresowaniem. Oznacza to, że firma może rozwijać swoją ofertę, przygotowując kolejne propozycje wycieczek zarówno z jasną, jak i ciemną stroną mocy."
+} else {
+  str_5 <- paste("Wobec większego zainteresowania klientów wyjazdami oznaczonymi jako ", more_popular_force_side$strona_mocy, " strona mocy, można wprowadzić do oferty firmy więcej wycieczek właśnie tego typu.")
+}
+
+```
+
+Z powyższego wykresu odczytać można, że to `r more_popular_force_side$strona_mocy` strona mocy cieszy się większą popularnością wśród klientów firmy - na wycieczki tego typu wybrało się `r more_popular_force_side$liczba_klientów` klientów. Dla porównania, wycieczki oznaczone jako "`r less_popular_force_side$strona_mocy` strona mocy" wybrało `r less_popular_force_side$liczba_klientów` klientów.
+
+`r str_5`
 
 ### 6. Bezpieczeństwo
 
@@ -1102,7 +1116,7 @@ Najważniejsze wnioski z badań to:
 
 -   Analiza klientów powracających i jednorazowych pokazała, które wycieczki cieszą się największą lojalnością i które wymagają poprawy, by zwiększyć wskaźnik powrotów.
 
--   Preferencje względem „strony mocy” ujawniły wyraźne zainteresowanie jedną stroną, co wskazuje na potrzebę rozbudowy oferty w tym kierunku.
+-   `r if (str_5 == "Możemy zaobserwować, że liczba klientów, którzy wybrali jasną oraz ciemną stronę mocy, nie różni się znacznie - obydwie strony mocy cieszą się podobnym zainteresowaniem. Oznacza to, że firma może rozwijać swoją ofertę, przygotowując kolejne propozycje wycieczek zarówno z jasną, jak i ciemną stroną mocy.") {"Badanie preferencji klientów dotyczących strony mocy nie wykazało wyraźnej różnicy w zainteresowaniu konkretną stroną."} else {"Preferencje względem „strony mocy” ujawniły wyraźne zainteresowanie jedną stroną, co wskazuje na potrzebę rozbudowy oferty w tym kierunku."}`
 
 -   Bezpieczeństwo i ubezpieczenia wykazały, że nie wszyscy klienci mają odpowiednie zabezpieczenie na najczęściej występujące wypadki, co sugeruje konieczność lepszego informowania i dostosowania produktów ubezpieczeniowych.
 
