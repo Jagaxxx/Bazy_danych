@@ -1072,18 +1072,27 @@ ggplot(df7, aes(x = df7$imiona, y = df7$liczba_wyjazdów)) +
 #| fig.align: "center"
 #| fig-cap: "Wykres 15. Heatmapa wspólnych wyjazdów wybranych członków załogi"
 
-crew_query <- "SELECT id_pilot, id_guide FROM spaceflight"
+crew_query <- "WITH pilot_names AS (SELECT id_employee, CONCAT(first_name, ' ', last_name) AS pilot_name FROM employee
+WHERE id_employee IN (SELECT DISTINCT id_pilot FROM spaceflight)),
+
+guide_names AS (SELECT id_employee, CONCAT(first_name, ' ', last_name) AS guide_name FROM employee
+WHERE id_employee IN (SELECT DISTINCT id_guide FROM spaceflight))
+
+SELECT e1.pilot_name AS pilot, e2.guide_name AS guide FROM spaceflight 
+INNER JOIN pilot_names AS e1 ON spaceflight.id_pilot = e1.id_employee
+INNER JOIN guide_names AS e2 ON spaceflight.id_guide = e2.id_employee"
+
 crew_df <- dbGetQuery(con, crew_query)
 
 crew_heatmap <- crew_df %>%
-  count(id_pilot, id_guide, name = "flights")
+  count(pilot, guide, name = "flights")
 
-ggplot(crew_heatmap, aes(x = factor(id_pilot), y = factor(id_guide), fill = flights)) +
+ggplot(crew_heatmap, aes(x = factor(pilot), y = factor(guide), fill = flights)) +
   geom_tile(color = "white") +
   scale_fill_gradient(low = "white", high = "darkblue") +
   labs(title = "Liczba wspólnych lotów: Pilot vs Przewodnik",
-       x = "ID Przewodnika",
-       y = "ID Pilota",
+       x = "Imię przewodnika",
+       y = "Imię pilota",
        fill = "Liczba lotów") +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
