@@ -56,8 +56,8 @@
       "73ThJG80mIT8jHfUMwq16",
       "dh-W8kE6lxqhdbbI39qJ4",
       "U1upP5oXVgDlOIecpnz2w",
-      "STOpRwrcFraWhIgYsD3w7",
       "gtml7wNV2UBy_UT04dqRc",
+      "STOpRwrcFraWhIgYsD3w7",
       "sBPVvGY9xHiFH4nSJFNQO"
     ],
     "indexIds": [],
@@ -393,7 +393,6 @@
         "name": "accident_report",
         "comment": "Rejestr wypadków przypisanych do konkretnych płatności (klientów/lotów).",
         "columnIds": [
-          "9KZhzeEo4i0uccCzXlkff",
           "nsp0qV-cBbTPyhnRZea15",
           "OwvEEVLtkKrcMfF3brq9x"
         ],
@@ -412,7 +411,7 @@
           "color": ""
         },
         "meta": {
-          "updateAt": 1750334700145,
+          "updateAt": 1750680340177,
           "createAt": 1749578603802
         }
       },
@@ -439,7 +438,7 @@
           "color": ""
         },
         "meta": {
-          "updateAt": 1750334700145,
+          "updateAt": 1750680329913,
           "createAt": 1749578716792
         }
       },
@@ -2493,7 +2492,7 @@
             "nsp0qV-cBbTPyhnRZea15"
           ],
           "x": 1412.2384,
-          "y": 662.5714,
+          "y": 650.5714,
           "direction": 1
         },
         "meta": {
@@ -2521,7 +2520,7 @@
             "OwvEEVLtkKrcMfF3brq9x"
           ],
           "x": 1670.2384,
-          "y": 726.5714,
+          "y": 702.5714,
           "direction": 8
         },
         "meta": {
