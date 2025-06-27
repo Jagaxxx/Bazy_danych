@@ -530,6 +530,7 @@ Celem przeprowadzonej analizy jest sprawdzenie, czy na podstawie wykresu liczby 
 #| warning: false
 #| fig.width: 9
 #| fig.height: 7
+#| fig.align: "center"
 
 query_2g_2 <- "SELECT COUNT(p.id_customer) AS liczba_klientow,
                  DATE_FORMAT(spf.departure_date, '%Y') AS rok
@@ -600,7 +601,7 @@ ggplot(df, aes(x = data, y = liczba_klientow, fill = as.factor(rok))) +
        x = "Rok-miesiąc",
        y = "Liczba klientów",
        fill = "Rok") + 
-  scale_fill_manual(values = c("2098" = "red", "2099" = "blue")) + 
+  scale_fill_manual(values = c("2098" = "pink", "2099" = "lightblue")) + 
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 df_max_miesiac <- df %>%
@@ -618,15 +619,15 @@ bm_wy_number_of_clients <- df_max_miesiac[df_max_miesiac[, "rok"] == worse_year,
 
 if (best_year > worse_year){
   if (bm_by_number_of_clients > bm_wy_number_of_clients){
-    text <- paste("W roku", best_year, "najwięcej klientów skorzystało z usługi w", best_month_best_year, "miesiącu. Dla porównania w roku", worse_year, "najbardziej zyskownym miesiącem był", months[best_month_worse_year], ". Sugeruje to, że z roku na rok do firmy przybywa coraz więcej klientów.")
+    text <- paste("W roku", best_year, "miesiąc, w którym najwięcej klientów skorzystało z usługi to ", months[best_month_best_year], ". Dla porównania w roku", worse_year, "najbardziej zyskownym miesiącem był", months[best_month_worse_year], ". Sugeruje to, że z roku na rok do firmy przybywa coraz więcej klientów.")
   } else {
-    text <- paste("W roku", best_year, "najwięcej klientów skorzystało z usługi w", best_month_best_year, "miesiącu. Dla porównania w roku", worse_year, "najbardziej zyskownym miesiącem był", months[best_month_worse_year], ". Mimo tego, że najbardziej zyskownym miesiącem w historii istnienia firmy był ", months[best_month_worse_year], ", to w roku ", best_year, " było więcej klientów ogółem.")
+    text <- paste("W roku", best_year, "miesiąc, w którym najwięcej klientów skorzystało z usługi to ", months[best_month_best_year], ". Dla porównania w roku", worse_year, "najbardziej zyskownym miesiącem był", months[best_month_worse_year], ". Mimo tego, że najbardziej zyskownym miesiącem w historii istnienia firmy był ", months[best_month_worse_year], ", to w roku ", best_year, " było więcej klientów ogółem.")
   }
 } else {
   if (bm_by_number_of_clients < bm_wy_number_of_clients){
-    text <- paste("W roku ", best_year, " najwięcej klientów skorzystało z usługi w ", best_month_best_year, " miesiącu. Dla porównania w roku ", worse_year, " najbardziej zyskownym miesiącem był ", months[best_month_worse_year], ". Sugeruje to, że z roku na rok liczba klientów naszej firmy maleje.")
+    text <- paste("W roku ", best_year, " miesiąc, w którym najwięcej klientów skorzystało z usługi to ", months[best_month_best_year], ". Dla porównania w roku ", worse_year, " najbardziej zyskownym miesiącem był ", months[best_month_worse_year], ". Sugeruje to, że z roku na rok liczba klientów naszej firmy maleje.")
   } else {
-    text <- paste("W roku ", best_year, " najwięcej klientów skorzystało z usługi w ", best_month_best_year, " miesiącu. Dla porównania w roku ", worse_year, " najbardziej zyskownym miesiącem był ", months[best_month_worse_year], ". Mimo tego, że najbardziej zyskownym miesiącem w historii naszej firmy był ", months[best_month_best_year], " to niestety liczba klientów z roku na rok spada.")
+    text <- paste("W roku ", best_year, " miesiąc, w którym najwięcej klientów skorzystało z usługi to ", months[best_month_best_year], ". Dla porównania w roku ", worse_year, " najbardziej zyskownym miesiącem był ", months[best_month_worse_year], ". Mimo tego, że najbardziej zyskownym miesiącem w historii naszej firmy był ", months[best_month_best_year], " to niestety liczba klientów z roku na rok spada.")
   }
 }
 ```
@@ -804,24 +805,19 @@ Powyższy wykres przedstawia liczbę wypadków podczas podróży w zależności 
 #| warning: false
 
 query_2_2 <- "SELECT
-    ar.id_report,
     at.accident_type,
-    i.type,
+    i.type AS rodzaj_ubezpieczenia,
     IF(ic.id_accident IS NOT NULL, 1, 0) AS czy_pokrywa
-FROM
-    accident_report AS ar
-        LEFT JOIN
-    payment AS p ON p.id_payment = ar.id_payment
-        LEFT JOIN
-    insurance_coverage AS ic ON ic.id_insurance = p.id_insurance
-        AND ic.id_accident = ar.id_accident
-        LEFT JOIN
-    insurance AS i ON p.id_insurance = i.id_insurance
-        LEFT JOIN
-    accident_type AS at ON ar.id_accident = at.id_accident
-
-ORDER BY
-    ar.id_report;"
+FROM accident_report AS ar
+LEFT JOIN payment AS p
+    ON p.id_payment = ar.id_payment
+INNER JOIN insurance AS i
+    ON p.id_insurance = i.id_insurance
+LEFT JOIN insurance_coverage AS ic
+    ON ic.id_insurance = p.id_insurance
+           AND ic.id_accident = ar.id_accident
+LEFT JOIN accident_type AS at
+ON at.id_accident = ar.id_accident;"
 
 df <- dbGetQuery(con, query_2_2)
 
