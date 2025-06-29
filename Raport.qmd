@@ -769,14 +769,30 @@ ggplot(df3_1, aes(x = df3_1$nazwa_wycieczki, y = df3_1$liczba_klientów)) +
 #| echo: false
 #| warning: false
 
-if (length(df3_1$nazwa_wycieczki >= 3)) {
-  str_4_1 <- paste("Analizując powracających klientów, zauważyliśmy, że osoby, które zdecydowały się na więcej niż jeden wyjazd, najczęściej wybierały podczas pierwszej podróży następujące wycieczki: ", df3_1$nazwa_wycieczki[1], ", ", df3_1$nazwa_wycieczki[2], ", ", df3_1$nazwa_wycieczki[3], ". Najwięcej klientów, którzy wrócili ponownie stanowili klienci, którzy za pierwszym razem wybrali wycieczkę: ", most_repeated_trip, " (łącznie ", df3_1_1$liczba_klientów, " klientów). Może to oznaczać, że zwiedzającym spodobał się klimat wycieczki, a w planie firmy na najbliższy czas należy uwzględnić organizację większej liczby wycieczek tego typu bądź wprowadzić do oferty więcej rodzajów wyjazdów w podobnym klimacie.")
-} else if (length(df3_1$nazwa_wycieczki) == 2) {
-  str_4_1 <- paste("Analizując powracających klientów, zauważyliśmy, że osoby, które zdecydowały się na więcej niż jeden wyjazd, najczęściej wybierały podczas pierwszej podróży następujące wycieczki: ", df3_1$nazwa_wycieczki[1], ", ", df3_1$nazwa_wycieczki[2], ". Najwięcej klientów, którzy wrócili ponownie stanowili klienci, którzy za pierwszym razem wybrali wycieczkę: ", most_repeated_trip, " (łącznie ", df3_1_1$liczba_klientów, " klientów). Może to oznaczać, że zwiedzającym spodobał się klimat wycieczki, a w planie firmy na najbliższy czas należy uwzględnić organizację większej liczby wycieczek tego typu bądź wprowadzić do oferty więcej rodzajów wyjazdów w podobnym klimacie.")
-} else if (length(df3_1$nazwa_wycieczki) == 1) {
-  str_4_1 <- paste("Analizując powracających klientów, zauważyliśmy, że osoby, które zdecydowały się na więcej niż jeden wyjazd, wybierały podczas pierwszej podróży wycieczkę: ", df3_1$nazwa_wycieczki[1], ". Wybrało ją łącznie ", df3_1_1$liczba_klientów, " klientów. Może to oznaczać, że zwiedzającym spodobał się klimat wycieczki, a w planie firmy na najbliższy czas należy uwzględnić organizację większej liczby wycieczek tego typu bądź wprowadzić do oferty więcej rodzajów wyjazdów w podobnym klimacie.")
+if (nrow(df3_1) >= 3) {
+  str_4_1 <- paste0(
+    "Analizując powracających klientów, zauważyliśmy, że osoby, które zdecydowały się na więcej niż jeden wyjazd, najczęściej wybierały podczas pierwszej podróży następujące wycieczki: ",
+    df3_1$nazwa_wycieczki[1], ", ", df3_1$nazwa_wycieczki[2], ", ", df3_1$nazwa_wycieczki[3], 
+    ". Najwięcej klientów, którzy wrócili ponownie stanowili klienci, którzy za pierwszym razem wybrali wycieczkę: ", 
+    most_repeated_trip, " (łącznie ", df3_1_1$liczba_klientów, " klientów). Może to oznaczać, że zwiedzającym spodobał się klimat wycieczki, a w planie firmy na najbliższy czas należy uwzględnić organizację większej liczby wycieczek tego typu bądź wprowadzić do oferty więcej rodzajów wyjazdów w podobnym klimacie."
+  )
+} else if (nrow(df3_1) == 2) {
+  str_4_1 <- paste0(
+    "Analizując powracających klientów, zauważyliśmy, że osoby, które zdecydowały się na więcej niż jeden wyjazd, najczęściej wybierały podczas pierwszej podróży następujące wycieczki: ", 
+    df3_1$nazwa_wycieczki[1], ", ", df3_1$nazwa_wycieczki[2], 
+    ". Najwięcej klientów, którzy wrócili ponownie stanowili klienci, którzy za pierwszym razem wybrali wycieczkę: ", 
+    most_repeated_trip, " (łącznie ", df3_1_1$liczba_klientów, " klientów). Może to oznaczać, że zwiedzającym spodobał się klimat wycieczki, a w planie firmy na najbliższy czas należy uwzględnić organizację większej liczby wycieczek tego typu bądź wprowadzić do oferty więcej rodzajów wyjazdów w podobnym klimacie."
+  )
+} else if (nrow(df3_1) == 1) {
+  str_4_1 <- paste0(
+    "Analizując powracających klientów, zauważyliśmy, że osoby, które zdecydowały się na więcej niż jeden wyjazd, wybierały podczas pierwszej podróży wycieczkę: ", 
+    df3_1$nazwa_wycieczki[1], 
+    ". Wybrało ją łącznie ", df3_1_1$liczba_klientów, " klientów. Może to oznaczać, że zwiedzającym spodobał się klimat wycieczki, a w planie firmy na najbliższy czas należy uwzględnić organizację większej liczby wycieczek tego typu bądź wprowadzić do oferty więcej rodzajów wyjazdów w podobnym klimacie."
+  )
 } else {
-  str_4_1 <- paste("Analizując wynik zapytania, można zauważyć, że żaden klient nie powrócił na kolejną wycieczkę po pierwszym wyjeździe z firmą. Oznacza to, że oferta wycieczek może być zupełnie nietrafiona. W tym przypadku należy przyjrzeć się dotychczasowym propozycjom wycieczek i zastanowić się nad ich zastąpieniem przez nowe propozycje, a następnie po pewnym czasie przeprowadzić ponowną analizę stopnia zainteresowania klientów.")
+  str_4_1 <- paste0(
+    "Analizując wynik zapytania, można zauważyć, że żaden klient nie powrócił na kolejną wycieczkę po pierwszym wyjeździe z firmą. Oznacza to, że oferta wycieczek może być zupełnie nietrafiona. W tym przypadku należy przyjrzeć się dotychczasowym propozycjom wycieczek i zastanowić się nad ich zastąpieniem przez nowe propozycje, a następnie po pewnym czasie przeprowadzić ponowną analizę stopnia zainteresowania klientów."
+  )
 }
 ```
 
@@ -834,7 +850,7 @@ Klienci, którzy nie zdecydowali się na ponowny udział w wyjazdach organizowan
 #| echo: false
 #| warning: false
 
-if (length(df3_1$nazwa_wycieczki >= 1)) {
+if (nrow(df3_1 >= 1)) {
   str_4_2 <- "Porównując obydwa wykresy, można zauważyć, że liczba osób powracających na kolejne wycieczki jest znacznie niższa niż osób niepowracających. Możemy wywnioskować, że oferta wycieczek nie odpowiada w pełni oczekiwaniom znacznej części klientów, co może być przyczyną ich decyzji o niekorzystaniu z kolejnych wyjazdów organizowanych przez firmę. Warto w związku z tym rozważyć wprowadzenie zmian w programie wycieczek, aby spełniały oczekiwania większej liczby klientów. Jeśli mimo to zainteresowanie kolejnymi wyjazdami pozostanie niskie, należy rozważyć wycofanie danych wycieczek z oferty i zastąpienie ich bardziej atrakcyjnymi propozycjami."
 } else {
   str_4_2 <- "Na podstawie wykresów można zauważyć, że liczba osób powracających na kolejne wycieczki wynosi dokładnie 0. Możemy wywnioskować, że oferta wycieczek zupełnie nie odpowiada oczekiwaniom klientów, co może być przyczyną ich decyzji o niekorzystaniu z kolejnych wyjazdów organizowanych przez firmę. Warto w związku z tym rozważyć wprowadzenie zmian w programie wycieczek, aby spełniały oczekiwania klientów. Jeśli mimo to zainteresowanie kolejnymi wyjazdami nie wzrośnie, należy rozważyć wycofanie danych wycieczek z oferty i zastąpienie ich bardziej atrakcyjnymi propozycjami."
