@@ -119,7 +119,7 @@ ggplot(df1_1_summary, aes(x = reorder(trip_name, -liczba_lotow),
 
 ```
 
-Łącznie zorganizowano `r laczna_liczba_wycieczek` wyjazdów. Najczęściej wybieraną wycieczką była  „`r najpopularniejsza[1]`”, która odbyła się `r najpopularniejsza[2]` razy. Z kolei najmniej popularna okazała się wycieczka  „`r najmniej_popularna[1]`”, z liczbą wylotów równą `r najmniej_popularna[2]`.
+Łącznie zorganizowano `r laczna_liczba_wycieczek` wyjazdów. Najczęściej wybieraną wycieczką była „`r najpopularniejsza[1]`”, która odbyła się `r najpopularniejsza[2]` razy. Z kolei najmniej popularna okazała się wycieczka „`r najmniej_popularna[1]`”, z liczbą wylotów równą `r najmniej_popularna[2]`.
 
 #### 2.2. Liczba klientów w podziale na typy wycieczek
 
@@ -185,7 +185,7 @@ ggplot(klienci_na_wycieczke, aes(x = reorder(trip_name, -liczba_klientow), y = l
   )
 ```
 
-Łącznie firma obsłużyła `r laczna_liczba_klientow` klientów. Najpopularniejsza wycieczka pod względem liczby klientów to „`r najwiecej_klientow[1]`” (`r najwiecej_klientow[3]` klientów), najmniej popularna okazała się  „`r najmniej_klientow[1]`” (`r najmniej_klientow[3]` klientów).
+Łącznie firma obsłużyła `r laczna_liczba_klientow` klientów. Najpopularniejsza wycieczka pod względem liczby klientów to „`r najwiecej_klientow[1]`” (`r najwiecej_klientow[3]` klientów), najmniej popularna okazała się „`r najmniej_klientow[1]`” (`r najmniej_klientow[3]` klientów).
 
 #### 2.3. Bilans zysków i strat dla poszczególnych wycieczek
 
@@ -428,6 +428,7 @@ najlepsza_wycieczka <- suma %>%
   arrange(desc(zysk)) %>%
   slice(1)
 ```
+
 Jak pokazuje wykres, najbardziej dochodową wycieczką dla firmy okazała się wycieczka „`r najlepsza_wycieczka$trip_name`”, która wygenerowała zysk na poziomie `r format(round(najlepsza_wycieczka$zysk, 2), big.mark = " ", scientific = FALSE)` SpaceCoinów.
 
 #### 2.4. Łączna dochodowość – analiza ogólna
@@ -760,10 +761,24 @@ ggplot(df3_1, aes(x = df3_1$nazwa_wycieczki, y = df3_1$liczba_klientów)) +
   labs(title = "Liczba klientów, którzy wrócili do firmy po danej wycieczce", x = "Nazwa wycieczki", y = "Liczba klientów") +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
-
 ```
 
-Analizując powracających klientów, zauważyliśmy, że osoby, które zdecydowały się na więcej niż jeden wyjazd, najczęściej wybierały podczas pierwszej podróży następujące wycieczki: `r df3_1$nazwa_wycieczki[1]`, `r df3_1$nazwa_wycieczki[2]`, `r df3_1$nazwa_wycieczki[3]`. Najwięcej klientów, którzy wrócili ponownie byli klienci, którzy za pierwszym razem wybrali wycieczkę: `r most_repeated_trip` (łącznie `r df3_1_1$liczba_klientów` klientów). Może to oznaczać, że zwiedzającym spodobał się klimat wycieczki, a w planie firmy na najbliższy czas należy uwzględnić organizację większej liczby wycieczek tego typu bądź wprowadzić do oferty więcej rodzajów wyjazdów w podobnym klimacie.
+```{r}
+#| echo: false
+#| warning: false
+
+if (length(df3_1$nazwa_wycieczki >= 3)) {
+  str_4_1 <- paste("Analizując powracających klientów, zauważyliśmy, że osoby, które zdecydowały się na więcej niż jeden wyjazd, najczęściej wybierały podczas pierwszej podróży następujące wycieczki: ", df3_1$nazwa_wycieczki[1], ", ", df3_1$nazwa_wycieczki[2], ", ", df3_1$nazwa_wycieczki[3], ". Najwięcej klientów, którzy wrócili ponownie stanowili klienci, którzy za pierwszym razem wybrali wycieczkę: ", most_repeated_trip, " (łącznie ", df3_1_1$liczba_klientów, " klientów). Może to oznaczać, że zwiedzającym spodobał się klimat wycieczki, a w planie firmy na najbliższy czas należy uwzględnić organizację większej liczby wycieczek tego typu bądź wprowadzić do oferty więcej rodzajów wyjazdów w podobnym klimacie.")
+} else if (length(df3_1$nazwa_wycieczki) == 2) {
+  str_4_1 <- paste("Analizując powracających klientów, zauważyliśmy, że osoby, które zdecydowały się na więcej niż jeden wyjazd, najczęściej wybierały podczas pierwszej podróży następujące wycieczki: ", df3_1$nazwa_wycieczki[1], ", ", df3_1$nazwa_wycieczki[2], ". Najwięcej klientów, którzy wrócili ponownie stanowili klienci, którzy za pierwszym razem wybrali wycieczkę: ", most_repeated_trip, " (łącznie ", df3_1_1$liczba_klientów, " klientów). Może to oznaczać, że zwiedzającym spodobał się klimat wycieczki, a w planie firmy na najbliższy czas należy uwzględnić organizację większej liczby wycieczek tego typu bądź wprowadzić do oferty więcej rodzajów wyjazdów w podobnym klimacie.")
+} else if (length(df3_1$nazwa_wycieczki) == 1) {
+  str_4_1 <- paste("Analizując powracających klientów, zauważyliśmy, że osoby, które zdecydowały się na więcej niż jeden wyjazd, wybierały podczas pierwszej podróży wycieczkę: ", df3_1$nazwa_wycieczki[1], ". Wybrało ją łącznie ", df3_1_1$liczba_klientów, " klientów. Może to oznaczać, że zwiedzającym spodobał się klimat wycieczki, a w planie firmy na najbliższy czas należy uwzględnić organizację większej liczby wycieczek tego typu bądź wprowadzić do oferty więcej rodzajów wyjazdów w podobnym klimacie.")
+} else {
+  str_4_1 <- paste("Analizując wynik zapytania, można zauważyć, że żaden klient nie powrócił na kolejną wycieczkę po pierwszym wyjeździe z firmą. Oznacza to, że oferta wycieczek może być zupełnie nietrafiona. W tym przypadku należy przyjrzeć się dotychczasowym propozycjom wycieczek i zastanowić się nad ich zastąpieniem przez nowe propozycje, a następnie po pewnym czasie przeprowadzić ponowną analizę stopnia zainteresowania klientów.")
+}
+```
+
+`r str_4_1`
 
 #### 4.2. Klienci jednorazowi
 
@@ -813,8 +828,19 @@ ggplot(df3_2, aes(x = df3_2$nazwa_wycieczki, y = df3_2$liczba_klientów)) +
 
 Klienci, którzy nie zdecydowali się na ponowny udział w wyjazdach organizowanych przez „Space-U”, najczęściej wybierali na pierwszym wyjeździe następujące wycieczki: `r df3_2$nazwa_wycieczki[1]`, `r df3_2$nazwa_wycieczki[2]`, `r df3_2$nazwa_wycieczki[3]`. Najczęściej wybieraną wśród nich wycieczką była wycieczka o nazwie `r df3_2_1$nazwa_wycieczki`, na którą wybrało się `r df3_2_1$liczba_klientów` klientów.
 
-Porównując obydwa wykresy, można zauważyć, że liczba osób powracających na kolejne wycieczki jest znacznie niższa niż osób niepowracających, a także że lista wycieczek, po których klienci powrócili, pokrywa się częściowo z listą wycieczek, po których nie wrócili.
-Może to wskazywać, że oferta tych wycieczek nie odpowiada w pełni oczekiwaniom znacznej części klientów, co może być przyczyną ich decyzji o niekorzystaniu z kolejnych wyjazdów organizowanych przez firmę. Warto w związku z tym rozważyć wprowadzenie zmian w programie tych wycieczek, aby spełniały oczekiwania większej liczby klientów. Jeśli mimo to zainteresowanie kolejnymi wyjazdami pozostanie niskie, należy rozważyć wycofanie danych wycieczek z oferty i zastąpienie ich bardziej atrakcyjnymi propozycjami.
+```{r}
+#| echo: false
+#| warning: false
+
+if (length(df3_1$nazwa_wycieczki >= 1)) {
+  str_4_2 <- "Porównując obydwa wykresy, można zauważyć, że liczba osób powracających na kolejne wycieczki jest znacznie niższa niż osób niepowracających. Możemy wywnioskować, że oferta wycieczek nie odpowiada w pełni oczekiwaniom znacznej części klientów, co może być przyczyną ich decyzji o niekorzystaniu z kolejnych wyjazdów organizowanych przez firmę. Warto w związku z tym rozważyć wprowadzenie zmian w programie wycieczek, aby spełniały oczekiwania większej liczby klientów. Jeśli mimo to zainteresowanie kolejnymi wyjazdami pozostanie niskie, należy rozważyć wycofanie danych wycieczek z oferty i zastąpienie ich bardziej atrakcyjnymi propozycjami."
+} else {
+  str_4_2 <- "Na podstawie wykresów można zauważyć, że liczba osób powracających na kolejne wycieczki wynosi dokładnie 0. Możemy wywnioskować, że oferta wycieczek zupełnie nie odpowiada oczekiwaniom klientów, co może być przyczyną ich decyzji o niekorzystaniu z kolejnych wyjazdów organizowanych przez firmę. Warto w związku z tym rozważyć wprowadzenie zmian w programie wycieczek, aby spełniały oczekiwania klientów. Jeśli mimo to zainteresowanie kolejnymi wyjazdami nie wzrośnie, należy rozważyć wycofanie danych wycieczek z oferty i zastąpienie ich bardziej atrakcyjnymi propozycjami."
+}
+
+```
+
+`r str_4_2`
 
 ### 5. Jasna czy ciemna strona mocy?
 
@@ -916,7 +942,7 @@ ggplot(df, aes(x = rodzaj_wypadku, y = liczba_wypadkow)) +
 max_incident_idx <- which.max(df$liczba_wypadkow)
 ```
 
-Powyższy wykres przedstawia liczbę wypadków podczas podróży w zależności od rodzaju wypadku. Jak możemy zauważyć najczęściej pojawiającym się wypadkiem jest  „`r df[max_incident_idx, "rodzaj_wypadku"]`”. Sugeruje nam to, że na ten rodzaj wypadku powinniśmy jako firma zalecać ubezpieczenie się naszym klientom.
+Powyższy wykres przedstawia liczbę wypadków podczas podróży w zależności od rodzaju wypadku. Jak możemy zauważyć najczęściej pojawiającym się wypadkiem jest „`r df[max_incident_idx, "rodzaj_wypadku"]`”. Sugeruje nam to, że na ten rodzaj wypadku powinniśmy jako firma zalecać ubezpieczenie się naszym klientom.
 
 #### 6.2. Ubezpieczenia klientów w razie wypadków
 
