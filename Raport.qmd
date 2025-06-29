@@ -5,6 +5,7 @@ format:
     toc: true
     toc-title: "Spis treści"
     toc-depth: 4
+    self-contained: true
     css: styles.css
 editor: visual
 execute:
