@@ -308,8 +308,6 @@ ggplot(dane_long, aes(x = trip_name, y = wartosc, fill = typ)) +
 
 W celu uzyskania pełniejszego obrazu rentowności działalności firmy, przeprowadzono także analizę łącznych zysków generowanych przez wycieczki do poszczególnych planet, z uwzględnieniem liczby uczestników. W odróżnieniu od wcześniejszego zestawienia, które bazowało na średnich wartościach dla jednej wycieczki (jeden wylot), niniejsze podsumowanie uwzględnia realną skalę sprzedaży – czyli ilość podróżnych, którzy skorzystali z każdej z ofert. Takie podejście pozwala precyzyjnie określić, które kierunki nie tylko są popularne, ale również najbardziej dochodowe w ujęciu globalnym.
 
-Uzupełniająco przeanalizowano łączne zyski z wycieczek na poszczególne planety, uwzględniając rzeczywistą liczbę uczestników. Podejście to pozwala ocenić nie tylko jednostkową rentowność, lecz także skalę sprzedaży, dając pełniejszy obraz dochodowości całej oferty pod kątem wygenerowanego zysku.
-
 ```{r}
 #| echo: false
 #| warning: false
