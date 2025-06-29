@@ -119,7 +119,7 @@ ggplot(df1_1_summary, aes(x = reorder(trip_name, -liczba_lotow),
 
 ```
 
-Łącznie zorganizowano `r laczna_liczba_wycieczek` wyjazdów. Najczęściej wybieraną wycieczką była:  „`r najpopularniejsza[1]`”, która odbyła się `r najpopularniejsza[2]` razy. Z kolei najmniej popularna okazała się wycieczka:  „`r najmniej_popularna[1]`”, z liczbą wylotów równą `r najmniej_popularna[2]`.
+Łącznie zorganizowano `r laczna_liczba_wycieczek` wyjazdów. Najczęściej wybieraną wycieczką była  „`r najpopularniejsza[1]`”, która odbyła się `r najpopularniejsza[2]` razy. Z kolei najmniej popularna okazała się wycieczka  „`r najmniej_popularna[1]`”, z liczbą wylotów równą `r najmniej_popularna[2]`.
 
 #### 2.2. Liczba klientów w podziale na typy wycieczek
 
@@ -185,15 +185,15 @@ ggplot(klienci_na_wycieczke, aes(x = reorder(trip_name, -liczba_klientow), y = l
   )
 ```
 
-Łącznie firma obsłużyła `r laczna_liczba_klientow` klientów. Najpopularniejsza wycieczka pod względem liczby klientów to:  „`r najwiecej_klientow[1]`” (`r najwiecej_klientow[3]` klientów), najmniej popularna okazała się:  „`r najmniej_klientow[1]`” (`r najmniej_klientow[3]` klientów).
+Łącznie firma obsłużyła `r laczna_liczba_klientow` klientów. Najpopularniejsza wycieczka pod względem liczby klientów to „`r najwiecej_klientow[1]`” (`r najwiecej_klientow[3]` klientów), najmniej popularna okazała się  „`r najmniej_klientow[1]`” (`r najmniej_klientow[3]` klientów).
 
 #### 2.3. Bilans zysków i strat dla poszczególnych wycieczek
 
-Analiza bilansu zysków i strat dla różnych typów wycieczek oferowanych przez firmę stanowi kluczowy element oceny rentowności działalności. Pozwala ona nie tylko ocenić, które rodzaje wycieczek generują największe przychody, ale również które wiążą się z najwyższymi kosztami operacyjnymi, co ma bezpośredni wpływ na ostateczny zysk netto.
+Analiza bilansu zysków i strat dla różnych typów wycieczek oferowanych przez firmę stanowi kluczowy element oceny rentowności działalności. Pozwala ona nie tylko ocenić, które rodzaje wycieczek generują największe przychody, ale również które wiążą się z najwyższymi kosztami operacyjnymi, co ma bezpośredni wpływ na ostateczny zysk.
 
-W ramach analizy zestawiono przychody uzyskane z tytułu sprzedaży konkretnych rodzajów wycieczek z odpowiadającymi im kosztami – takimi jak zakwaterowanie, wyżywienie, opłaty przewodników, transport, naprawy pojazdów czy wydatki logistyczne. Dzięki temu możliwe było określenie, które typy wyjazdów są najbardziej opłacalne, a które przynoszą mniejsze zyski lub wręcz straty.
+Zestawiono przychody ze sprzedaży różnych ofert z odpowiadającymi im kosztami operacyjnymi – takimi jak zakwaterowanie, wyżywienie, transport, opłaty przewodników czy logistyka. Analiza wykazała, które typy wyjazdów generują najwyższy zysk netto, a które są mniej rentowne lub wręcz nierentowne.
 
-W tym celu posłużmy się najpierw średnią ceną wycieczki.
+W pierwszym kroku posłużono się średnią ceną jednej wycieczki, co pozwoliło porównać opłacalność na poziomie pojedynczego wyjazdu.
 
 ```{r}
 #| echo: false
@@ -308,6 +308,8 @@ ggplot(dane_long, aes(x = trip_name, y = wartosc, fill = typ)) +
 
 W celu uzyskania pełniejszego obrazu rentowności działalności firmy, przeprowadzono także analizę łącznych zysków generowanych przez wycieczki do poszczególnych planet, z uwzględnieniem liczby uczestników. W odróżnieniu od wcześniejszego zestawienia, które bazowało na średnich wartościach dla jednej wycieczki (jeden wylot), niniejsze podsumowanie uwzględnia realną skalę sprzedaży – czyli ilość podróżnych, którzy skorzystali z każdej z ofert. Takie podejście pozwala precyzyjnie określić, które kierunki nie tylko są popularne, ale również najbardziej dochodowe w ujęciu globalnym.
 
+Uzupełniająco przeanalizowano łączne zyski z wycieczek na poszczególne planety, uwzględniając rzeczywistą liczbę uczestników. Podejście to pozwala ocenić nie tylko jednostkową rentowność, lecz także skalę sprzedaży, dając pełniejszy obraz dochodowości całej oferty pod kątem wygenerowanego zysku.
+
 ```{r}
 #| echo: false
 #| warning: false
@@ -420,6 +422,15 @@ ggplot(dane_long, aes(x = trip_name, y = wartosc, fill = typ)) +
     legend.text = element_text(size = 8)
   )
 ```
+
+```{r}
+#| echo: false
+# Znalezienie najbardziej dochodowej wycieczki
+najlepsza_wycieczka <- suma %>%
+  arrange(desc(zysk)) %>%
+  slice(1)
+```
+Jak pokazuje wykres, najbardziej dochodową wycieczką dla firmy okazała się wycieczka „`r najlepsza_wycieczka$trip_name`”, która wygenerowała zysk na poziomie `r format(round(najlepsza_wycieczka$zysk, 2), big.mark = " ", scientific = FALSE)` SpaceCoinów.
 
 #### 2.4. Łączna dochodowość – analiza ogólna
 
