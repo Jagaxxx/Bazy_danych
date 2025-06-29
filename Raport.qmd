@@ -585,7 +585,7 @@ Przychód ze sprzedaży biletów na wycieczki osiągnął wartość `r format(su
 
 ### 3. Rozwój firmy na przestrzeni lat
 
-Celem przeprowadzonej analizy jest sprawdzenie, czy na podstawie wykresu liczby obsłużonych klientów w poszczególnych miesiącach można ocenić, czy firma się rozwija, czy podupada. W tym celu dane zostały przedstawione na wykresach, które umożliwiają identyfikowanie trendów oraz zmian w liczbie klientów na przestrzeni czasu.
+Celem przeprowadzonej analizy jest sprawdzenie, czy na podstawie liczby obsłużonych klientów w poszczególnych miesiącach można ocenić, czy firma się rozwija, czy podupada. W tym celu dane zostały przedstawione na wykresach, które umożliwiają identyfikowanie trendów oraz zmian w liczbie klientów na przestrzeni czasu.
 
 #### 3.1. Analiza w kontekście rocznym
 
@@ -674,7 +674,6 @@ ggplot(df, aes(x = data, y = liczba_klientow, fill = as.factor(rok))) +
        y = "Liczba klientów",
        fill = "Rok") + 
   scale_fill_manual(values = c("2098" = "pink", "2099" = "lightblue")) + 
-  theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 df_max_miesiac <- df %>%
@@ -692,15 +691,15 @@ bm_wy_number_of_clients <- df_max_miesiac[df_max_miesiac[, "rok"] == worse_year,
 
 if (best_year > worse_year){
   if (bm_by_number_of_clients > bm_wy_number_of_clients){
-    text <- paste("W roku", best_year, "najwięcej klientów skorzystało z usługi w", best_month_best_year, "miesiącu. Dla porównania w roku", worse_year, "najbardziej zyskownym miesiącem był", months[best_month_worse_year], ". Sugeruje to, że z roku na rok do firmy przybywa coraz więcej klientów.")
+    text <- paste("W roku", best_year, "miesiąc, w którym najwięcej klientów skorzystało z usługi to ", months[best_month_best_year], ". Dla porównania w roku", worse_year, "najbardziej zyskownym miesiącem był", months[best_month_worse_year], ".")
   } else {
-    text <- paste("W roku", best_year, "najwięcej klientów skorzystało z usługi w", best_month_best_year, "miesiącu. Dla porównania w roku", worse_year, "najbardziej zyskownym miesiącem był", months[best_month_worse_year], ". Mimo tego, że najbardziej zyskownym miesiącem w historii istnienia firmy był ", months[best_month_worse_year], ", to w roku ", best_year, " było więcej klientów ogółem.")
+    text <- paste("W roku", best_year, "miesiąc, w którym najwięcej klientów skorzystało z usługi to ", months[best_month_best_year], ". Dla porównania w roku", worse_year, "najbardziej zyskownym miesiącem był", months[best_month_worse_year], ". Mimo tego, że najbardziej zyskownym miesiącem w historii istnienia firmy był ", months[best_month_worse_year], ", to w roku ", best_year, " było więcej klientów ogółem.")
   }
 } else {
   if (bm_by_number_of_clients < bm_wy_number_of_clients){
-    text <- paste("W roku ", best_year, " najwięcej klientów skorzystało z usługi w ", best_month_best_year, " miesiącu. Dla porównania w roku ", worse_year, " najbardziej zyskownym miesiącem był ", months[best_month_worse_year], ". Sugeruje to, że z roku na rok liczba klientów naszej firmy maleje.")
+    text <- paste("W roku ", best_year, " miesiąc, w którym najwięcej klientów skorzystało z usługi to ", months[best_month_best_year], ". Dla porównania w roku ", worse_year, " najbardziej zyskownym miesiącem był ", months[best_month_worse_year], ".")
   } else {
-    text <- paste("W roku ", best_year, " najwięcej klientów skorzystało z usługi w ", best_month_best_year, " miesiącu. Dla porównania w roku ", worse_year, " najbardziej zyskownym miesiącem był ", months[best_month_worse_year], ". Mimo tego, że najbardziej zyskownym miesiącem w historii naszej firmy był ", months[best_month_best_year], " to niestety liczba klientów z roku na rok spada.")
+    text <- paste("W roku ", best_year, " miesiąc, w którym najwięcej klientów skorzystało z usługi to ", months[best_month_best_year], ". Dla porównania w roku ", worse_year, " najbardziej zyskownym miesiącem był ", months[best_month_worse_year], ". Mimo tego, że najbardziej zyskownym miesiącem w historii naszej firmy był ", months[best_month_best_year], " to niestety liczba klientów z roku na rok spada.")
   }
 }
 ```
