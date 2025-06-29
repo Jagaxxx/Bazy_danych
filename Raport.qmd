@@ -1144,8 +1144,13 @@ INNER JOIN guide_names AS e2 ON spaceflight.id_guide = e2.id_employee"
 
 crew_df <- dbGetQuery(con, crew_query)
 
+# Wszystkie możliwe kombinacje par
+all_pairs <- expand.grid(pilot = unique(crew_df$pilot), guide = unique(crew_df$guide), stringsAsFactors = FALSE)
+
 crew_heatmap <- crew_df %>%
-  count(pilot, guide, name = "flights")
+  count(pilot, guide, name = "flights") %>%
+  right_join(all_pairs, by = c("pilot", "guide")) %>%
+  mutate(flights = ifelse(is.na(flights), 0, flights))
 
 ggplot(crew_heatmap, aes(x = factor(pilot), y = factor(guide), fill = flights)) +
   geom_tile(color = "white") +
