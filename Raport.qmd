@@ -733,8 +733,8 @@ WHERE id_customer IN (
 SELECT trip_name AS nazwa_wycieczki, COUNT(*) AS liczba_klientów
 FROM (SELECT *, ROW_NUMBER() OVER (PARTITION BY id_customer) AS rn
     FROM more_than_one_trip) AS subquery
-WHERE rn = 1
-GROUP BY trip_name ORDER BY COUNT(*) DESC LIMIT 3"
+WHERE rn = 1 
+GROUP BY trip_name HAVING COUNT(*) IS NOT NULL ORDER BY COUNT(*) DESC"
 
 df3_1 <- dbGetQuery(con, query3_1)
 df3_1$liczba_klientów <- as.integer(df3_1$liczba_klientów)
