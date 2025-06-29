@@ -955,7 +955,8 @@ ggplot(df, aes(x = rodzaj_wypadku, y = liczba_wypadkow)) +
        x = "Rodzaj wypadku",
        y = "Liczba wypadków") + 
   theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        plot.margin = margin(t = 10, r = 10, b = 40, l = 20) )
 
 max_incident_idx <- which.max(df$liczba_wypadkow)
 ```
@@ -999,7 +1000,8 @@ ggplot(df, aes(x = accident_type, fill = czy_pokrywa)) +
        fill = "Czy ubezpieczenie \npokrywa wypadek") + 
   scale_fill_manual(values = c("Nie" = "lightpink", "Tak" = "lightblue")) + 
   theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        plot.margin = margin(t = 10, r = 10, b = 40, l = 30) )
 
 tak_df <- df %>%
   filter(czy_pokrywa == "Tak") %>%
