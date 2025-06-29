@@ -1,26 +1,33 @@
 ---
-title: "Raport"
-format: html
+title: "Analiza danych firmy „Space-U”"
+format:
+  html:
+    toc: true
+    toc-title: "Spis treści"
+    toc-depth: 4
+    css: styles.css
 editor: visual
 execute:
   eval: true
 ---
 
-# Analiza danych firmy „Space-U”
+### 1. Wstęp
 
-Niniejszy raport został wykonany na zlecenie firmy „Space-U”, organizującej konsumenckie załogowe loty kosmiczne, a w szczególności wycieczki z jasną i ciemną stroną mocy w świecie Star Wars. Celem raportu jest analiza danych zebranych przez firmę podczas 2 lat obecności na rynku, która pozwoli na wyciągnięcie wniosków na temat dotychczasowej działalności: związanych z nią kosztów oraz zysków, a także stosunku klientów do proponowanej oferty. Dzięki temu, możliwe będzie wskazanie kierunku rozwoju dla firmy w najbliższej przyszłości.
+#### 1.1. Cel i zakres raportu
 
-Podczas analizy posłużymy się następującymi pytaniami badawczymi:
+Niniejszy raport został wykonany na zlecenie firmy „Space-U”, organizującej konsumenckie załogowe loty kosmiczne, a w szczególności wycieczki z jasną i ciemną stroną mocy w świecie Star Wars. Celem raportu jest analiza danych zebranych przez firmę podczas 2 lat obecności na rynku, która pozwoli na wyciągnięcie wniosków na temat dotychczasowej działalności - związanych z nią kosztów oraz zysków, a także stosunku klientów do proponowanych ofert. Dzięki temu, możliwe będzie wskazanie kierunku rozwoju dla firmy w najbliższej przyszłości.
 
--   Które z proponowanych przez firmę rodzajów wycieczek cieszą się największą popularnością? Jak kształtuje się ich bilans zysków i strat? Czy są dla firmy opłacalne?
--   Czy na podstawie wykresu liczby obsłużonych klientów w każdym miesiącu działalności firmy możemy wyciągnąć wnioski, że firma się rozwija lub podupada?
--   Po których z proponowanych wycieczek klienci są skłonni wybrać się na kolejne, a po których nie wracają do firmy? Czy można na tej podstawie wycofać niektóre wycieczki z oferty?
+W niniejszej analizie skoncentrujemy się na udzieleniu odpowiedzi na następujące pytania:
+
+-   Które rodzaje wycieczek oferowanych przez firmę „Space-U” cieszą się największą popularnością? Jak przedstawia się bilans zysków i strat dla poszczególnych typów podróży? Czy są dla firmy opłacalne?
+-   Jak kształtuje się liczba obsłużonych klientów w poszczególnych miesiącach działalności? Czy na podstawie tych danych można wnioskować o rozwoju lub spadku aktywności firmy?
+-   Jakie typy wycieczek skłaniają klientów do ponownego skorzystania z usług firmy? Czy istnieją oferty, po których klienci nie wracają? Czy można na tej podstawie wycofać niektóre wycieczki z oferty?
 -   Który z typów wycieczek cieszy się większą popularnością – wycieczki z jasną czy ciemną stroną mocy?
 -   Jak często podczas wyjazdów zdarzają się wypadki konkretnych typów i jaka część klientów jest ubezpieczona na wypadek ich wystąpienia?
--   Czy wycieczki, którym klienci wystawiają najwyższe oceny, są również najchętniej wybierane?
--   Którzy spośród naszych pracowników (pilot i przewodnik) najczęściej latali wspólnie na wycieczki?
+-   Czy najlepiej oceniane wycieczki są również najczęściej wybierane przez klientów?
+-   Które duety pracowników – pilot i przewodnik – najczęściej wspólnie realizowały wyjazdy?
 
-## Analiza
+### 2. Analiza popularności wycieczek
 
 ```{r}
 #| echo: false
@@ -31,6 +38,8 @@ library(DBI)
 library(tidyr)
 library(scales)
 ```
+
+Jednym z ważnych aspektów działalności firmy turystycznej jest dopasowanie oferty do oczekiwań klientów. Dlatego analiza popularności poszczególnych typów wycieczek ma kluczowe znaczenie – pozwala lepiej planować działania marketingowe, rozwijać ofertę oraz skupić się na tych wyjazdach, które cieszą się największym zainteresowaniem. Dzięki temu firma może efektywniej wykorzystywać zasoby i zwiększać satysfakcję klientów.
 
 ```{r}
 #| echo: false
@@ -46,20 +55,17 @@ con <- dbConnect(RMariaDB::MariaDB(),
                  host = "giniewicz.it")
 ```
 
-### Które z proponowanych przez firmę rodzajów wycieczek cieszą się największą popularnością? Jak kształtuje się ich bilans zysków i strat? Czy są dla firmy opłacalne?
+#### 2.1. Liczba lotów według rodzajów wycieczek
 
-Jednym z kluczowych elementów działalności firmy turystycznej jest dostosowywanie oferty do potrzeb i preferencji klientów. Dlatego analiza popularności poszczególnych rodzajów wycieczek jest niezwykle istotna z punktu widzenia planowania przyszłych działań marketingowych oraz rozwoju oferty. Pozwala to nie tylko na optymalizację zasobów, ale również na zwiększenie satysfakcji klientów poprzez oferowanie wyjazdów, które cieszą się największym zainteresowaniem.
-
-Na podstawie danych zgromadzonych w bazie danych, możliwe było określenie, które wycieczki cieszyły się największą popularnością wśród klientów. Spójrzmy teraz na liczbę zorganizowanych lotów na poszczególne planety.
+Na podstawie danych zgromadzonych w bazie danych, możliwe było określenie, które wycieczki cieszyły się największą popularnością wśród klientów. Spójrzmy teraz na liczbę zorganizowanych wylotów dla poszczególnych wycieczek.
 
 ```{r}
 #| echo: false
 #| warning: false
-#| fig.width: 9
-#| fig.height: 7
+#| fig.width: 6
+#| fig.height: 4
 #| fig.align: "center"
-
-### POPULARNOŚĆ WYCIECZEK ###
+#| fig-cap: "Wykres 1. Liczba lotów przypadających na poszczególne wycieczki"
 
 # Pobieramy dane
 query1_1 <- "
@@ -88,40 +94,44 @@ najpopularniejsza <- df1_1_summary %>%
 najmniej_popularna <- df1_1_summary %>%
   slice_min(order_by = liczba_lotow, n = 1, with_ties = FALSE)
 
-# Wykres
 ggplot(df1_1_summary, aes(x = reorder(trip_name, -liczba_lotow),
                           y = liczba_lotow,
                           fill = force_side)) +
   geom_col() +
   geom_text(aes(label = liczba_lotow),
-            vjust = -0.5, size = 5) +
+            vjust = -0.2, size = 3) +  # mniejszy tekst nad słupkami
   scale_fill_manual(values = c("jasna" = "lightblue", "ciemna" = "pink")) +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.2))) +  # więcej miejsca na tekst
   labs(title = "Popularność wycieczek",
        x = "Wycieczka",
        y = "Liczba lotów",
        fill = "Strona Mocy") +
   theme_minimal() +
   theme(
-    plot.title = element_text(size = 18, face = "bold", hjust = 0.5),
-    axis.title.x = element_text(size = 14),
-    axis.title.y = element_text(size = 14),
-    axis.text.x = element_text(size = 12, angle = 45, hjust = 1),
-    axis.text.y = element_text(size = 12),
-    legend.title = element_text(size = 13),
-    legend.text = element_text(size = 12)
+    plot.title = element_text(size = 11, face = "bold", hjust = 0.5),
+    axis.title.x = element_text(size = 9),
+    axis.title.y = element_text(size = 9),
+    axis.text.x = element_text(size = 8, angle = 45, hjust = 1),
+    axis.text.y = element_text(size = 8),
+    legend.title = element_text(size = 9),
+    legend.text = element_text(size = 8)
   )
+
 ```
 
-Łącznie zorganizowana liczba wylotów wynosi `r laczna_liczba_wycieczek`. Najpopularniejsza wycieczka pod względem liczby wylotów to: `r najpopularniejsza[1]`, z liczbą wylotów `r najpopularniejsza[2]`, natomiast zyskująca dopiero popularność okazała się: `r najmniej_popularna[1]`, z liczbą wylotów `r najmniej_popularna[2]`.
+Łącznie zorganizowano `r laczna_liczba_wycieczek` wyjazdów. Najczęściej wybieraną wycieczką była  „`r najpopularniejsza[1]`”, która odbyła się `r najpopularniejsza[2]` razy. Z kolei najmniej popularna okazała się wycieczka  „`r najmniej_popularna[1]`”, z liczbą wylotów równą `r najmniej_popularna[2]`.
 
-Teraz możemy zobaczyć, jak wygląda to w przypadku ilości obsłużonych podróżnych.
+#### 2.2. Liczba klientów w podziale na typy wycieczek
+
+Sprawdźmy jak wygląda to w przypadku ilości obsłużonych podróżnych.
 
 ```{r}
 #| echo: false
 #| warning: false
-#| fig.width: 9
-#| fig.height: 7
+#| fig.width: 6
+#| fig.height: 4
 #| fig.align: "center"
+#| fig-cap: "Wykres 2. Liczba klientów przypadających na poszczególne wycieczki"
 
 df <- dbGetQuery(con, "
   SELECT 
@@ -155,7 +165,7 @@ najmniej_klientow <- klienci_na_wycieczke %>%
 # Wykres
 ggplot(klienci_na_wycieczke, aes(x = reorder(trip_name, -liczba_klientow), y = liczba_klientow, fill = force_side)) +
   geom_col() +
-  geom_text(aes(label = liczba_klientow), vjust = -0.5, size = 5) +
+  geom_text(aes(label = liczba_klientow), vjust = -0.3, size = 3) +
   scale_fill_manual(values = c("jasna" = "lightblue", "ciemna" = "pink")) +
   labs(
     title = "Liczba klientów na wycieczkę",
@@ -165,29 +175,33 @@ ggplot(klienci_na_wycieczke, aes(x = reorder(trip_name, -liczba_klientow), y = l
   ) +
   theme_minimal() +
   theme(
-    plot.title = element_text(size = 18, face = "bold", hjust = 0.5),
-    axis.title = element_text(size = 14),
-    axis.text.x = element_text(angle = 45, hjust = 1, size = 12),
-    axis.text.y = element_text(size = 12)
+    plot.title = element_text(size = 11, face = "bold", hjust = 0.5),
+    axis.title.x = element_text(size = 9),
+    axis.title.y = element_text(size = 9),
+    axis.text.x = element_text(size = 8, angle = 45, hjust = 1),
+    axis.text.y = element_text(size = 8),
+    legend.title = element_text(size = 9),
+    legend.text = element_text(size = 8)
   )
 ```
 
-Łącznie firma obsłużyła `r laczna_liczba_klientow` klientów. Najpopularniejsza wycieczka pod względem liczby klientów to: `r najwiecej_klientow[1]`, z liczbą klientów `r najwiecej_klientow[3]`, natomiast zyskująca dopiero popularność okazała się: `r najmniej_klientow[1]`, gdzie zdecydowało się na nią tyle osób: `r najmniej_klientow[3]`.
+Łącznie firma obsłużyła `r laczna_liczba_klientow` klientów. Najpopularniejsza wycieczka pod względem liczby klientów to „`r najwiecej_klientow[1]`” (`r najwiecej_klientow[3]` klientów), najmniej popularna okazała się  „`r najmniej_klientow[1]`” (`r najmniej_klientow[3]` klientów).
 
-#### Bilans zysków i strat poszczególnych rodzajów wycieczek
+#### 2.3. Bilans zysków i strat dla poszczególnych wycieczek
 
-Analiza bilansu zysków i strat dla różnych typów wycieczek oferowanych przez firmę stanowi kluczowy element oceny rentowności działalności. Pozwala ona nie tylko ocenić, które rodzaje wycieczek generują największe przychody, ale również które wiążą się z najwyższymi kosztami operacyjnymi, co ma bezpośredni wpływ na ostateczny zysk netto.
+Analiza bilansu zysków i strat dla różnych typów wycieczek oferowanych przez firmę stanowi kluczowy element oceny rentowności działalności. Pozwala ona nie tylko ocenić, które rodzaje wycieczek generują największe przychody, ale również które wiążą się z najwyższymi kosztami operacyjnymi, co ma bezpośredni wpływ na ostateczny zysk.
 
-W ramach analizy zestawiono przychody uzyskane z tytułu sprzedaży konkretnych rodzajów wycieczek z odpowiadającymi im kosztami – takimi jak zakwaterowanie, wyżywienie, opłaty przewodników, transport, naprawy pojazdów czy wydatki logistyczne. Dzięki temu możliwe było określenie, które typy wyjazdów są najbardziej opłacalne, a które przynoszą mniejsze zyski lub wręcz straty.
+Zestawiono przychody ze sprzedaży różnych ofert z odpowiadającymi im kosztami operacyjnymi – takimi jak zakwaterowanie, wyżywienie, transport, opłaty przewodników czy logistyka. Analiza wykazała, które typy wyjazdów generują najwyższy zysk netto, a które są mniej rentowne lub wręcz nierentowne.
 
-W tym celu posłużmy się najpierw średnią ceną wycieczki.
+W pierwszym kroku posłużono się średnią ceną jednej wycieczki, co pozwoliło porównać opłacalność na poziomie pojedynczego wyjazdu.
 
 ```{r}
 #| echo: false
 #| warning: false
-#| fig.width: 12
-#| fig.height: 10
+#| fig.width: 8
+#| fig.height: 6
 #| fig.align: "center"
+#| fig-cap: "Wykres 3. Średnie koszty, przychody i zysk z każdej wycieczki"
 
 # Pobranie danych
 query <- "
@@ -200,42 +214,52 @@ SELECT
   trip_type.trip_name,
   trip_type.daily_cost_per_participant,
   trip_type.customer_price_total,
-  payment.id_payment
+  payment.id_payment,
+  payment.id_insurance,
+  insurance.price AS insurance_price,
+  insurance.commission_rate
 FROM spaceflight
 JOIN trip_type ON spaceflight.id_trip = trip_type.id_trip
 LEFT JOIN payment ON spaceflight.id_spaceflight = payment.id_spaceflight
+LEFT JOIN insurance ON payment.id_insurance = insurance.id_insurance
 "
 
 df <- dbGetQuery(con, query)
 
-# Przetwarzanie dat i czasu trwania
+# Przetwarzanie dat i czasu trwania oraz obliczenie prowizji
 df <- df %>%
   mutate(
     departure_date = as.Date(departure_date),
     return_date = as.Date(return_date),
-    duration_days = as.numeric(return_date - departure_date)
+    duration_days = as.numeric(return_date - departure_date),
+    prowizja = insurance_price * commission_rate
   )
 
-# Liczba klientów dla każdego lotu
-liczba_klientow_df <- df %>%
+# Liczba klientów i suma prowizji dla każdego lotu
+lot_statystyki <- df %>%
   group_by(id_spaceflight) %>%
-  summarise(liczba_klientow = n(), .groups = "drop")
+  summarise(
+    liczba_klientow = n(),
+    suma_prowizji = sum(prowizja, na.rm = TRUE),
+    .groups = "drop"
+  )
 
-# Scalenie z oryginalną ramką i usunięcie duplikatów płatności
+# Scalenie z unikalnymi lotami i dołączenie statystyk
 df_unique <- df %>%
   distinct(id_spaceflight, .keep_all = TRUE) %>%
-  left_join(liczba_klientow_df, by = "id_spaceflight")
+  left_join(lot_statystyki, by = "id_spaceflight")
 
-# Koszty i przychody dla każdego lotu
+# Obliczenia kosztów i przychodów
 df_obliczone <- df_unique %>%
   mutate(
     koszt_organizacji = organization_cost,
     koszt_utrzymania = duration_days * daily_cost_per_participant * liczba_klientow,
     koszt_calkowity = koszt_organizacji + koszt_utrzymania,
-    przychod = liczba_klientow * customer_price_total
+    przychod_bilety = liczba_klientow * customer_price_total,
+    przychod = przychod_bilety + suma_prowizji
   )
 
-# Średnie wartości dla każdej wycieczki
+# Obliczenia średnich wartości dla każdej wycieczki
 srednie <- df_obliczone %>%
   group_by(trip_name) %>%
   summarise(
@@ -247,12 +271,12 @@ srednie <- df_obliczone %>%
     .groups = "drop"
   )
 
-# Long format
+# Przygotowanie danych do wykresu w formacie long
 dane_long <- srednie %>%
   select(trip_name, Koszty = sredni_koszt_lacznie, Przychód = sredni_przychod, Zysk = srednia_roznica) %>%
   pivot_longer(cols = -trip_name, names_to = "typ", values_to = "wartosc")
 
-# Wykres
+# Wykres słupkowy
 ggplot(dane_long, aes(x = trip_name, y = wartosc, fill = typ)) +
   geom_col(position = position_dodge(width = 0.9)) +
   geom_text(aes(label = ifelse(wartosc >= 1e6,
@@ -261,7 +285,7 @@ ggplot(dane_long, aes(x = trip_name, y = wartosc, fill = typ)) +
                                       paste0(round(wartosc / 1e3, 1), " k"),
                                       round(wartosc)))),
             position = position_dodge(width = 0.9),
-            vjust = -0.5, size = 4) +
+            vjust = -0.3, size = 3) +
   scale_y_continuous(labels = scales::label_number(big.mark = " ", decimal.mark = ",")) +
   scale_fill_manual(values = c("Koszty" = "pink", "Przychód" = "lightblue", "Zysk" = "lightgreen")) +
   labs(
@@ -272,13 +296,13 @@ ggplot(dane_long, aes(x = trip_name, y = wartosc, fill = typ)) +
   ) +
   theme_minimal() +
   theme(
-    plot.title = element_text(size = 18, face = "bold", hjust = 0.5),
-    axis.title.x = element_text(size = 14),
-    axis.title.y = element_text(size = 14),
-    axis.text.x = element_text(size = 12, angle = 45, hjust = 1),
-    axis.text.y = element_text(size = 12),
-    legend.title = element_text(size = 13),
-    legend.text = element_text(size = 12)
+    plot.title = element_text(size = 11, face = "bold", hjust = 0.5),
+    axis.title.x = element_text(size = 9),
+    axis.title.y = element_text(size = 9),
+    axis.text.x = element_text(size = 8, angle = 45, hjust = 1),
+    axis.text.y = element_text(size = 8),
+    legend.title = element_text(size = 9),
+    legend.text = element_text(size = 8)
   )
 ```
 
@@ -287,10 +311,12 @@ W celu uzyskania pełniejszego obrazu rentowności działalności firmy, przepro
 ```{r}
 #| echo: false
 #| warning: false
-#| fig.width: 12
-#| fig.height: 10
+#| fig.width: 8
+#| fig.height: 6
 #| fig.align: "center"
+#| fig-cap: "Wykres 4. Suma kosztów, przychodów i zysków z każdej wycieczki"
 
+# Pobranie danych
 query <- "
 SELECT 
   spaceflight.id_spaceflight,
@@ -301,42 +327,52 @@ SELECT
   trip_type.trip_name,
   trip_type.daily_cost_per_participant,
   trip_type.customer_price_total,
-  payment.id_payment
+  payment.id_payment,
+  payment.id_insurance,
+  insurance.price AS insurance_price,
+  insurance.commission_rate
 FROM spaceflight
 JOIN trip_type ON spaceflight.id_trip = trip_type.id_trip
 LEFT JOIN payment ON spaceflight.id_spaceflight = payment.id_spaceflight
+LEFT JOIN insurance ON payment.id_insurance = insurance.id_insurance
 "
 
 df <- dbGetQuery(con, query)
 
-# Przetwarzanie dat i czasu trwania
+# Przetwarzanie dat i prowizji
 df <- df %>%
   mutate(
     departure_date = as.Date(departure_date),
     return_date = as.Date(return_date),
-    duration_days = as.numeric(return_date - departure_date)
+    duration_days = as.numeric(return_date - departure_date),
+    prowizja = insurance_price * commission_rate
   )
 
-# Liczba klientów na każdy lot
+# Liczba klientów i suma prowizji dla każdego lotu
 liczba_klientow_df <- df %>%
   group_by(id_spaceflight) %>%
-  summarise(liczba_klientow = n(), .groups = "drop")
+  summarise(
+    liczba_klientow = n(),
+    suma_prowizji = sum(prowizja, na.rm = TRUE),
+    .groups = "drop"
+  )
 
-# Scalenie z oryginalną ramką i usunięcie duplikatów płatności
+# Usunięcie duplikatów
 df_unique <- df %>%
   distinct(id_spaceflight, .keep_all = TRUE) %>%
   left_join(liczba_klientow_df, by = "id_spaceflight")
 
-# Koszty i przychody dla każdego lotu
+# Obliczenia kosztów i przychodów (z prowizją)
 df_obliczone <- df_unique %>%
   mutate(
     koszt_organizacji = organization_cost,
     koszt_utrzymania = duration_days * daily_cost_per_participant * liczba_klientow,
     koszt_calkowity = koszt_organizacji + koszt_utrzymania,
-    przychod = liczba_klientow * customer_price_total
+    przychod_bilety = liczba_klientow * customer_price_total,
+    przychod = przychod_bilety + suma_prowizji
   )
 
-# Sumowanie po nazwach wycieczek
+# Sumowanie po wycieczkach
 suma <- df_obliczone %>%
   group_by(trip_name) %>%
   summarise(
@@ -348,7 +384,7 @@ suma <- df_obliczone %>%
     .groups = "drop"
   )
 
-# Long format
+# Przygotowanie danych do wykresu (long format)
 dane_long <- suma %>%
   select(trip_name, Koszty = suma_koszt_lacznie, Przychód = suma_przychod, Zysk = zysk) %>%
   pivot_longer(cols = -trip_name, names_to = "typ", values_to = "wartosc")
@@ -362,7 +398,7 @@ ggplot(dane_long, aes(x = trip_name, y = wartosc, fill = typ)) +
                                       paste0(round(wartosc / 1e3, 1), " k"),
                                       round(wartosc)))),
             position = position_dodge(width = 0.9), 
-            vjust = -0.5, size = 4) +
+            vjust = -0.3, size = 3) +
   scale_y_continuous(
     labels = scales::label_number(big.mark = " ", decimal.mark = ",")
   ) +
@@ -375,39 +411,50 @@ ggplot(dane_long, aes(x = trip_name, y = wartosc, fill = typ)) +
   ) +
   theme_minimal() +
   theme(
-    plot.title = element_text(size = 18, face = "bold", hjust = 0.5),
-    axis.title.x = element_text(size = 14),
-    axis.title.y = element_text(size = 14),
-    axis.text.x = element_text(size = 12, angle = 45, hjust = 1),
-    axis.text.y = element_text(size = 12),
-    legend.title = element_text(size = 13),
-    legend.text = element_text(size = 12)
+    plot.title = element_text(size = 11, face = "bold", hjust = 0.5),
+    axis.title.x = element_text(size = 9),
+    axis.title.y = element_text(size = 9),
+    axis.text.x = element_text(size = 8, angle = 45, hjust = 1),
+    axis.text.y = element_text(size = 8),
+    legend.title = element_text(size = 9),
+    legend.text = element_text(size = 8)
   )
 ```
 
-#### Ostateczny bilans finansowy
+```{r}
+#| echo: false
+# Znalezienie najbardziej dochodowej wycieczki
+najlepsza_wycieczka <- suma %>%
+  arrange(desc(zysk)) %>%
+  slice(1)
+```
+Jak pokazuje wykres, najbardziej dochodową wycieczką dla firmy okazała się wycieczka „`r najlepsza_wycieczka$trip_name`”, która wygenerowała zysk na poziomie `r format(round(najlepsza_wycieczka$zysk, 2), big.mark = " ", scientific = FALSE)` SpaceCoinów.
 
-W końcowym etapie analizy działalności firmy turystycznej dokonano całościowego podsumowania bilansu finansowego, obejmującego wszystkie kluczowe kategorie wpływające na rentowność przedsiębiorstwa. Zestawiono trzy główne elementy: koszty, przychody oraz zysk.
+#### 2.4. Łączna dochodowość – analiza ogólna
 
-W skład całkowitych kosztów weszły:
+Na zakończenie analizy działalności firmy dokonano zestawienia podstawowych danych finansowych. Uwzględniono trzy kluczowe elementy: koszty, przychody oraz zysk.
+
+Na całkowite koszty złożyły się:
 
 -   Koszty organizacji wyjazdów,
 
--   Koszty utrzymania klientów podczas wycieczki,
+-   Koszty związane z zakwaterowaniem i wyżywieniem klientów podczas wycieczki,
 
--   Koszty utrzymania pracowników.
+-   Koszty wynagrodzeń pracowników.
 
-Przychody uwzględniają wszystkie wpływy uzyskane od klientów za zakupione wycieczki, bez względu na ich rodzaj czy kierunek. Dzięki temu możliwe było określenie ogólnej wartości sprzedaży usług turystycznych w analizowanym okresie.
+Przychody, to łączna kwota uzyskana od klientów za wszystkie sprzedane wycieczki oraz prowizja od ubezpieczenia.
 
-Zysk został obliczony jako różnica między całkowitymi przychodami a sumą wszystkich kosztów – zarówno bezpośrednich (organizacja wyjazdów), jak i pośrednich (utrzymanie pracowników).
+Zysk został obliczony jako różnica między przychodami a kosztami.
 
 ```{r}
 #| echo: false
 #| warning: false
-#| fig.width: 9
-#| fig.height: 7
+#| fig.width: 6
+#| fig.height: 4
 #| fig.align: "center"
+#| fig-cap: "Wykres 5. Podsumowanie finansowe firmy - łączne koszty, przychód i zysk"
 
+# Pobranie danych
 query <- "
 SELECT 
   spaceflight.id_spaceflight,
@@ -417,48 +464,61 @@ SELECT
   spaceflight.organization_cost,
   trip_type.daily_cost_per_participant,
   trip_type.customer_price_total,
-  payment.id_payment
+  payment.id_payment,
+  payment.id_insurance,
+  insurance.price AS insurance_price,
+  insurance.commission_rate
 FROM spaceflight
 JOIN trip_type ON spaceflight.id_trip = trip_type.id_trip
 LEFT JOIN payment ON spaceflight.id_spaceflight = payment.id_spaceflight
+LEFT JOIN insurance ON payment.id_insurance = insurance.id_insurance
 "
+
 df <- dbGetQuery(con, query)
 
 # Dane o pracownikach
 employee_df <- dbGetQuery(con, "SELECT hire_date, leave_date, salary FROM employee")
 
-# Czas trwania lotów
+# Przetwarzanie dat i obliczanie prowizji
 df <- df %>%
   mutate(
     departure_date = as.Date(departure_date),
     return_date = as.Date(return_date),
-    duration_days = as.numeric(return_date - departure_date)
+    duration_days = as.numeric(return_date - departure_date),
+    prowizja = insurance_price * commission_rate
   )
 
-# Liczba klientów na każdy lot
+# Liczba klientów i suma prowizji na każdy lot
 liczba_klientow_df <- df %>%
   group_by(id_spaceflight) %>%
-  summarise(liczba_klientow = n(), .groups = "drop")
+  summarise(
+    liczba_klientow = n(),
+    suma_prowizji = sum(prowizja, na.rm = TRUE),
+    .groups = "drop"
+  )
 
-# Połączenie i usunięcie duplikatów płatności
+# Połączenie z unikalnymi lotami
 df_unique <- df %>%
   distinct(id_spaceflight, .keep_all = TRUE) %>%
   left_join(liczba_klientow_df, by = "id_spaceflight")
 
-# Koszty i przychody na lot
+# Obliczenia kosztów i przychodów
 df_obliczone <- df_unique %>%
   mutate(
     koszt_organizacji = organization_cost,
     koszt_utrzymania = duration_days * daily_cost_per_participant * liczba_klientow,
-    przychod = liczba_klientow * customer_price_total
+    przychod_bilety = liczba_klientow * customer_price_total,
+    przychod = przychod_bilety + suma_prowizji
   )
 
 # SUMA kosztów i przychodów z lotów
 suma_koszt_organizacji <- sum(df_obliczone$koszt_organizacji, na.rm = TRUE)
 suma_koszt_utrzymania <- sum(df_obliczone$koszt_utrzymania, na.rm = TRUE)
+suma_prowizji <- sum(df_obliczone$suma_prowizji, na.rm = TRUE)
+suma_cena_biletow <- sum(df_obliczone$przychod_bilety, na.rm = TRUE)
 suma_przychod <- sum(df_obliczone$przychod, na.rm = TRUE)
 
-# Koszt wypłat pracowników
+# Koszt wynagrodzeń pracowników
 dzisiaj <- as.Date("2100-01-01")
 
 employee_df <- employee_df %>%
@@ -480,20 +540,22 @@ suma_wyplaty <- sum(employee_df$wyplata, na.rm = TRUE)
 suma_koszt_calkowity <- suma_koszt_organizacji + suma_koszt_utrzymania + suma_wyplaty
 zysk_firmy <- suma_przychod - suma_koszt_calkowity
 
+# Dane do wykresu
 df_wykres <- data.frame(
   Rodzaj = c("Koszty", "Przychód", "Zysk"),
   Kwota = c(suma_koszt_calkowity, suma_przychod, zysk_firmy)
 )
 
+# Wykres
 ggplot(df_wykres, aes(x = Rodzaj, y = Kwota, fill = Rodzaj)) +
   geom_col(width = 0.6) +
   geom_text(
     aes(label = format(Kwota, big.mark = " ", scientific = FALSE)),
-    vjust = -0.5,
-    size = 5
+    vjust = -0.3,
+    size = 3
   ) +
   scale_y_continuous(
-    labels = label_number(big.mark = " ", decimal.mark = ",")
+    labels = scales::label_number(big.mark = " ", decimal.mark = ",")
   ) +
   scale_fill_manual(values = c("Koszty" = "pink", "Przychód" = "lightblue", "Zysk" = "lightgreen")) +
   labs(
@@ -503,34 +565,37 @@ ggplot(df_wykres, aes(x = Rodzaj, y = Kwota, fill = Rodzaj)) +
   ) +
   theme_minimal() +
   theme(
-    plot.title = element_text(size = 18, face = "bold", hjust = 0.5),
-    axis.title.y = element_text(size = 14),
-    axis.text.x = element_text(size = 13),
-    axis.text.y = element_text(size = 12),
+    plot.title = element_text(size = 11, face = "bold", hjust = 0.5),
+    axis.title.y = element_text(size = 9),
+    axis.text.x = element_text(size = 8),
+    axis.text.y = element_text(size = 8),
     legend.position = "none"
   )
+
 ```
 
 Ostatecznie uzyskano:
 
--   Koszt organizacji lotów wyniósł `r format(suma_koszt_organizacji, big.mark = " ", scientific = FALSE)`. Obejmuje on głównie wydatki związane z transportem oraz logistyką podróży.
--   Koszt utrzymania klientów podczas wycieczek wyniósł `r format(suma_koszt_utrzymania, big.mark = " ", scientific = FALSE)`. W skład tej kategorii wchodzą m.in. zakwaterowanie, wyżywienie, usługi przewodników i atrakcje w ramach programu wycieczki.
--   Wypłaty dla pracowników stanowiły `r format(suma_wyplaty, big.mark = " ", scientific = FALSE)`.
+-   Koszt organizacji lotów wyniósł `r format(suma_koszt_organizacji, big.mark = " ", scientific = FALSE)` SpaceCoinów. Obejmuje on głównie wydatki związane z transportem oraz logistyką podróży.
+-   Koszt utrzymania klientów podczas wycieczek wyniósł `r format(suma_koszt_utrzymania, big.mark = " ", scientific = FALSE)` SpaceCoinów. W skład tej kategorii wchodzą m.in. zakwaterowanie, wyżywienie, usługi przewodników i atrakcje w ramach programu wycieczki.
+-   Wypłaty dla pracowników stanowiły `r format(suma_wyplaty, big.mark = " ", scientific = FALSE)` SpaceCoinów.
 
-Łącznie koszty operacyjne firmy osiągnęły poziom `r format(suma_koszt_calkowity, big.mark = " ", scientific = FALSE)`.\
-Z kolei przychód uzyskany ze sprzedaży wycieczek wyniósł `r format(suma_przychod, big.mark = " ", scientific = FALSE)`.\
-Na tej podstawie obliczono zysk firmy, który wyniósł `r format(zysk_firmy, big.mark = " ", scientific = FALSE)`.
+Łącznie koszty operacyjne firmy osiągnęły poziom `r format(suma_koszt_calkowity, big.mark = " ", scientific = FALSE)` SpaceCoinów.\
+Przychód ze sprzedaży biletów na wycieczki osiągnął wartość `r format(suma_cena_biletow, big.mark = " ", scientific = FALSE)` SpaceCoinów, natomiast z tytułu prowizji od ubezpieczeń uzyskano dodatkowe `r format(suma_prowizji, big.mark = " ", scientific = FALSE)` SpaceCoinów. Łączny przychód firmy wyniósł `r format(suma_przychod, big.mark = " ", scientific = FALSE)` SpaceCoinów. Na tej podstawie wyliczono zysk, który osiągnął poziom `r format(zysk_firmy, big.mark = " ", scientific = FALSE)` SpaceCoinów.
 
-### Czy na podstawie wykresu liczby obsłużonych klientów w każdym miesiącu działalności firmy możemy wyciągnąć wnioski, że firma się rozwija lub podupada?
+### 3. Rozwój firmy na przestrzeni lat
 
-Celem przeprowadzonej analizy jest sprawdzenie, czy na podstawie wykresu liczby obsłużonych klientów w poszczególnych miesiącach można ocenić, czy firma się rozwija, czy podupada. W tym celu dane zostały przedstawione na wykresach, które umożliwiają identyfikowanie trendów oraz zmian w liczbie klientów na przestrzeni czasu.
+Celem przeprowadzonej analizy jest sprawdzenie, czy na podstawie liczby obsłużonych klientów w poszczególnych miesiącach można ocenić, czy firma się rozwija, czy podupada. W tym celu dane zostały przedstawione na wykresach, które umożliwiają identyfikowanie trendów oraz zmian w liczbie klientów na przestrzeni czasu.
+
+#### 3.1. Analiza w kontekście rocznym
 
 ```{r}
 #| echo: false
 #| warning: false
-#| fig.width: 9
-#| fig.height: 7
+#| fig.width: 6
+#| fig.height: 4
 #| fig.align: "center"
+#| fig-cap: "Wykres 6. Liczba klientów w podziale na lata"
 
 query_2g_2 <- "SELECT COUNT(p.id_customer) AS liczba_klientow,
                  DATE_FORMAT(spf.departure_date, '%Y') AS rok
@@ -540,12 +605,14 @@ GROUP BY rok
 ORDER BY rok;"
 
 df <- dbGetQuery(con, query_2g_2)
+df$liczba_klientow <- as.integer(df$liczba_klientow)
 
 ggplot(df, aes(x = rok, y = liczba_klientow)) +
   geom_col(fill = "lightblue") +
   labs(title = "Liczba klientów - zestawienie lat",
        x = "Rok",
        y = "Liczba klientów") + 
+  theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 max_idx <- which.max(df$liczba_klientow)
@@ -562,7 +629,7 @@ difference <- abs(b_number_of_clients - w_number_of_clients)
 if (best_year > worse_year) {
   str <- paste("możemy stwierdzić, że z roku na rok w naszej firmie przybywa coraz więcej klientów. W roku", 
                best_year, "było", b_number_of_clients,"klientów. To o", 
-               difference,"klientów więcejniż w roku", 
+               difference,"klientów więcej niż w roku", 
                worse_year,".")
 } else if (best_year < worse_year) {
   str <- paste("możemy stwierdzić, że z roku na rok w naszej firmie ubywa klientów. W roku", 
@@ -576,11 +643,15 @@ if (best_year > worse_year) {
 
 Porównując dane na tle lat `r str`
 
+#### 3.2. Analiza w kontekście miesięcznym
+
 ```{r}
 #| echo: false
 #| warning: false
-#| fig.width: 9
-#| fig.height: 7
+#| fig.width: 6
+#| fig.height: 4
+#| fig.align: "center"
+#| fig-cap: "Wykres 7. Liczba klientów według miesiąca"
 
 query_2g <- "SELECT COUNT(p.id_customer) AS liczba_klientow,
                  DATE_FORMAT(spf.departure_date, '%Y-%m') AS data
@@ -590,6 +661,7 @@ GROUP BY data
 ORDER BY data;"
 
 df <- dbGetQuery(con, query_2g)
+df$liczba_klientow <- as.integer(df$liczba_klientow)
 
 df$rok <- as.numeric(substr(df$data, 1, 4))
 
@@ -619,13 +691,13 @@ bm_wy_number_of_clients <- df_max_miesiac[df_max_miesiac[, "rok"] == worse_year,
 
 if (best_year > worse_year){
   if (bm_by_number_of_clients > bm_wy_number_of_clients){
-    text <- paste("W roku", best_year, "miesiąc, w którym najwięcej klientów skorzystało z usługi to ", months[best_month_best_year], ". Dla porównania w roku", worse_year, "najbardziej zyskownym miesiącem był", months[best_month_worse_year], ". Sugeruje to, że z roku na rok do firmy przybywa coraz więcej klientów.")
+    text <- paste("W roku", best_year, "miesiąc, w którym najwięcej klientów skorzystało z usługi to ", months[best_month_best_year], ". Dla porównania w roku", worse_year, "najbardziej zyskownym miesiącem był", months[best_month_worse_year], ".")
   } else {
     text <- paste("W roku", best_year, "miesiąc, w którym najwięcej klientów skorzystało z usługi to ", months[best_month_best_year], ". Dla porównania w roku", worse_year, "najbardziej zyskownym miesiącem był", months[best_month_worse_year], ". Mimo tego, że najbardziej zyskownym miesiącem w historii istnienia firmy był ", months[best_month_worse_year], ", to w roku ", best_year, " było więcej klientów ogółem.")
   }
 } else {
   if (bm_by_number_of_clients < bm_wy_number_of_clients){
-    text <- paste("W roku ", best_year, " miesiąc, w którym najwięcej klientów skorzystało z usługi to ", months[best_month_best_year], ". Dla porównania w roku ", worse_year, " najbardziej zyskownym miesiącem był ", months[best_month_worse_year], ". Sugeruje to, że z roku na rok liczba klientów naszej firmy maleje.")
+    text <- paste("W roku ", best_year, " miesiąc, w którym najwięcej klientów skorzystało z usługi to ", months[best_month_best_year], ". Dla porównania w roku ", worse_year, " najbardziej zyskownym miesiącem był ", months[best_month_worse_year], ".")
   } else {
     text <- paste("W roku ", best_year, " miesiąc, w którym najwięcej klientów skorzystało z usługi to ", months[best_month_best_year], ". Dla porównania w roku ", worse_year, " najbardziej zyskownym miesiącem był ", months[best_month_worse_year], ". Mimo tego, że najbardziej zyskownym miesiącem w historii naszej firmy był ", months[best_month_best_year], " to niestety liczba klientów z roku na rok spada.")
   }
@@ -634,9 +706,11 @@ if (best_year > worse_year){
 
 `r text`
 
-### Po których z proponowanych wycieczek klienci są skłonni wybrać się na kolejne, a po których nie wracają do firmy? Czy można na tej podstawie wycofać niektóre wycieczki z oferty?
+### 4. Powrót klientów i ich preferencje
 
-Kolejne zagadnienie dotyczy badania chęci wybierania się klientów na kolejne wycieczki z firmą. W tym celu klienci zostali podzieleni na 2 grupy: tych, którzy w ciągu 2 lat działalności „Space-U” wybrali się tylko na jeden wyjazd, oraz tych, którzy odwiedzili kilka miejsc. Dla każdej z grup zliczono wycieczki, które wybrano podczas pierwszych wylotów – pierwsze wrażenia zdecydowały o tym, czy klienci ponownie obdarzyli firmę zaufaniem, czy też nie.
+Kolejnym obszarem analizy była skłonność klientów do ponownego skorzystania z oferty firmy „Space-U”. W tym celu klienci zostali podzieleni na 2 grupy: osoby, które w ciągu 2 lat działalności firmy wzięły udział wyłącznie w jednej wycieczce, oraz tych, którzy zdecydowali się na więcej niż jeden wyjazd. Dla każdej z grup zliczono wycieczki, które wybrano podczas pierwszych wylotów – pierwsze wrażenia zdecydowały o tym, czy klienci ponownie obdarzyli firmę zaufaniem, czy też nie.
+
+#### 4.1. Klienci powracający
 
 ```{r}
 #| echo: false
@@ -644,6 +718,7 @@ Kolejne zagadnienie dotyczy badania chęci wybierania się klientów na kolejne 
 #| fig.width: 6
 #| fig.height: 4
 #| fig.align: "center"
+#| fig-cap: "Wykres 8. Liczba klientów, którzy wrócili do firmy po danej wycieczce"
 
 query3_1 <- "WITH more_than_one_trip AS (SELECT payment.id_customer AS id_customer, spaceflight.id_trip AS id_trip, trip_type.trip_name AS trip_name
 FROM payment INNER JOIN spaceflight ON payment.id_spaceflight = spaceflight.id_spaceflight INNER JOIN trip_type ON spaceflight.id_trip = trip_type.id_trip
@@ -683,11 +758,14 @@ most_repeated_trip <- df3_1_1$nazwa_najczesciej_powtarzanej_wycieczki
 ggplot(df3_1, aes(x = df3_1$nazwa_wycieczki, y = df3_1$liczba_klientów)) +
   geom_col(fill = "lightblue") +
   labs(title = "Liczba klientów, którzy wrócili do firmy po danej wycieczce", x = "Nazwa wycieczki", y = "Liczba klientów") +
+  theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 ```
 
-Klienci, którzy zdecydowali się wziąć udział w więcej niż jednym wyjeździe, najczęściej wykupowali za pierwszym razem następujące wycieczki: `r df3_1$nazwa_wycieczki[1]`, `r df3_1$nazwa_wycieczki[2]`, `r df3_1$nazwa_wycieczki[3]`. Najpopularniejszą wycieczką wśród nich była wycieczka o nazwie `r most_repeated_trip`, na którą wybrało się `r df3_1_1$liczba_klientów` klientów. Może to oznaczać, że zwiedzającym spodobał się klimat wycieczki, a w planie firmy na najbliższy czas należy uwzględnić organizację większej liczby wycieczek tego typu bądź wprowadzić do oferty więcej rodzajów wyjazdów w podobnym klimacie.
+Analizując powracających klientów, zauważyliśmy, że osoby, które zdecydowały się na więcej niż jeden wyjazd, najczęściej wybierały podczas pierwszej podróży następujące wycieczki: `r df3_1$nazwa_wycieczki[1]`, `r df3_1$nazwa_wycieczki[2]`, `r df3_1$nazwa_wycieczki[3]`. Najwięcej klientów, którzy wrócili ponownie byli klienci, którzy za pierwszym razem wybrali wycieczkę: `r most_repeated_trip` (łącznie `r df3_1_1$liczba_klientów` klientów). Może to oznaczać, że zwiedzającym spodobał się klimat wycieczki, a w planie firmy na najbliższy czas należy uwzględnić organizację większej liczby wycieczek tego typu bądź wprowadzić do oferty więcej rodzajów wyjazdów w podobnym klimacie.
+
+#### 4.2. Klienci jednorazowi
 
 ```{r}
 #| echo: false
@@ -695,6 +773,7 @@ Klienci, którzy zdecydowali się wziąć udział w więcej niż jednym wyjeźdz
 #| fig.width: 6
 #| fig.height: 4
 #| fig.align: "center"
+#| fig-cap: "Wykres 9. Liczba klientów, którzy nie wrócili do firmy po danej wycieczce"
 
 query3_2 <- "WITH one_trip AS (SELECT payment.id_customer AS id_customer, spaceflight.id_trip AS id_trip, trip_type.trip_name AS trip_name
 FROM payment INNER JOIN spaceflight ON payment.id_spaceflight = spaceflight.id_spaceflight INNER JOIN trip_type ON spaceflight.id_trip = trip_type.id_trip
@@ -727,13 +806,17 @@ df3_2_1 <- dbGetQuery(con, query3_2_1)
 ggplot(df3_2, aes(x = df3_2$nazwa_wycieczki, y = df3_2$liczba_klientów)) +
   geom_col(fill = "lightblue") +
   labs(title = "Liczba klientów, którzy nie wrócili do firmy po danej wycieczce", x = "Nazwa wycieczki", y = "Liczba klientów") +
+  theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 ```
 
-Klienci, którzy nie zdecydowali się ponownie wziąć udziału w wyjeździe organizowanym przez „Space-U", najczęściej wykupowali za pierwszym razem następujące wycieczki: `r df3_2$nazwa_wycieczki[1]`, `r df3_2$nazwa_wycieczki[2]`, `r df3_2$nazwa_wycieczki[3]`. Najczęściej wybieraną wśród nich wycieczką była wycieczka o nazwie `r df3_2_1$nazwa_wycieczki`, na którą wybrało się `r df3_2_1$liczba_klientów` klientów. Może to oznaczać, że zaproponowana wycieczka nie spotyka się z pozytywnym odbiorem wszystkich klientów, zatem należy wprowadzić zmiany w jej plan. W przypadku dalszego braku zainteresowania kolejnymi wyjazdami z firmą wśród klientów, którzy wybrali się na wycieczkę tego typu, należy zastanowić się nad wycofaniem wycieczki z oferty i zastąpieniem jej inną propozycją.
+Klienci, którzy nie zdecydowali się na ponowny udział w wyjazdach organizowanych przez „Space-U”, najczęściej wybierali na pierwszym wyjeździe następujące wycieczki: `r df3_2$nazwa_wycieczki[1]`, `r df3_2$nazwa_wycieczki[2]`, `r df3_2$nazwa_wycieczki[3]`. Najczęściej wybieraną wśród nich wycieczką była wycieczka o nazwie `r df3_2_1$nazwa_wycieczki`, na którą wybrało się `r df3_2_1$liczba_klientów` klientów.
 
-### Który z typów wycieczek cieszy się większą popularnością – wycieczki z jasną czy ciemną stroną mocy?
+Porównując obydwa wykresy, można zauważyć, że liczba osób powracających na kolejne wycieczki jest znacznie niższa niż osób niepowracających, a także że lista wycieczek, po których klienci powrócili, pokrywa się częściowo z listą wycieczek, po których nie wrócili.
+Może to wskazywać, że oferta tych wycieczek nie odpowiada w pełni oczekiwaniom znacznej części klientów, co może być przyczyną ich decyzji o niekorzystaniu z kolejnych wyjazdów organizowanych przez firmę. Warto w związku z tym rozważyć wprowadzenie zmian w programie tych wycieczek, aby spełniały oczekiwania większej liczby klientów. Jeśli mimo to zainteresowanie kolejnymi wyjazdami pozostanie niskie, należy rozważyć wycofanie danych wycieczek z oferty i zastąpienie ich bardziej atrakcyjnymi propozycjami.
+
+### 5. Jasna czy ciemna strona mocy?
 
 Firmę „Space-U” interesuje również, która ze stron mocy cieszy się większą popularnością wśród turystów - czy więcej osób wybiera się na wycieczki z jasną, czy z ciemną stroną mocy? Odpowiedź na to pytanie pomoże firmie lepiej dopasować ofertę wycieczek do oczekiwań klientów w najbliższej przyszłości. Aby uzyskać odpowiedź, liczymy, ile było rezerwacji wycieczek każdego z dwóch typów.
 
@@ -743,6 +826,7 @@ Firmę „Space-U” interesuje również, która ze stron mocy cieszy się wię
 #| fig.width: 6
 #| fig.height: 4
 #| fig.align: "center"
+#| fig-cap: "Wykres 10. Liczba klientów w zależności od strony mocy"
 
 query4 <- "SELECT force_side AS strona_mocy, COUNT(*) AS liczba_klientów
 FROM spaceflight INNER JOIN trip_type ON spaceflight.id_trip = trip_type.id_trip
@@ -766,20 +850,51 @@ GROUP BY force_side ORDER BY COUNT(*) ASC LIMIT 1"
 
 less_popular_force_side <- dbGetQuery(con, query4_2)
 
-ggplot(df4, aes(x = df4$strona_mocy, y = df4$liczba_klientów)) +
-  geom_col(fill = "lightblue") +
-  labs(title = "Liczba klientów w zależności od strony mocy", x = "Strona mocy", y = "Liczba klientów")
+ggplot(df4, aes(x = strona_mocy, y = liczba_klientów, fill = strona_mocy)) +
+  geom_col() +
+  scale_fill_manual(values = c("ciemna" = "pink", "jasna" = "lightblue")) +
+  labs(
+    title = "Liczba klientów w zależności od strony mocy",
+    x = "Strona mocy",
+    y = "Liczba klientów",
+    fill = "Strona mocy"
+  ) +
+  theme_minimal()
 ```
-
-Z powyższego wykresu odczytać można, że to `r more_popular_force_side$strona_mocy` strona mocy cieszy się większą popularnością wśród klientów firmy - na wycieczki tego typu wybrało się `r more_popular_force_side$liczba_klientów` klientów. Dla porównania, wycieczki oznaczone jako "`r less_popular_force_side$strona_mocy` strona mocy" wybrało `r less_popular_force_side$liczba_klientów` klientów. Wobec dużego zainteresowania klientów wyjazdami oznaczonymi jako "`r more_popular_force_side$strona_mocy` strona mocy", można wprowadzić do oferty firmy więcej wycieczek tego typu.
-
-### Jak często podczas wyjazdów zdarzają się wypadki konkretnych typów i jaka część klientów jest ubezpieczona na wypadek ich wystąpienia?
-
-Celem przeprowadzonej analizy jest sprawdzenie, jak często podczas podróży dochodzi do wypadków poszczególnych typów oraz jak duża część klientów jest ubezpieczona od skutków takiej sytuacji. W tym celu dane zostały przedstawione na wykresie, umożliwiającym identyfikowanie najczęściej występujących wypadków oraz ocenę stopnia ubezpieczenia klientów w obliczu takiego ryzyka.
 
 ```{r}
 #| echo: false
 #| warning: false
+
+if (more_popular_force_side$liczba_klientów == less_popular_force_side$liczba_klientów) {
+  str_5_observations <- paste("Możemy zaobserwować, że liczba klientów, którzy wybrali jasną oraz ciemną stronę mocy, jest dokładnie taka sama. Każdą ze stron mocy wybrało ", more_popular_force_side$liczba_klientów, " osób.")
+} else {
+  str_5_observations <- paste("Z powyższego wykresu odczytać można, że to ", more_popular_force_side$strona_mocy, " strona mocy cieszy się większą popularnością wśród klientów firmy - na wycieczki tego typu wybrało się ", more_popular_force_side$liczba_klientów, " klientów, natomiast wycieczki oznaczone jako ", less_popular_force_side$strona_mocy, " strona mocy wybrało ", less_popular_force_side$liczba_klientów, " klientów.")
+}
+
+if (more_popular_force_side$liczba_klientów - less_popular_force_side$liczba_klientów < 10) {
+  str_5 <- "Możemy zaobserwować, że liczba klientów, którzy wybrali jasną oraz ciemną stronę mocy, nie różni się znacznie - obydwie strony mocy cieszą się podobnym zainteresowaniem. Oznacza to, że firma może rozwijać swoją ofertę, przygotowując kolejne propozycje wycieczek zarówno z jasną, jak i ciemną stroną mocy."
+} else {
+  str_5 <- paste("Wobec większego zainteresowania klientów wyjazdami oznaczonymi jako ", more_popular_force_side$strona_mocy, " strona mocy, można wprowadzić do oferty firmy więcej wycieczek właśnie tego typu.")
+}
+
+```
+
+`r str_5_observations`
+
+`r str_5`
+
+### 6. Bezpieczeństwo
+
+Celem przeprowadzonej analizy jest sprawdzenie, jak często podczas podróży dochodzi do wypadków poszczególnych typów oraz jak duża część klientów jest ubezpieczona od skutków takiej sytuacji. W tym celu dane zostały przedstawione na wykresie, umożliwiającym identyfikowanie najczęściej występujących wypadków oraz ocenę stopnia ubezpieczenia klientów w obliczu takiego ryzyka.
+
+#### 6.1. Liczba i częstotliwość wypadków
+
+```{r}
+#| echo: false
+#| warning: false
+#| fig.align: "center"
+#| fig-cap: "Wykres 11. Liczba wypadków podczas podróży"
 
 query_2 <- "SELECT COUNT(ar.id_accident) AS liczba_wypadkow, at.accident_type AS rodzaj_wypadku
 FROM accident_report AS ar
@@ -787,22 +902,29 @@ INNER JOIN accident_type AS at ON ar.id_accident = at.id_accident
 GROUP BY ar.id_accident;"
 
 df <- dbGetQuery(con, query_2)
+df$liczba_wypadkow <- as.integer(df$liczba_wypadkow)
+
 
 ggplot(df, aes(x = rodzaj_wypadku, y = liczba_wypadkow)) + 
   geom_col(fill="lightblue") + 
   labs(title = "Liczba wypadków podczas podróży",
        x = "Rodzaj wypadku",
        y = "Liczba wypadków") + 
+  theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 max_incident_idx <- which.max(df$liczba_wypadkow)
 ```
 
-Powyższy wykres przedstawia liczbę wypadków podczas podróży w zależności od rodzaju wypadku. Jak możemy zauważyć najczęściej pojawiającym się wypadkiem jest `r df[max_incident_idx, "rodzaj_wypadku"]`. Sugeruje nam to, że na ten rodzaj wypadku powinniśmy jako firma zalecać ubezpieczenie się naszym klientom.
+Powyższy wykres przedstawia liczbę wypadków podczas podróży w zależności od rodzaju wypadku. Jak możemy zauważyć najczęściej pojawiającym się wypadkiem jest  „`r df[max_incident_idx, "rodzaj_wypadku"]`”. Sugeruje nam to, że na ten rodzaj wypadku powinniśmy jako firma zalecać ubezpieczenie się naszym klientom.
+
+#### 6.2. Ubezpieczenia klientów w razie wypadków
 
 ```{r}
 #| echo: false
 #| warning: false
+#| fig.align: "center"
+#| fig-cap: "Wykres 12. Liczba wypadków według rodzaju"
 
 query_2_2 <- "SELECT
     at.accident_type,
@@ -865,18 +987,21 @@ accident_ratio_min <- wynik$accident_type[idx_ratio_min]
 suma_ratio_min <- wynik$suma[idx_ratio_min]
 ```
 
-Dla najczęściej pojawiającego się rodzaju wypadku, jakim jest `r accident_suma_max`, `r ratio_suma_max * 100`% klientów posiada ubezpieczenie pokrywające koszty związane z tym wypadkiem. Dla wypadku: "`r accident_ratio_max`" stosunek klientów ubezpieczonych do wszystkich klientów, którzy tego wypadku doświadczyli, jest największy i wynosi `r ratio_max * 100`%. Liczba tych wypadków wynosi `r suma_ratio_max`. Z kolei klienci najrzadziej posiadają ubezpieczenie na `r accident_ratio_min` w stosunku do liczby wypadków tego typu.
+Dla najczęściej pojawiającego się rodzaju wypadku, jakim jest „`r accident_suma_max`”, `r round(ratio_suma_max * 100,2)`% klientów posiada ubezpieczenie pokrywające koszty związane z tym wypadkiem. Dla wypadku: „`r accident_ratio_max`” stosunek klientów ubezpieczonych do wszystkich klientów, którzy tego wypadku doświadczyli, jest największy i wynosi `r round(ratio_max * 100,2)`%. Liczba tych wypadków wynosi `r suma_ratio_max`. Z kolei klienci najrzadziej posiadają ubezpieczenie na „`r accident_ratio_min`” w stosunku do liczby wypadków tego typu.
 
-### Czy wycieczki, którym klienci wystawiają najwyższe oceny, są również najchętniej wybierane?
+### 7. Ocena ofert
 
-Oceny wystawiane przez klientów po zakończonych wycieczkach stanowią istotny element oceny jakości oferty turystycznej. Są one nie tylko subiektywnym wyrazem zadowolenia uczestników, ale również cennym źródłem informacji dla firmy, pozwalającym na identyfikację mocnych i słabych stron. Dzięki gromadzeniu ocen firma może monitorować poziom satysfakcji uczestników, identyfikować najbardziej doceniane elementy oferty (np. konkretne kierunki, przewodników, atrakcje) oraz podejmować trafne decyzje dotyczące udoskonalania wyjazdów. Wysokie oceny stanowią również wartość marketingową – mogą budować zaufanie nowych klientów i pozytywnie wpływać na wizerunek firmy. Klienci firmy Space-U mają możliwość oceny wycieczki w pięciostopiowej skali (1-5). Przyjrzyjmy się jak jakie mają odczucia.
+#### 7.1. Najlepiej oceniane wycieczki
+
+Oceny wystawiane przez klientów po zakończonych wycieczkach są istotnym wskaźnikiem jakości oferty turystycznej. Stanowią one cenne źródło informacji dla firmy, pozwalające na identyfikację mocnych i słabych stron oraz monitorowanie poziomu satysfakcji uczestników. Klienci mają możliwość oceny wycieczki w pięciostopiowej skali (1-5). Przyjrzyjmy się zatem, jak klienci oceniają poszczególne wycieczki.
 
 ```{r}
 #| echo: false
 #| warning: false
-#| fig.width: 9
-#| fig.height: 7
+#| fig.width: 7
+#| fig.height: 5
 #| fig.align: "center"
+#| fig-cap: "Wykres 13. Średnia ocena wycieczki w skali 1-5"
 
 # Pobieramy dane
 df <- dbGetQuery(con, "
@@ -898,16 +1023,16 @@ srednie_oceny <- df %>%
 
 # Wycieczka z najlepszą oceną
 najlepsza_wycieczka <- srednie_oceny %>%
-  slice_max(order_by = srednia_ocena, n = 1)
+  slice_max(order_by = srednia_ocena, n = 1, with_ties = FALSE)
 
 # Wycieczka z najgorszą oceną
 najgorsza_wycieczka <- srednie_oceny %>%
-  slice_min(order_by = srednia_ocena, n = 1)
+  slice_min(order_by = srednia_ocena, n = 1, with_ties = FALSE)
 
 # Wykres
 ggplot(srednie_oceny, aes(x = reorder(trip_name, -srednia_ocena), y = srednia_ocena, fill = force_side)) +
   geom_col() +
-  geom_text(aes(label = round(srednia_ocena, 2)), vjust = -0.5, size = 5) +
+  geom_text(aes(label = round(srednia_ocena, 2)), vjust = -0.3, size = 3) +
   scale_fill_manual(values = c("jasna" = "lightblue", "ciemna" = "pink")) +
   labs(
     title = "Średnia ocena wycieczki",
@@ -917,101 +1042,113 @@ ggplot(srednie_oceny, aes(x = reorder(trip_name, -srednia_ocena), y = srednia_oc
   ) +
   theme_minimal() +
   theme(
-    plot.title = element_text(size = 18, face = "bold", hjust = 0.5),
-    axis.title = element_text(size = 14),
-    axis.text.x = element_text(angle = 45, hjust = 1, size = 12),
-    axis.text.y = element_text(size = 12)
+    plot.title = element_text(size = 11, face = "bold", hjust = 0.5),
+    axis.title = element_text(size = 9),
+    axis.text.x = element_text(angle = 45, hjust = 1, size = 9),
+    axis.text.y = element_text(size = 8),
+    plot.margin = margin(1, 1, 2, 2, "cm") 
   )
 ```
 
-Najlepiej ocenianą wycieczką jest `r najlepsza_wycieczka[1]`, z oceną `r najlepsza_wycieczka[3]`. Najmniej do gustu przypadła za to wycieczka `r najgorsza_wycieczka[1]`, gdzie ocena wyniosła `r najgorsza_wycieczka[3]`.
-
-Dla porównania spójrzmy na wykres popularności, który już wcześniej widzieliśmy.
+Najlepiej ocenianą wycieczką jest `r najlepsza_wycieczka[1]`, z oceną `r round(najlepsza_wycieczka[3],2)`. Najmniej do gustu przypadła za to wycieczka `r najgorsza_wycieczka[1]`, gdzie ocena wyniosła `r round(najgorsza_wycieczka[3],2)`.
 
 ```{r}
 #| echo: false
 #| warning: false
-#| fig.width: 9
-#| fig.height: 7
-#| fig.align: "center"
 
-df <- dbGetQuery(con, "
-  SELECT 
-    payment.id_payment,
-    payment.id_spaceflight,
-    spaceflight.id_trip,
-    trip_type.trip_name,
-    trip_type.force_side
-  FROM payment
-  JOIN spaceflight ON payment.id_spaceflight = spaceflight.id_spaceflight
-  JOIN trip_type ON spaceflight.id_trip = trip_type.id_trip
-")
+# Sprawdzenie, czy najlepiej oceniana wycieczka jest też najpopularniejszą
+czy_najlepsza_jest_najpopularniejsza <- najlepsza_wycieczka$trip_name == najwiecej_klientow$trip_name
 
-# Liczby klientów
-klienci_na_wycieczke <- df %>%
-  group_by(trip_name, force_side) %>%
-  summarise(liczba_klientow = n(), .groups = "drop") %>%
-  arrange(desc(liczba_klientow))
-
-# Wykres
-ggplot(klienci_na_wycieczke, aes(x = reorder(trip_name, -liczba_klientow), y = liczba_klientow, fill = force_side)) +
-  geom_col() +
-  geom_text(aes(label = liczba_klientow), vjust = -0.5, size = 5) +
-  scale_fill_manual(values = c("jasna" = "lightblue", "ciemna" = "pink")) +
-  labs(
-    title = "Liczba klientów na wycieczkę",
-    x = "Wycieczka",
-    y = "Liczba klientów",
-    fill = "Strona mocy"
-  ) +
-  theme_minimal() +
-  theme(
-    plot.title = element_text(size = 18, face = "bold", hjust = 0.5),
-    axis.title = element_text(size = 14),
-    axis.text.x = element_text(angle = 45, hjust = 1, size = 12),
-    axis.text.y = element_text(size = 12)
-  )
 ```
 
-### Którzy spośród naszych pracowników (pilot i przewodnik) najczęściej latali wspólnie na wycieczki?
+`r if (czy_najlepsza_jest_najpopularniejsza) {   "Jak możemy zauważyć, najlepiej oceniana wycieczka pokrywa się z tą, która cieszy się największą popularnością wśród klientów. Potwierdza to **wykres 2.**, przedstawiający liczbę uczestników poszczególnych wycieczek." } else {   "Warto zauważyć, że najlepiej oceniana wycieczka nie jest jednocześnie tą najczęściej wybieraną przez klientów. Potwierdza to *wykres 2*, przedstawiający liczbę uczestników poszczególnych wycieczek. Może to oznaczać, że choć wycieczka cieszy się dużym uznaniem wśród uczestników, to jej charakter, cena lub dostępność sprawiają, że trafia do węższego grona." }`
 
-Ostatnie pytanie dotyczy załogi statków - którzy spośród pracowników firmy najczęściej wybierają się wspólnie na wycieczki. Aby na nie odpowiedzieć, korzystamy z tabeli, w której opisano wszystkie zorganizowane wyjazdy - wybieramy wszystkie możliwe połączenia pilotów i przewodników oraz liczymy, jak często wyruszają ze sobą w podróże.
+### 8. Załoga i współpraca
+
+#### 8.1. Najczęstsze pary pilot–przewodnik podczas wyjazdów
+
+W ostatnim etapie analizy przyjrzano się składom załóg uczestniczących w wycieczkach, koncentrując się na współpracy między pilotami a przewodnikami. Celem było zidentyfikowanie par pracowników, które najczęściej odbywały wspólne wyjazdy. Analiza została przeprowadzona na podstawie danych zawartych w tabeli opisującej wszystkie zorganizowane wyprawy. Dla każdego wyjazdu wyodrębniono kombinacje pilot–przewodnik, a następnie obliczono częstotliwość ich wspólnych podróży, co pozwoliło wskazać najczęściej współpracujące duety.
+
+```{r}
+#| echo: false
+#| warning: false
+
+query_7 <- "WITH crews_with_max_flights AS (SELECT 
+  CONCAT(e1.first_name, ' ', e1.last_name, ', ', e2.first_name, ' ', e2.last_name) AS imiona,
+  COUNT(*) AS liczba_wyjazdów
+FROM spaceflight AS s
+INNER JOIN employee AS e1 ON s.id_pilot = e1.id_employee
+INNER JOIN employee AS e2 ON s.id_guide = e2.id_employee
+GROUP BY s.id_pilot, s.id_guide
+HAVING COUNT(*) = (
+  SELECT MAX(flight_count) FROM (
+    SELECT COUNT(*) AS flight_count
+    FROM spaceflight
+    GROUP BY id_pilot, id_guide
+  ) AS sub
+))
+
+SELECT GROUP_CONCAT(imiona SEPARATOR ' oraz ') AS crews_with_max_flights_combined FROM crews_with_max_flights"
+
+
+df7 <- dbGetQuery(con, query_7)
+
+```
 
 ```{r}
 #| echo: false
 #| warning: false
 #| fig.width: 6
-#| fig.height: 6
+#| fig.height: 4
 #| fig.align: "center"
+#| fig-cap: "Wykres 14. Heatmapa wspólnych wyjazdów wybranych członków załogi"
 
-query7 <- "SELECT s.id_pilot AS id_pilota, s.id_guide AS id_przewodnika, CONCAT(e1.first_name, ' ', e1.last_name, ', ', e2.first_name, ' ', 
-e2.last_name) AS imiona, COUNT(*) AS liczba_wyjazdów
-FROM spaceflight AS s INNER JOIN employee AS e1 ON s.id_pilot = e1.id_employee
-INNER JOIN employee AS e2 ON s.id_guide = e2.id_employee
-GROUP BY s.id_pilot, s.id_guide
-ORDER BY COUNT(*) DESC"
+crew_query <- "WITH pilot_names AS (SELECT id_employee, CONCAT(first_name, ' ', last_name) AS pilot_name FROM employee
+WHERE id_employee IN (SELECT DISTINCT id_pilot FROM spaceflight)),
 
-df7 <- dbGetQuery(con, query7)
-df7$liczba_wyjazdów <- as.integer(df7$liczba_wyjazdów)
+guide_names AS (SELECT id_employee, CONCAT(first_name, ' ', last_name) AS guide_name FROM employee
+WHERE id_employee IN (SELECT DISTINCT id_guide FROM spaceflight))
 
-query7_1 <- "SELECT s.id_pilot AS id_pilota, s.id_guide AS id_przewodnika, CONCAT(e1.first_name, ' ', e1.last_name, ', ', e2.first_name, ' ', 
-e2.last_name) AS imiona, COUNT(*) AS liczba_wyjazdów
-FROM spaceflight AS s INNER JOIN employee AS e1 ON s.id_pilot = e1.id_employee
-INNER JOIN employee AS e2 ON s.id_guide = e2.id_employee
-GROUP BY s.id_pilot, s.id_guide
-ORDER BY COUNT(*) DESC LIMIT 1"
+SELECT e1.pilot_name AS pilot, e2.guide_name AS guide FROM spaceflight 
+INNER JOIN pilot_names AS e1 ON spaceflight.id_pilot = e1.id_employee
+INNER JOIN guide_names AS e2 ON spaceflight.id_guide = e2.id_employee"
 
-df7_1 <- dbGetQuery(con, query7_1)
+crew_df <- dbGetQuery(con, crew_query)
 
+crew_heatmap <- crew_df %>%
+  count(pilot, guide, name = "flights")
 
-ggplot(df7, aes(x = df7$imiona, y = df7$liczba_wyjazdów)) +
-  geom_col(fill = "lightblue") +
-  labs(title = "Liczba wspólnych wyjazdów wybranych członków załogi", x = "Załoga", y = "Liczba wyjazdów") +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1), plot.margin = margin(1, 1, 2, 2, "cm"))
-
+ggplot(crew_heatmap, aes(x = factor(pilot), y = factor(guide), fill = flights)) +
+  geom_tile(color = "white") +
+  geom_text(aes(label = flights), color = "black") +
+  scale_fill_gradient(low = "lightblue", high = "blue") +
+  labs(title = "Liczba wspólnych lotów: pilot i przewodnik",
+       x = "Imię pilota",
+       y = "Imię przewodnika",
+       fill = "Liczba lotów") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
-Z wykresu powyżej możemy odczytać, że `r df7_1$imiona` są członkami załogi, którzy wylatują ze sobą na wycieczki najczęściej. Może to oznaczać, że zgłaszają się do wyjazdów wspólnie, ponieważ dobrze im się współpracuje. Firma powinna wziąć to pod uwagę podczas planowania kolejnych lotów - jeżeli relacje pomiędzy pracownikami są dobre, znajduje to przełożenie na atmosferę całej wycieczki, a dzięki temu - również na pozytywną opinię klientów.
+Z wykresu powyżej możemy odczytać, że `r df7$crews_with_max_flights_combined` są członkami załogi, którzy wylatują ze sobą na wycieczki najczęściej. Może to oznaczać, że zgłaszają się do wyjazdów wspólnie, ponieważ dobrze im się współpracuje. Firma powinna wziąć to pod uwagę podczas planowania kolejnych lotów - jeżeli relacje pomiędzy pracownikami są dobre, znajduje to przełożenie na atmosferę całej wycieczki, a dzięki temu - również na pozytywną opinię klientów.
+
+### 9. Podsumowanie
+
+Przeprowadzone analizy umożliwiły wszechstronną ocenę sytuacji dotyczącej organizacji wypraw w kosmos. Stworzona baza danych stanowiła podstawę do przeanalizowania wielu kluczowych obszarów działalności firmy.
+
+Dokonano analizy zysków i kosztów utrzymania, sprawdzono sezonowość popytu na wyprawy, jak również preferencje klientów dotyczące wyboru „jasnej” lub „ciemnej strony mocy”. Dodatkowo przeanalizowano przypadki wypadków podczas wypraw — określono ich rodzaje, skutki oraz sprawdzono, jak wygląda ubezpieczenie klientów w takiej sytuacji.
+
+Najważniejsze wnioski z badań to:
+
+-   Analiza klientów powracających i jednorazowych pokazała, które wycieczki cieszą się największą lojalnością i które wymagają poprawy, by zwiększyć wskaźnik powrotów.
+
+-   `r if (str_5 == "Możemy zaobserwować, że liczba klientów, którzy wybrali jasną oraz ciemną stronę mocy, nie różni się znacznie - obydwie strony mocy cieszą się podobnym zainteresowaniem. Oznacza to, że firma może rozwijać swoją ofertę, przygotowując kolejne propozycje wycieczek zarówno z jasną, jak i ciemną stroną mocy.") {"Badanie preferencji klientów dotyczących strony mocy nie wykazało wyraźnej różnicy w zainteresowaniu konkretną stroną."} else {"Preferencje względem „strony mocy” ujawniły wyraźne zainteresowanie jedną stroną, co wskazuje na potrzebę rozbudowy oferty w tym kierunku."}`
+
+-   Bezpieczeństwo i ubezpieczenia wykazały, że nie wszyscy klienci mają odpowiednie zabezpieczenie na najczęściej występujące wypadki, co sugeruje konieczność lepszego informowania i dostosowania produktów ubezpieczeniowych.
+
+-   Oceny wycieczek pozwoliły wskazać najlepsze i najsłabsze oferty, dając kierunek do optymalizacji programów wypraw.
+
+Tak przeprowadzone badania umożliwiły pełniejsze zrozumienie funkcjonowania firmy oraz identyfikowanie obszarów wymagających uwagi lub zmian. Wyniki stanowią solidną podstawę do podejmowania skuteczniejszych decyzji zarządczych w zakresie organizacji wypraw w kosmos, pozwalając na lepsze dopasowanie oferty do oczekiwań klientów i zwiększenie satysfakcji oraz bezpieczeństwa uczestników.
 
 ```{r}
 #| echo: false
